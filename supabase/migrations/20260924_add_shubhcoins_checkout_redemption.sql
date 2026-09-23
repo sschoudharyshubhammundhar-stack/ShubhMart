@@ -88,3 +88,7 @@ end;
 $function$;
 revoke all on function public.release_shubhcoins_for_order(uuid) from public,anon;
 grant execute on function public.release_shubhcoins_for_order(uuid) to authenticated;
+
+-- Defense-in-depth: order creation is only callable by the Edge Function's service role.
+revoke all on function public.create_order_from_cart_with_coins(uuid,uuid,text,text,text,bigint) from public,anon,authenticated;
+grant execute on function public.create_order_from_cart_with_coins(uuid,uuid,text,text,text,bigint) to service_role;
