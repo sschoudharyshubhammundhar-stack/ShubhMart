@@ -15,19 +15,11 @@ create index if not exists wishlist_product_id_idx on public.wishlist(product_id
 
 revoke execute on function public.is_admin() from public, anon, authenticated;
 
-drop policy if exists "customer create service bookings" on public.service_bookings;
-drop policy if exists "customer cancel own service bookings" on public.service_bookings;
-drop policy if exists "provider update own service bookings" on public.service_bookings;
-drop policy if exists "customer insert service bookings" on public.service_bookings;
-drop policy if exists "customer can create valid service booking" on public.service_bookings;
-drop policy if exists "customer can cancel own booking" on public.service_bookings;
-drop policy if exists "provider can update own bookings" on public.service_bookings;
-
-create policy "service bookings admin manage"
-on public.service_bookings for all to authenticated
-using ((select private.is_admin()))
-with check ((select private.is_admin()));
-
+drop policy if exists "customer create valid booking" on public.service_bookings;
+drop policy if exists "customer cancel own booking" on public.service_bookings;
+drop policy if exists "provider update own bookings" on public.service_bookings;
+drop policy if exists "customer insert own service events" on public.service_events;
+drop policy if exists "provider insert own events" on public.service_events;
 create or replace function public.book_service_slot(p_service_id uuid,p_slot_id uuid,p_address text,p_customer_note text default null)
 returns uuid language plpgsql security definer set search_path=public as $$
 declare v_user uuid := (select auth.uid()); v_provider uuid; v_price numeric; v_booking uuid;
