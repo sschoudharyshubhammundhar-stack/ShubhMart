@@ -6,6 +6,8 @@
 <title>ShubhMart — Live Marketplace</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config/app-config.js"></script>
+<script src="shared/supabase-client.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
@@ -134,18 +136,8 @@ input,select,textarea{padding:11px;border:1px solid #ddd;border-radius:9px;box-s
 
 <script>
 
-const SUPABASE_URL =
-"https://yauveaexbpokhytqijae.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_79SNGwvCzpL4OqWBAInVoA_d4xFht6g";
-
 const PAYMENT_FUNCTION = "razorpay-payment";
-
-const sb = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const sb = window.shubhSupabase;
 
 let currentUser = null;
 let selectedAddress = null;
