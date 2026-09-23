@@ -1,0 +1,1 @@
+window.shubhAI=async function(action,payload={}){const {data,error}=await window.shubhSupabase.functions.invoke("shubhmart-ai",{body:{action,...payload}});if(error)throw new Error(error.message||"AI service error");if(data?.error)throw new Error(data.error);return data?.result||{};};
