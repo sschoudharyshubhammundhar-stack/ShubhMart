@@ -14,7 +14,7 @@ window.SHUBHMART_CONFIG = Object.freeze({
     multiSpeedDelivery: false,
     aiListing: true,
     aiShopping: true,
-    shubhCoins: false,
+    shubhCoins: true,
     realOtp: false,
     realPayments: false,
     shubhCredit: false
