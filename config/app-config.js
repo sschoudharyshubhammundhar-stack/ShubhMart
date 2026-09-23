@@ -10,7 +10,7 @@ window.SHUBHMART_CONFIG = Object.freeze({
   mode: "demo",
   features: Object.freeze({
     retailMarketplace: true,
-    wholesaleMarketplace: false,
+    wholesaleMarketplace: true,
     multiSpeedDelivery: false,
     aiListing: false,
     shubhCoins: false,
