@@ -58,3 +58,33 @@ end;
 $function$;
 revoke all on function public.create_order_from_cart_with_coins(uuid,uuid,text,text,text,bigint) from public,anon;
 grant execute on function public.create_order_from_cart_with_coins(uuid,uuid,text,text,text,bigint) to service_role;
+
+-- Release a checkout redemption reservation when an online payment is abandoned or fails.
+alter table public.shubhcoins_ledger drop constraint if exists shubhcoins_ledger_type_check;
+alter table public.shubhcoins_ledger add constraint shubhcoins_ledger_type_check check(type in ('welcome','order_reward','referral','bonus','redeem','refund','adjustment','coin_release'));
+
+create or replace function public.release_shubhcoins_for_order(p_order_id uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path=public
+as $function$
+declare v_order record; v_redeem record; v_wallet public.shubhcoins_wallets;
+begin
+ if auth.uid() is null then raise exception 'Unauthorized'; end if;
+ select id,customer_id,payment_status from public."Orders" where id=p_order_id and customer_id=auth.uid() into v_order;
+ if not found then raise exception 'Order not found'; end if;
+ if v_order.payment_status='Paid' then return false; end if;
+ select id,customer_id,amount,reference_id from public.shubhcoins_ledger where customer_id=auth.uid() and type='redeem' and reference_id=p_order_id::text for update into v_redeem;
+ if not found then return false; end if;
+ if exists(select 1 from public.shubhcoins_ledger where customer_id=auth.uid() and type='coin_release' and reference_id=p_order_id::text) then return false; end if;
+ select * into v_wallet from public.shubhcoins_wallets where customer_id=auth.uid() for update;
+ if not found then raise exception 'ShubhCoins wallet not found'; end if;
+ update public.shubhcoins_wallets set balance=balance+abs(v_redeem.amount),lifetime_spent=greatest(0,lifetime_spent-abs(v_redeem.amount)),updated_at=now() where customer_id=auth.uid();
+ insert into public.shubhcoins_ledger(customer_id,amount,balance_after,type,reference_id,note)
+ select customer_id,abs(v_redeem.amount),balance,'coin_release',p_order_id::text,'Released after unpaid/failed checkout';
+ return true;
+end;
+$function$;
+revoke all on function public.release_shubhcoins_for_order(uuid) from public,anon;
+grant execute on function public.release_shubhcoins_for_order(uuid) to authenticated;
