@@ -138,6 +138,17 @@ async function loadProducts(){
 }
 
 
+/* CART BADGE */
+async function updateCartBadge(){
+  const badge=document.getElementById("cartBadge");
+  if(!badge)return;
+  if(!currentUser){ badge.textContent="0"; return; }
+  const {data,error}=await sb.from("cart").select("quantity").eq("customer_id",currentUser.id);
+  if(error){ badge.textContent="0"; return; }
+  const count=(data||[]).reduce((n,row)=>n+Number(row.quantity||0),0);
+  badge.textContent=String(count);
+}
+
 /* CART */
 
 async function addCart(id){
@@ -175,6 +186,7 @@ async function addCart(id){
   }else{
 
     note("Cart mein add ho gaya ✅");
+    await updateCartBadge();
 
   }
 }
@@ -224,16 +236,19 @@ async function loadCart(){
 
     document.getElementById("cartbox")
       .textContent=error.message;
+    await updateCartBadge();
 
     return;
   }
 
+  await updateCartBadge();
   let total=0;
 
   if(!data?.length){
 
     document.getElementById("cartbox")
       .innerHTML="Cart empty.";
+    await updateCartBadge();
 
     return;
   }
@@ -323,6 +338,7 @@ async function changeQty(id,q){
       currentUser.id
     );
 
+  await updateCartBadge();
   loadCart();
 }
 
@@ -338,6 +354,7 @@ async function removeCart(id){
       currentUser.id
     );
 
+  await updateCartBadge();
   loadCart();
 }
 
@@ -427,6 +444,7 @@ async function logout(){
   currentUser=null;
 
   selectedAddress=null;
+  await updateCartBadge();
 
   note("Logout ho gaya");
 
@@ -649,15 +667,22 @@ async function checkout(){
   }
 
   if(!selectedAddress){
-
-    note(
-      "Account mein address select kijiye",
-      true
-    );
-
-    show("account");
-
-    return;
+    const {data:addresses,error:ae}=await sb
+      .from("addresses")
+      .select("*")
+      .eq("customer_id",currentUser.id)
+      .order("is_default",{ascending:false})
+      .order("created_at",{ascending:false});
+    if(ae){
+      note(ae.message,true);
+      return;
+    }
+    if(!addresses?.length){
+      note("Pehle Delivery Address save kijiye.",true);
+      show("account");
+      return;
+    }
+    selectedAddress=addresses[0];
   }
 
   const box=
@@ -675,6 +700,14 @@ async function checkout(){
 
     <div id="paymentBox" class="paybox">
 
+      <h3>Delivery Address</h3>
+      <div class="panel">
+        <b>\${esc(selectedAddress.name)}</b> — \${esc(selectedAddress.mobile)}<br>
+        \${esc(selectedAddress.house_shop||"")} \${esc(selectedAddress.area||"")}<br>
+        \${esc(selectedAddress.city||"")}, \${esc(selectedAddress.state||"")} - \${esc(selectedAddress.pincode||"")}
+        <br>
+        <button class="btn alt" onclick="changeCheckoutAddress()">Change Address</button>
+      </div>
       <h3>Payment Method</h3>
 
       <label class="payoption">
@@ -736,6 +769,34 @@ async function checkout(){
 
     `
   );
+}
+
+async function changeCheckoutAddress(){
+  const {data,error}=await sb.from("addresses").select("*").eq("customer_id",currentUser.id).order("is_default",{ascending:false}).order("created_at",{ascending:false});
+  if(error){ note(error.message,true); return; }
+  if(!data?.length){ note("Koi saved address nahi hai.",true); return; }
+  const box=document.getElementById("paymentBox");
+  if(!box)return;
+  let list=box.querySelector(".checkout-address-list");
+  if(list)list.remove();
+  list=document.createElement("div");
+  list.className="checkout-address-list";
+  list.innerHTML="<h3>Select Delivery Address</h3>";
+  data.forEach(a=>{
+    const b=document.createElement("button");
+    b.className="btn alt";
+    b.style="display:block;width:100%;text-align:left";
+    b.textContent=(a.name||"")+" — "+(a.mobile||"")+" | "+(a.city||"")+", "+(a.state||"")+" - "+(a.pincode||"");
+    b.onclick=()=>selectCheckoutAddress(a);
+    list.appendChild(b);
+  });
+  box.insertBefore(list,box.firstChild);
+}
+function selectCheckoutAddress(a){
+  selectedAddress=a;
+  document.getElementById("paymentBox")?.remove();
+  checkout();
+  note("Delivery address selected ✅");
 }
 
 
@@ -1081,6 +1142,7 @@ sb.auth.getSession()
     data.session?.user || null;
 
   loadProducts();
+  updateCartBadge();
 
   loadAccount();
 
