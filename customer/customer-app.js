@@ -1141,6 +1141,26 @@ async function placeOrder(){
 
 }
 
+/* ORDER IMAGE VIEWER */
+
+function openOrderImage(url,name){
+  if(!url)return;
+  const old=document.getElementById("orderImageViewer");
+  old?.remove();
+  const wrap=document.createElement("div");
+  wrap.id="orderImageViewer";
+  wrap.style="position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px";
+  wrap.innerHTML=`
+    <div style="max-width:95vw;max-height:95vh;text-align:center;position:relative">
+      <button class="btn" style="position:absolute;right:0;top:-48px" onclick="document.getElementById('orderImageViewer')?.remove()">✕ Close</button>
+      <img src="${esc(url)}" alt="${esc(name||"Product")}" style="max-width:90vw;max-height:82vh;object-fit:contain;border-radius:12px;background:#fff">
+      <div style="color:#fff;margin-top:10px;font-weight:700">${esc(name||"Product")}</div>
+    </div>
+  `;
+  wrap.onclick=(e)=>{if(e.target===wrap)wrap.remove();};
+  document.body.appendChild(wrap);
+}
+
 /* ORDERS */
 
 async function loadOrders(){
@@ -1194,7 +1214,9 @@ async function loadOrders(){
         ${items.map(i=>`
           <div class="row" style="align-items:center;margin:8px 0">
             <img src="${i.products?.image_url||"https://placehold.co/90x70?text=Product"}"
-              style="width:80px;height:60px;object-fit:cover;border-radius:8px">
+              alt="${esc(i.products?.name||"Product")}"
+              onclick="openOrderImage('${esc(i.products?.image_url||"https://placehold.co/600x500?text=Product")}','${esc(i.products?.name||"Product")}')"
+              style="width:80px;height:60px;object-fit:cover;border-radius:8px;cursor:zoom-in">
             <div style="flex:1">
               <b>${esc(i.products?.name||"Product")}</b>
               <div class="small">${esc(i.products?.category||"")}</div>
@@ -1206,8 +1228,15 @@ async function loadOrders(){
 
         <hr>
 
-        <div class="small"><b>Delivery Address:</b><br>${esc(o.shipping_address||"Not available")}</div>
-        <div style="margin-top:8px"><b>Order Total: ₹${Number(o.total_amount||0).toFixed(2)}</b></div>
+        <div class="panel" style="margin-top:10px">
+          <div>Products Total <b style="float:right">₹${Number(o.item_total||0).toFixed(2)}</b></div>
+          <div>Product Discount <b style="float:right">−₹${Number(o.product_discount||0).toFixed(2)}</b></div>
+          ${o.coupon_code ? `<div>Coupon (${esc(o.coupon_code)}) <b style="float:right">−₹${Number(o.coupon_discount||0).toFixed(2)}</b></div>` : ""}
+          <div>Delivery (${esc(o.delivery_method||"standard")}) <b style="float:right">${Number(o.delivery_charge||0)>0?"₹"+Number(o.delivery_charge).toFixed(2):"FREE"}</b></div>
+          <hr>
+          <div><b>Total Paid/Payable</b><b style="float:right">₹${Number(o.total_amount||0).toFixed(2)}</b></div>
+        </div>
+        <div class="small" style="margin-top:10px"><b>Delivery Address:</b><br>${esc(o.shipping_address||"Not available")}</div>
       </div>
     `;
   }).join("");
