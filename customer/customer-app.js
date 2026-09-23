@@ -702,9 +702,9 @@ async function checkout(){
 
       <h3>Delivery Address</h3>
       <div class="panel">
-        <b>\${esc(selectedAddress.name)}</b> — \${esc(selectedAddress.mobile)}<br>
-        \${esc(selectedAddress.house_shop||"")} \${esc(selectedAddress.area||"")}<br>
-        \${esc(selectedAddress.city||"")}, \${esc(selectedAddress.state||"")} - \${esc(selectedAddress.pincode||"")}
+        <b>${esc(selectedAddress.name)}</b> — ${esc(selectedAddress.mobile)}<br>
+        ${esc(selectedAddress.house_shop||"")} ${esc(selectedAddress.area||"")}<br>
+        ${esc(selectedAddress.city||"")}, ${esc(selectedAddress.state||"")} - ${esc(selectedAddress.pincode||"")}
         <br>
         <button class="btn alt" onclick="changeCheckoutAddress()">Change Address</button>
       </div>
@@ -771,32 +771,59 @@ async function checkout(){
   );
 }
 
-async function changeCheckoutAddress(){
-  const {data,error}=await sb.from("addresses").select("*").eq("customer_id",currentUser.id).order("is_default",{ascending:false}).order("created_at",{ascending:false});
-  if(error){ note(error.message,true); return; }
-  if(!data?.length){ note("Koi saved address nahi hai.",true); return; }
+async async function changeCheckoutAddress(){
+  if(!currentUser){
+    note("Pehle login kijiye.",true);
+    show("account");
+    return;
+  }
+  const {data,error}=await sb
+    .from("addresses")
+    .select("*")
+    .eq("customer_id",currentUser.id)
+    .order("is_default",{ascending:false})
+    .order("created_at",{ascending:false});
+  if(error){
+    note("Address load nahi hua: "+error.message,true);
+    return;
+  }
+  if(!data?.length){
+    note("Koi saved address nahi hai.",true);
+    show("account");
+    return;
+  }
   const box=document.getElementById("paymentBox");
   if(!box)return;
   let list=box.querySelector(".checkout-address-list");
   if(list)list.remove();
   list=document.createElement("div");
-  list.className="checkout-address-list";
-  list.innerHTML="<h3>Select Delivery Address</h3>";
+  list.className="checkout-address-list panel";
+  list.innerHTML="<h3>Delivery Address Change Karein</h3>";
   data.forEach(a=>{
+    const row=document.createElement("div");
+    row.className="panel";
+    row.style="border:1px solid #ddd";
+    const title=document.createElement("b");
+    title.textContent=(a.name||"")+" — "+(a.mobile||"");
+    const details=document.createElement("div");
+    details.className="small";
+    details.textContent=(a.house_shop||"")+" "+(a.area||"")+" | "+(a.city||"")+", "+(a.state||"")+" - "+(a.pincode||"");
     const b=document.createElement("button");
-    b.className="btn alt";
-    b.style="display:block;width:100%;text-align:left";
-    b.textContent=(a.name||"")+" — "+(a.mobile||"")+" | "+(a.city||"")+", "+(a.state||"")+" - "+(a.pincode||"");
+    b.className="btn";
+    b.type="button";
+    b.textContent="Use this address";
     b.onclick=()=>selectCheckoutAddress(a);
-    list.appendChild(b);
+    row.append(title,document.createElement("br"),details,b);
+    list.appendChild(row);
   });
   box.insertBefore(list,box.firstChild);
 }
 function selectCheckoutAddress(a){
   selectedAddress=a;
-  document.getElementById("paymentBox")?.remove();
-  checkout();
+  const box=document.getElementById("paymentBox");
+  if(box)box.remove();
   note("Delivery address selected ✅");
+  checkout();
 }
 
 
@@ -804,7 +831,22 @@ function selectCheckoutAddress(a){
 
 async function placeOrder(){
 
-  if(checkoutBusy || !currentUser || !selectedAddress)return;
+  if(checkoutBusy)return;
+
+  const {data:{user},error:userError}=await sb.auth.getUser();
+  if(userError || !user){
+    note("Session expire ho gaya. Dobara login kijiye.",true);
+    currentUser=null;
+    updateCartBadge();
+    show("account");
+    return;
+  }
+  currentUser=user;
+
+  if(!selectedAddress){
+    note("Delivery address select kijiye.",true);
+    return;
+  }
 
   const method=paymentChoice();
   setCheckoutBusy(true);
