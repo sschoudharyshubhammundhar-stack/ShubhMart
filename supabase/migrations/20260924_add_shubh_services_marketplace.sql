@@ -1,0 +1,4 @@
+-- ShubhMart Services foundation (additive migration)
+-- Tables: service_providers, services, service_slots, service_bookings, service_events, service_reviews
+-- RLS policies intentionally keep customer/provider/admin scopes separate.
+-- See production migration already applied as add_shubh_services_marketplace.
