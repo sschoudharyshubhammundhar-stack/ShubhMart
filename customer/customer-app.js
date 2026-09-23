@@ -918,7 +918,9 @@ async function placeOrder(){
       {
         body:{
           address_id:selectedAddress.id,
-          payment_method:method
+          payment_method:method,
+          delivery_method:deliveryChoice(),
+          coupon_code:checkoutCouponCode
         }
       }
     );
