@@ -1,0 +1,95 @@
+/* ShubhMart Customer Order Enhancements — isolated module */
+(function(){
+  const oldCheckout = window.checkout;
+
+  function esc2(s){return String(s??"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[c]));}
+  function money(v){return "₹"+Number(v||0).toFixed(2);}
+
+  function statusClass(s){
+    const x=String(s||"Pending").toLowerCase();
+    if(x.includes("deliver")) return "Delivered";
+    if(x.includes("cancel")) return "Cancelled";
+    if(x.includes("ship")) return "Shipped";
+    if(x.includes("pack")) return "Packed";
+    if(x.includes("confirm")) return "Confirmed";
+    return "Placed";
+  }
+
+  function timeline(status){
+    const current=statusClass(status);
+    if(current==="Cancelled") return '<div class="panel" style="background:#fff0f0"><b>❌ Order Cancelled</b></div>';
+    const steps=["Placed","Confirmed","Packed","Shipped","Out for Delivery","Delivered"];
+    let active=steps.indexOf(current); if(active<0)active=0;
+    return '<div style="display:flex;gap:5px;overflow:auto;padding:8px 0">'+steps.map((s,i)=>`<div style="min-width:78px;text-align:center;font-size:11px"><div style="width:26px;height:26px;border-radius:50%;margin:auto;display:flex;align-items:center;justify-content:center;border:1px solid #999;background:${i<=active?'#111':'#fff'};color:${i<=active?'#fff':'#777'}">${i<=active?'✓':i+1}</div><div style="margin-top:4px">${s}</div></div>`).join('')+'</div>';
+  }
+
+  window.openOrderDetails=function(orderId){
+    const el=document.getElementById('orderDetailsModal');
+    if(el)el.remove();
+    const src=document.querySelector(`[data-order-id="${CSS.escape(orderId)}"]`);
+    if(src){src.scrollIntoView({behavior:'smooth',block:'center'});src.style.outline='3px solid #111';setTimeout(()=>src.style.outline='',1800);}
+  };
+
+  window.trackOrder=function(orderId,status){
+    const text=`Order #${String(orderId).slice(0,8)}\n\nCurrent status: ${status||'Placed'}\n\nTracking timeline:\nPlaced → Confirmed → Packed → Shipped → Out for Delivery → Delivered`;
+    alert(text);
+  };
+
+  window.orderHelp=function(orderId){
+    const old=document.getElementById('orderHelpModal'); old?.remove();
+    const wrap=document.createElement('div');wrap.id='orderHelpModal';wrap.style='position:fixed;inset:0;background:#0009;z-index:10000;display:flex;align-items:center;justify-content:center;padding:18px';
+    wrap.innerHTML=`<div style="background:#fff;max-width:430px;width:100%;border-radius:16px;padding:18px"><h2>❓ Order Help</h2><p>Order #${esc2(String(orderId).slice(0,8))}</p><button class="btn" onclick="note('Order support request registered. Customer support module next step mein connect hoga.')">Delivery Issue</button><button class="btn" onclick="note('Return/Refund request option selected.')">Return / Refund</button><button class="btn" onclick="note('Payment issue option selected.')">Payment Issue</button><button class="btn alt" onclick="document.getElementById('orderHelpModal')?.remove()">Close</button></div>`;
+    wrap.onclick=e=>{if(e.target===wrap)wrap.remove();};document.body.appendChild(wrap);
+  };
+
+  window.viewInvoice=function(orderId){
+    const el=document.querySelector(`[data-order-id="${CSS.escape(orderId)}"]`);
+    if(!el)return;
+    const print=window.open('','_blank','width=700,height=800');
+    if(!print){note('Popup blocked hai. Browser popup allow kijiye.',true);return;}
+    print.document.write('<html><head><title>ShubhMart Invoice</title><style>body{font-family:Arial;padding:25px}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}</style></head><body>'+el.innerHTML+'</body></html>');
+    print.document.close();setTimeout(()=>print.print(),300);
+  };
+
+  window.checkout=function(){
+    const existing=document.getElementById('paymentBox');
+    if(existing){existing.scrollIntoView({behavior:'smooth',block:'start'});return;}
+    if(typeof oldCheckout==='function')return oldCheckout();
+  };
+
+  window.loadOrders=async function(){
+    const e=document.getElementById('ordersbox');
+    if(!window.currentUser){e.innerHTML='Login karke orders dekhein.';return;}
+    const {data,error}=await sb.from('Orders').select('*,Order_items(id,quantity,unit_price,total_price,products(name,image_url,mrp,category))').eq('customer_id',currentUser.id).order('created_at',{ascending:false});
+    if(error){e.innerHTML='<div class="panel danger">Orders load error: '+esc2(error.message)+'</div>';return;}
+    if(!data?.length){e.innerHTML='<div class="panel"><h3>Abhi koi order nahi hai</h3><button class="btn" onclick="show(\'home\')">🛍️ Start Shopping</button></div>';return;}
+
+    e.innerHTML=data.map(o=>{
+      const items=o.Order_items||[];
+      const itemTotal=Number(o.item_total||items.reduce((n,i)=>n+Number(i.total_price||0),0));
+      const coupon=Number(o.coupon_discount||0);
+      const productDiscount=Number(o.product_discount||0);
+      const delivery=Number(o.delivery_charge||0);
+      const total=Number(o.total_amount||Math.max(0,itemTotal-coupon+delivery));
+      const payMethod=String(o.payment_method||'').toLowerCase();
+      const paymentLabel=payMethod==='cod'?'Cash on Delivery':'Online Payment';
+      const paymentStatus=payMethod==='cod'?(String(o.payment_status||'').toLowerCase()==='paid'?'Collected':'COD — Payment on Delivery'):(o.payment_status||'Pending');
+      const status=o.order_status||'Placed';
+      const date=o.created_at?new Date(o.created_at).toLocaleString('en-IN'):'';
+      return `<article class="panel" data-order-id="${esc2(o.id)}" style="margin-bottom:18px">
+        <div class="row" style="justify-content:space-between"><div><h3 style="margin:0">Order #${esc2(String(o.id).slice(0,8))}</h3><div class="small">${esc2(date)}</div></div><div style="font-size:20px;font-weight:700">${money(total)}</div></div>
+        <div style="margin-top:8px"><b>📦 ${esc2(status)}</b> &nbsp; • &nbsp; <b>💳 ${esc2(paymentLabel)}</b></div>
+        ${timeline(status)}
+        <h4>🛍️ Products (${items.length})</h4>
+        ${items.map(i=>`<div class="row" style="border-top:1px solid #eee;padding:10px 0">
+          <img src="${esc2(i.products?.image_url||'https://placehold.co/100x80?text=Product')}" style="width:82px;height:65px;object-fit:cover;border-radius:9px;cursor:zoom-in" onclick="openOrderImage('${esc2(i.products?.image_url||'https://placehold.co/600x500?text=Product')}','${esc2(i.products?.name||'Product')}')">
+          <div style="flex:1"><b>${esc2(i.products?.name||'Product')}</b><div class="small">${esc2(i.products?.category||'')}</div><div>${money(i.unit_price)} × ${Number(i.quantity||0)}</div></div><b>${money(i.total_price)}</b>
+        </div>`).join('')}
+        <div class="panel" style="margin-top:10px;background:#fafafa"><h4>💰 Price Details</h4><div>Products Total <b style="float:right">${money(itemTotal)}</b></div><div>Product Discount <b style="float:right">−${money(productDiscount)}</b></div>${o.coupon_code?`<div>Coupon (${esc2(o.coupon_code)}) <b style="float:right">−${money(coupon)}</b></div>`:''}<div>Delivery (${esc2(o.delivery_method||'standard')}) <b style="float:right">${delivery?money(delivery):'FREE'}</b></div><hr><div><b>Total Payable</b><b style="float:right">${money(total)}</b></div></div>
+        <div class="panel" style="background:#fafafa"><b>📍 Delivery Address</b><br>${esc2(o.shipping_address||'Not available')}</div>
+        <div class="panel" style="background:#fafafa"><b>💳 Payment</b><br>Method: ${esc2(paymentLabel)}<br>Status: <b>${esc2(paymentStatus)}</b></div>
+        <div class="row"><button class="btn" onclick="trackOrder('${esc2(o.id)}','${esc2(status)}')">🚚 Track Order</button><button class="btn" onclick="buyAgain('${esc2(o.id)}')">🔁 Buy Again</button><button class="btn" onclick="viewInvoice('${esc2(o.id)}')">🧾 Invoice</button><button class="btn alt" onclick="orderHelp('${esc2(o.id)}')">❓ Help</button></div>
+      </article>`;
+    }).join('');
+  };
+})();
