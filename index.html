@@ -40,104 +40,17 @@ input,select,textarea{padding:11px;border:1px solid #ddd;border-radius:9px;box-s
 .success{background:#effff2}
 </style>
 </head>
-
 <body>
-
-<div class="top">
-  <div class="wrap">
-    <div class="brand">🛍️ SHUBHMART</div>
-    <div>Har Zaroorat, Ek Jagah</div>
-    <input id="search" class="search"
-      placeholder="Product search..."
-      oninput="loadProducts()">
-  </div>
-</div>
-
+<div class="top"><div class="wrap"><div class="brand">🛍️ SHUBHMART</div><div>Har Zaroorat, Ek Jagah</div><input id="search" class="search" placeholder="Product search..." oninput="loadProducts()"></div></div>
 <div class="wrap">
-
-<div class="nav">
-  <button class="btn" onclick="show('home')">Home</button>
-  <button class="btn cart-link" onclick="show('cart')">Cart 🛒 <span id="cartBadge" class="cart-badge">0</span></button>
-  <button class="btn" onclick="show('orders')">My Orders</button>
-  <button class="btn" onclick="show('account')">Account</button>
-</div>
-
+<div class="nav"><button class="btn" onclick="show('home')">Home</button><button class="btn cart-link" onclick="show('cart')">Cart 🛒 <span id="cartBadge" class="cart-badge">0</span></button><button class="btn" onclick="show('orders')">My Orders</button><button class="btn" onclick="show('account')">Account</button></div>
 <div id="msg"></div>
-
-<section id="home">
-  <div class="panel">
-    <h2>Products</h2>
-    <div id="products" class="grid">Loading...</div>
-  </div>
-</section>
-
-<section id="cart" class="hidden">
-  <div class="panel">
-    <h2>My Cart</h2>
-    <div id="cartbox"></div>
-    <button id="checkoutBtn" class="btn" onclick="checkout()">
-      Proceed to Checkout
-    </button>
-  </div>
-</section>
-
-<section id="orders" class="hidden">
-  <div class="panel">
-    <h2>My Orders</h2>
-    <div id="ordersbox">Login karke orders dekhein.</div>
-  </div>
-</section>
-
-<section id="account" class="hidden">
-  <div class="panel">
-    <h2>Account</h2>
-
-    <div id="userbox"></div>
-
-    <div id="loginbox">
-      <input id="email" type="email" autocomplete="email" placeholder="Email">
-      <input id="password" type="password" autocomplete="current-password" placeholder="Password">
-
-      <div id="signupFields" class="hidden">
-        <input id="signupName" autocomplete="name" placeholder="Full name">
-        <input id="signupPhone" autocomplete="tel" inputmode="tel" placeholder="Mobile number">
-      </div>
-
-      <button class="btn" onclick="login()">Login</button>
-      <button class="btn alt" onclick="signup()">New account / Signup</button>
-      <button class="btn alt" onclick="resetPassword()">Forgot password?</button>
-    </div>
-
-    <div id="addressbox" class="hidden">
-
-      <h3>Delivery Address</h3>
-
-      <input id="aname" placeholder="Name">
-      <input id="amobile" placeholder="Mobile">
-      <input id="ahouse" placeholder="House/Shop">
-      <input id="aarea" placeholder="Area">
-      <input id="acity" placeholder="City">
-      <input id="astate" placeholder="State">
-      <input id="apin" placeholder="PIN code">
-
-      <button class="btn" onclick="saveAddress()">
-        Save Address
-      </button>
-
-      <div id="addresses"></div>
-
-      <button class="btn alt" onclick="logout()">
-        Logout
-      </button>
-
-    </div>
-  </div>
-</section>
-
+<section id="home"><div class="panel"><h2>Products</h2><div id="products" class="grid">Loading...</div></div></section>
+<section id="cart" class="hidden"><div class="panel"><h2>My Cart</h2><div id="cartbox"></div><button id="checkoutBtn" class="btn" onclick="checkout()">Proceed to Checkout</button></div></section>
+<section id="orders" class="hidden"><div class="panel"><h2>My Orders</h2><div id="ordersbox">Login karke orders dekhein.</div></div></section>
+<section id="account" class="hidden"><div class="panel"><h2>Account</h2><div id="userbox"></div><div id="loginbox"><input id="email" type="email" autocomplete="email" placeholder="Email"><input id="password" type="password" autocomplete="current-password" placeholder="Password"><div id="signupFields" class="hidden"><input id="signupName" autocomplete="name" placeholder="Full name"><input id="signupPhone" autocomplete="tel" inputmode="tel" placeholder="Mobile number"></div><button class="btn" onclick="login()">Login</button><button class="btn alt" onclick="signup()">New account / Signup</button><button class="btn alt" onclick="resetPassword()">Forgot password?</button></div><div id="addressbox" class="hidden"><h3>Delivery Address</h3><input id="aname" placeholder="Name"><input id="amobile" placeholder="Mobile"><input id="ahouse" placeholder="House/Shop"><input id="aarea" placeholder="Area"><input id="acity" placeholder="City"><input id="astate" placeholder="State"><input id="apin" placeholder="PIN code"><button class="btn" onclick="saveAddress()">Save Address</button><div id="addresses"></div><button class="btn alt" onclick="logout()">Logout</button></div></div></section>
 </div>
-
 <script src="customer/customer-app.js"></script>
-
-
+<script src="customer/order-enhancements.js"></script>
 </body>
 </html>
