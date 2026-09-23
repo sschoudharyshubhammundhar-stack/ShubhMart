@@ -743,445 +743,189 @@ async function checkout(){
 
 async function placeOrder(){
 
-  if(
-    checkoutBusy ||
-    !currentUser ||
-    !selectedAddress
-  )return;
+  if(checkoutBusy || !currentUser || !selectedAddress)return;
 
-  const method=
-    paymentChoice();
-
+  const method=paymentChoice();
   setCheckoutBusy(true);
 
   let ord=null;
 
   try{
 
-    /* GET CART */
+    /* SECURE SERVER-SIDE ORDER CREATION */
+    const {data:created,error:ce}=await sb.functions.invoke(
+      "create-customer-order",
+      {
+        body:{
+          address_id:selectedAddress.id,
+          payment_method:method
+        }
+      }
+    );
 
-    const {data:cart,error}=await sb
-      .from("cart")
-      .select(
-        "id,quantity,product_id,products(id,name,price,seller_id)"
-      )
-      .eq(
-        "customer_id",
-        currentUser.id
-      );
-
-    if(error || !cart?.length){
-
+    if(ce || created?.error){
       throw new Error(
-        error?.message || "Cart empty"
+        ce?.message ||
+        created?.error ||
+        "Order create nahi hua"
       );
-
     }
 
-    /* TOTAL */
+    ord={
+      id:created.order_id,
+      total_amount:Number(created.amount||0),
+      payment_method:method
+    };
 
-    const total=
-      cart.reduce(
-        (sum,x)=>
-          sum+
-          Number(
-            x.products?.price || 0
-          )*
-          x.quantity,
-        0
-      );
-
-    if(
-      !Number.isFinite(total) ||
-      total<=0
-    ){
-
-      throw new Error(
-        "Invalid order amount"
-      );
-
+    if(!ord.id || !Number.isFinite(ord.total_amount) || ord.total_amount<=0){
+      throw new Error("Invalid order response");
     }
-
-    /* CREATE PENDING ORDER */
-
-    const {data:o,error:oe}=
-      await sb
-      .from("Orders")
-      .insert({
-
-        customer_id:
-          currentUser.id,
-
-        customer_name:
-          selectedAddress.name,
-
-        customer_phone:
-          selectedAddress.mobile,
-
-        total_amount:
-          total,
-
-        payment_method:
-          method,
-
-        payment_status:
-          "Pending",
-
-        order_status:
-          "Pending",
-
-        shipping_address:
-          `${selectedAddress.house_shop||""},
-           ${selectedAddress.area||""},
-           ${selectedAddress.city},
-           ${selectedAddress.state}
-           - ${selectedAddress.pincode}`,
-
-        address_id:
-          selectedAddress.id,
-
-        currency:
-          "INR",
-
-        commission_amount:
-          0,
-
-        seller_earning:
-          0
-
-      })
-      .select()
-      .single();
-
-    if(oe){
-
-      throw new Error(
-        oe.message
-      );
-
-    }
-
-    ord=o;
-
-
-    /* ORDER ITEMS */
-
-    const items=
-      cart.map(x=>({
-
-        order_id:
-          o.id,
-
-        product_id:
-          x.product_id,
-
-        quantity:
-          x.quantity,
-
-        unit_price:
-          x.products.price,
-
-        total_price:
-          Number(
-            x.products.price
-          )*
-          x.quantity
-
-      }));
-
-    const {error:ie}=
-      await sb
-      .from("Order_items")
-      .insert(items);
-
-    if(ie){
-
-      throw new Error(
-        ie.message
-      );
-
-    }
-
-
-    /* PAYMENT RECORD */
-
-    const {error:pe}=
-      await sb
-      .from("payments")
-      .insert({
-
-        order_id:
-          o.id,
-
-        customer_id:
-          currentUser.id,
-
-        amount:
-          total,
-
-        currency:
-          "INR",
-
-        method:
-          method,
-
-        status:
-          "Pending"
-
-      });
-
-    if(pe){
-
-      throw new Error(
-        "Payment record create nahi hua: "+
-        pe.message
-      );
-
-    }
-
 
     /* COD */
-
     if(method==="cod"){
 
       await sb
         .from("cart")
         .delete()
-        .eq(
-          "customer_id",
-          currentUser.id
-        );
+        .eq("customer_id",currentUser.id);
 
-      note(
-        "COD order successfully placed 🎉"
-      );
+      note("COD order successfully placed 🎉");
 
       document
         .getElementById("paymentBox")
         ?.remove();
 
       setCheckoutBusy(false);
-
       show("orders");
-
       return;
     }
 
-
     /* RAZORPAY CREATE ORDER */
-
     const {
       data:gatewayData,
       error:fe
-    }=
-      await sb.functions.invoke(
-        PAYMENT_FUNCTION,
-        {
-
-          body:{
-
-            action:
-              "create_order",
-
-            order_id:
-              o.id,
-
-            amount:
-              total
-
-          }
-
+    }=await sb.functions.invoke(
+      PAYMENT_FUNCTION,
+      {
+        body:{
+          action:"create_order",
+          order_id:ord.id,
+          amount:ord.total_amount
         }
-      );
+      }
+    );
 
     if(fe){
-
       throw new Error(
         fe.message ||
         "Payment gateway connect nahi hua"
       );
-
     }
 
     if(gatewayData?.error){
-
-      throw new Error(
-        gatewayData.error
-      );
-
+      throw new Error(gatewayData.error);
     }
 
     if(
       !gatewayData?.key_id ||
       !gatewayData?.razorpay_order_id
     ){
-
-      throw new Error(
-        "Razorpay order create nahi hua"
-      );
-
+      throw new Error("Razorpay order create nahi hua");
     }
-
-
-    /* RAZORPAY CHECKOUT */
 
     const options={
 
-      key:
-        gatewayData.key_id,
-
-      amount:
-        gatewayData.amount,
-
-      currency:
-        gatewayData.currency ||
-        "INR",
-
-      name:
-        "ShubhMart",
-
-      description:
-        "ShubhMart Order",
-
-      order_id:
-        gatewayData.razorpay_order_id,
+      key:gatewayData.key_id,
+      amount:gatewayData.amount,
+      currency:gatewayData.currency||"INR",
+      name:"ShubhMart",
+      description:"ShubhMart Order",
+      order_id:gatewayData.razorpay_order_id,
 
       prefill:{
-
-        name:
-          selectedAddress.name,
-
-        email:
-          currentUser.email,
-
-        contact:
-          selectedAddress.mobile
-
+        name:selectedAddress.name,
+        email:currentUser.email,
+        contact:selectedAddress.mobile
       },
 
-      theme:{
+      theme:{color:"#111111"},
 
-        color:
-          "#111111"
+      handler:async function(response){
 
-      },
+        try{
 
-
-      handler:
-        async function(response){
-
-          try{
-
-            /* VERIFY PAYMENT */
-
-            const {
-              data:v,
-              error:ve
-            }=
-              await sb.functions.invoke(
-                PAYMENT_FUNCTION,
-                {
-
-                  body:{
-
-                    action:
-                      "verify_payment",
-
-                    order_id:
-                      o.id,
-
-                    razorpay_order_id:
-                      response.razorpay_order_id,
-
-                    razorpay_payment_id:
-                      response.razorpay_payment_id,
-
-                    razorpay_signature:
-                      response.razorpay_signature
-
-                  }
-
-                }
-              );
-
-            if(
-              ve ||
-              v?.error
-            ){
-
-              throw new Error(
-                ve?.message ||
-                v?.error ||
-                "Payment verification failed"
-              );
-
+          const {
+            data:v,
+            error:ve
+          }=await sb.functions.invoke(
+            PAYMENT_FUNCTION,
+            {
+              body:{
+                action:"verify_payment",
+                order_id:ord.id,
+                razorpay_order_id:response.razorpay_order_id,
+                razorpay_payment_id:response.razorpay_payment_id,
+                razorpay_signature:response.razorpay_signature
+              }
             }
+          );
 
-
-            /* ONLY AFTER SUCCESS */
-
-            await sb
-              .from("cart")
-              .delete()
-              .eq(
-                "customer_id",
-                currentUser.id
-              );
-
-
-            note(
-              "Payment successful ✅ Order confirmed 🎉"
+          if(ve || v?.error){
+            throw new Error(
+              ve?.message ||
+              v?.error ||
+              "Payment verification failed"
             );
-
-            document
-              .getElementById("paymentBox")
-              ?.remove();
-
-            show("orders");
-
-          }catch(err){
-
-            note(
-              "Payment verify nahi hua: "+
-              err.message,
-              true
-            );
-
-            show("orders");
-
-          }finally{
-
-            setCheckoutBusy(false);
-
           }
 
-        },
+          await sb
+            .from("cart")
+            .delete()
+            .eq("customer_id",currentUser.id);
 
+          note("Payment successful ✅ Order confirmed 🎉");
+
+          document
+            .getElementById("paymentBox")
+            ?.remove();
+
+          show("orders");
+
+        }catch(err){
+
+          note(
+            "Payment verify nahi hua: "+
+            err.message,
+            true
+          );
+
+          show("orders");
+
+        }finally{
+
+          setCheckoutBusy(false);
+
+        }
+
+      },
 
       modal:{
+        ondismiss:function(){
 
-        ondismiss:
-          function(){
+          note(
+            "Payment window close ho gayi. Order Pending hai; aap dobara payment try kar sakte hain.",
+            true
+          );
 
-            note(
-              "Payment window close ho gayi. Order Pending hai; aap dobara payment try kar sakte hain.",
-              true
-            );
+          setCheckoutBusy(false);
+          show("orders");
 
-            setCheckoutBusy(false);
-
-            show("orders");
-
-          }
-
+        }
       }
 
     };
 
-
-    const rzp=
-      new Razorpay(options);
-
+    const rzp=new Razorpay(options);
 
     rzp.on(
       "payment.failed",
@@ -1201,9 +945,7 @@ async function placeOrder(){
       }
     );
 
-
     rzp.open();
-
 
   }catch(err){
 
@@ -1218,7 +960,6 @@ async function placeOrder(){
   }
 
 }
-
 
 /* ORDERS */
 
