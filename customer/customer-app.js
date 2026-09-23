@@ -771,7 +771,7 @@ async function checkout(){
   );
 }
 
-async async function changeCheckoutAddress(){
+async function changeCheckoutAddress(){
   if(!currentUser){
     note("Pehle login kijiye.",true);
     show("account");
