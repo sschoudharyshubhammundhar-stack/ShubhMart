@@ -1,0 +1,10 @@
+create table if not exists public.shubhcoins_wallets (customer_id uuid primary key references auth.users(id) on delete cascade,balance bigint not null default 0 check(balance>=0),lifetime_earned bigint not null default 0 check(lifetime_earned>=0),lifetime_spent bigint not null default 0 check(lifetime_spent>=0),updated_at timestamptz not null default now());
+create table if not exists public.shubhcoins_ledger (id uuid primary key default gen_random_uuid(),customer_id uuid not null references auth.users(id) on delete cascade,amount bigint not null check(amount<>0),balance_after bigint not null check(balance_after>=0),type text not null check(type in ('welcome','order_reward','referral','bonus','redeem','refund','adjustment')),reference_id text,note text,created_at timestamptz not null default now(),unique(customer_id,type,reference_id));
+create index if not exists shubhcoins_ledger_customer_created_idx on public.shubhcoins_ledger(customer_id,created_at desc);
+alter table public.shubhcoins_wallets enable row level security; alter table public.shubhcoins_ledger enable row level security;
+drop policy if exists shubhcoins_wallet_select on public.shubhcoins_wallets;
+create policy shubhcoins_wallet_select on public.shubhcoins_wallets for select to authenticated using ((select auth.uid())=customer_id);
+drop policy if exists shubhcoins_ledger_select on public.shubhcoins_ledger;
+create policy shubhcoins_ledger_select on public.shubhcoins_ledger for select to authenticated using ((select auth.uid())=customer_id);
+create or replace function public.ensure_shubhcoins_wallet() returns public.shubhcoins_wallets language plpgsql security invoker as $$ declare w public.shubhcoins_wallets; begin if auth.uid() is null then raise exception 'Authentication required'; end if; insert into public.shubhcoins_wallets(customer_id) values(auth.uid()) on conflict(customer_id) do nothing; select * into w from public.shubhcoins_wallets where customer_id=auth.uid(); return w; end $$;
+grant execute on function public.ensure_shubhcoins_wallet() to authenticated;
