@@ -215,109 +215,79 @@ async function buy(id){
 async function loadCart(){
 
   if(!currentUser){
-
-    document.getElementById("cartbox")
-      .innerHTML="Login kijiye.";
-
+    document.getElementById("cartbox").innerHTML="Login kijiye.";
     return;
   }
 
   const {data,error}=await sb
     .from("cart")
-    .select(
-      "id,quantity,product_id,products(id,name,price,mrp,image_url)"
-    )
-    .eq(
-      "customer_id",
-      currentUser.id
-    );
+    .select("id,quantity,product_id,products(id,name,price,mrp,image_url,category)")
+    .eq("customer_id",currentUser.id);
+
+  const box=document.getElementById("cartbox");
 
   if(error){
-
-    document.getElementById("cartbox")
-      .textContent=error.message;
+    box.textContent=error.message;
     await updateCartBadge();
-
     return;
   }
 
   await updateCartBadge();
-  let total=0;
 
   if(!data?.length){
-
-    document.getElementById("cartbox")
-      .innerHTML="Cart empty.";
-    await updateCartBadge();
-
+    box.innerHTML="Cart empty.";
     return;
   }
 
-  document.getElementById("cartbox")
-    .innerHTML=data.map(x=>{
+  let itemTotal=0;
+  let mrpTotal=0;
 
-      total +=
-        Number(x.products?.price||0) *
-        x.quantity;
+  const items=data.map(x=>{
+    const price=Number(x.products?.price||0);
+    const mrp=Number(x.products?.mrp||price);
+    const qty=Number(x.quantity||0);
+    const line=price*qty;
+    itemTotal+=line;
+    mrpTotal+=Math.max(price,mrp)*qty;
+    return {x,price,mrp,qty,line};
+  });
 
-      return `
+  const productDiscount=Math.max(0,mrpTotal-itemTotal);
 
-        <div class="panel row">
-
-          <img
-            src="${x.products?.image_url ||
-            "https://placehold.co/100x80"}"
-            style="
-              width:80px;
-              height:60px;
-              object-fit:cover;
-              border-radius:8px
-            "
-          >
-
-          <div style="flex:1">
-
-            <b>
-              ${esc(x.products?.name)}
-            </b>
-
-            <br>
-
-            ₹${x.products?.price}
-            × ${x.quantity}
-
+  box.innerHTML=
+    '<h3>Added Products</h3>'+
+    items.map(({x,price,mrp,qty,line})=>`
+      <div class="panel row">
+        <img src="${x.products?.image_url || "https://placehold.co/120x90?text=ShubhMart"}"
+          style="width:90px;height:70px;object-fit:cover;border-radius:10px">
+        <div style="flex:1;min-width:160px">
+          <b>${esc(x.products?.name||"Product")}</b>
+          <div class="small">${esc(x.products?.category||"")}</div>
+          <div>
+            <b>₹${price.toFixed(2)}</b>
+            ${mrp>price ? '<span class="old"> ₹'+mrp.toFixed(2)+'</span>' : ''}
+            × ${qty}
           </div>
-
-          <button class="btn"
-            onclick="changeQty(
-              '${x.id}',
-              ${x.quantity-1}
-            )">
-            −
-          </button>
-
-          <button class="btn"
-            onclick="changeQty(
-              '${x.id}',
-              ${x.quantity+1}
-            )">
-            +
-          </button>
-
-          <button class="btn alt"
-            onclick="removeCart('${x.id}')">
-            Remove
-          </button>
-
+          <div><b>Item Total: ₹${line.toFixed(2)}</b></div>
         </div>
-
-      `;
-
-    }).join("")+
-
-    `<h3>Total: ₹${total.toFixed(2)}</h3>`;
+        <div>
+          <button class="btn" onclick="changeQty('${x.id}',${qty-1})">−</button>
+          <button class="btn" onclick="changeQty('${x.id}',${qty+1})">+</button>
+          <button class="btn alt" onclick="removeCart('${x.id}')">Remove</button>
+        </div>
+      </div>
+    `).join("")+
+    `
+      <div class="panel">
+        <h3>Price Summary</h3>
+        <div>Products Total <b style="float:right">₹${mrpTotal.toFixed(2)}</b></div>
+        <div>Product Discount <b style="float:right">−₹${productDiscount.toFixed(2)}</b></div>
+        <div>Cart Value <b style="float:right">₹${itemTotal.toFixed(2)}</b></div>
+        <hr>
+        <div style="font-size:20px"><b>Total</b><b style="float:right">₹${itemTotal.toFixed(2)}</b></div>
+      </div>
+    `;
 }
-
 
 async function changeQty(id,q){
 
@@ -834,32 +804,32 @@ async function changeCheckoutAddress(){
     show("account");
     return;
   }
+
   const {data,error}=await sb
     .from("addresses")
     .select("*")
     .eq("customer_id",currentUser.id)
     .order("is_default",{ascending:false})
     .order("created_at",{ascending:false});
+
   if(error){
     note("Address load nahi hua: "+error.message,true);
     return;
   }
-  if(!data?.length){
-    note("Koi saved address nahi hai.",true);
-    show("account");
-    return;
-  }
+
   const box=document.getElementById("paymentBox");
   if(!box)return;
-  let list=box.querySelector(".checkout-address-list");
-  if(list)list.remove();
-  list=document.createElement("div");
+
+  box.querySelector(".checkout-address-list")?.remove();
+
+  const list=document.createElement("div");
   list.className="checkout-address-list panel";
-  list.innerHTML="<h3>Delivery Address Change Karein</h3>";
-  data.forEach(a=>{
+  list.innerHTML="<h3>Change Delivery Address</h3>";
+
+  (data||[]).forEach(a=>{
     const row=document.createElement("div");
     row.className="panel";
-    row.style="border:1px solid #ddd";
+    row.style="border:1px solid #ddd;margin:8px 0";
     const title=document.createElement("b");
     title.textContent=(a.name||"")+" — "+(a.mobile||"");
     const details=document.createElement("div");
@@ -873,12 +843,60 @@ async function changeCheckoutAddress(){
     row.append(title,document.createElement("br"),details,b);
     list.appendChild(row);
   });
+
+  list.insertAdjacentHTML("beforeend",`
+    <hr>
+    <h3>+ Add New Address</h3>
+    <input id="newAnam" placeholder="Name">
+    <input id="newAmob" placeholder="Mobile">
+    <input id="newAhouse" placeholder="House/Shop">
+    <input id="newAarea" placeholder="Area">
+    <input id="newAcity" placeholder="City">
+    <input id="newAstate" placeholder="State">
+    <input id="newApin" placeholder="PIN code">
+    <button class="btn" type="button" onclick="saveCheckoutAddress()">Save & Use New Address</button>
+  `);
+
   box.insertBefore(list,box.firstChild);
 }
+
+async function saveCheckoutAddress(){
+  if(!currentUser)return;
+
+  const a={
+    customer_id:currentUser.id,
+    name:document.getElementById("newAnam")?.value.trim(),
+    mobile:document.getElementById("newAmob")?.value.trim(),
+    house_shop:document.getElementById("newAhouse")?.value.trim(),
+    area:document.getElementById("newAarea")?.value.trim(),
+    city:document.getElementById("newAcity")?.value.trim(),
+    state:document.getElementById("newAstate")?.value.trim(),
+    pincode:document.getElementById("newApin")?.value.trim(),
+    is_default:true
+  };
+
+  if(!a.name||!a.mobile||!a.city||!a.state||!a.pincode){
+    note("Name, Mobile, City, State aur PIN bharna zaroori hai.",true);
+    return;
+  }
+
+  const {data,error}=await sb.from("addresses").insert(a).select().single();
+
+  if(error){
+    note("New address save nahi hua: "+error.message,true);
+    return;
+  }
+
+  selectedAddress=data;
+  note("New delivery address save aur select ho gaya ✅");
+
+  document.getElementById("paymentBox")?.remove();
+  checkout();
+}
+
 function selectCheckoutAddress(a){
   selectedAddress=a;
-  const box=document.getElementById("paymentBox");
-  if(box)box.remove();
+  document.getElementById("paymentBox")?.remove();
   note("Delivery address selected ✅");
   checkout();
 }
@@ -1127,112 +1145,73 @@ async function placeOrder(){
 
 async function loadOrders(){
 
+  const e=document.getElementById("ordersbox");
+
   if(!currentUser){
-
-    document.getElementById(
-      "ordersbox"
-    ).innerHTML=
-      "Login karke orders dekhein.";
-
+    e.innerHTML="Login karke orders dekhein.";
     return;
   }
 
-  const {data,error}=
-    await sb
+  const {data,error}=await sb
     .from("Orders")
-    .select(
-      "*,Order_items(quantity,unit_price,total_price,products(name,image_url))"
-    )
-    .eq(
-      "customer_id",
-      currentUser.id
-    )
-    .order(
-      "created_at",
-      {ascending:false}
-    );
-
-  const e=
-    document.getElementById(
-      "ordersbox"
-    );
+    .select("*,Order_items(id,quantity,unit_price,total_price,products(name,image_url,mrp,category))")
+    .eq("customer_id",currentUser.id)
+    .order("created_at",{ascending:false});
 
   if(error){
-
-    e.textContent=
-      error.message;
-
+    e.textContent=error.message;
     return;
   }
 
   if(!data?.length){
-
-    e.innerHTML=
-      "No orders yet.";
-
+    e.innerHTML="No orders yet.";
     return;
   }
 
-  e.innerHTML=
-    data.map(o=>`
+  e.innerHTML=data.map(o=>{
+    const items=o.Order_items||[];
+    const date=o.created_at ? new Date(o.created_at).toLocaleString("en-IN") : "";
+    return `
+      <div class="panel" style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <div>
+            <b>Order #${String(o.id).slice(0,8)}</b>
+            <div class="small">${esc(date)}</div>
+          </div>
+          <div><b>₹${Number(o.total_amount||0).toFixed(2)}</b></div>
+        </div>
 
-      <div class="panel">
-
-        <b>
-          Order #${String(o.id).slice(0,8)}
-        </b>
-
-        <br>
-
-        Amount:
-        ₹${o.total_amount}
-
-        <br>
-
-        Order Status:
-        <b>
-          ${esc(o.order_status)}
-        </b>
-
-        <br>
-
-        Payment Status:
-        <b>
-          ${esc(o.payment_status)}
-        </b>
-
-        <br>
-
-        Payment Method:
-        ${esc(o.payment_method)}
+        <div style="margin:10px 0">
+          <span class="small">Order Status:</span> <b>${esc(o.order_status||"Pending")}</b>
+          &nbsp; | &nbsp;
+          <span class="small">Payment:</span> <b>${esc(o.payment_status||"Pending")}</b>
+          &nbsp; | &nbsp;
+          <span class="small">Method:</span> ${esc(o.payment_method||"")}
+        </div>
 
         <hr>
 
-        ${
-          (o.Order_items||[])
-          .map(i=>`
+        ${items.map(i=>`
+          <div class="row" style="align-items:center;margin:8px 0">
+            <img src="${i.products?.image_url||"https://placehold.co/90x70?text=Product"}"
+              style="width:80px;height:60px;object-fit:cover;border-radius:8px">
+            <div style="flex:1">
+              <b>${esc(i.products?.name||"Product")}</b>
+              <div class="small">${esc(i.products?.category||"")}</div>
+              <div>₹${Number(i.unit_price||0).toFixed(2)} × ${Number(i.quantity||0)}</div>
+            </div>
+            <b>₹${Number(i.total_price||0).toFixed(2)}</b>
+          </div>
+        `).join("")}
 
-            ${esc(
-              i.products?.name ||
-              "Product"
-            )}
+        <hr>
 
-            × ${i.quantity}
-
-            —
-            ₹${i.total_price}
-
-            <br>
-
-          `)
-          .join("")
-        }
-
+        <div class="small"><b>Delivery Address:</b><br>${esc(o.shipping_address||"Not available")}</div>
+        <div style="margin-top:8px"><b>Order Total: ₹${Number(o.total_amount||0).toFixed(2)}</b></div>
       </div>
-
-    `).join("");
+    `;
+  }).join("");
 }
-
 
 /* INITIAL LOAD */
 
