@@ -617,6 +617,45 @@ function selectAddress(a){
 }
 
 
+
+let checkoutCouponCode="";
+function deliveryChoice(){
+  return document.querySelector('input[name="delivery_method"]:checked')?.value || "standard";
+}
+async function loadCheckoutItems(){
+  const {data,error}=await sb.from("cart").select("quantity,product_id,products(id,name,price,mrp)").eq("customer_id",currentUser.id);
+  if(error)return {items:[],error};
+  return {items:(data||[]).map(x=>({name:x.products?.name||"Product",quantity:Number(x.quantity||0),price:Number(x.products?.price||0),mrp:Number(x.products?.mrp||x.products?.price||0)})),error:null};
+}
+function renderCheckoutSummary(items){
+  const itemTotal=items.reduce((n,i)=>n+i.price*i.quantity,0);
+  const productDiscount=items.reduce((n,i)=>n+Math.max(0,i.mrp-i.price)*i.quantity,0);
+  const couponDiscount=checkoutCouponCode==="WELCOME10"?Math.min(itemTotal*0.10,200):0;
+  const d=deliveryChoice();
+  const delivery=d==="express"?99:d==="fast"?49:d==="scheduled"?79:(itemTotal>=499?0:40);
+  const total=Math.max(0,itemTotal-couponDiscount+delivery);
+  document.getElementById("checkoutItemsSummary").innerHTML=items.map(i=>"<div>"+esc(i.name)+" × "+i.quantity+" — ₹"+(i.price*i.quantity).toFixed(2)+(i.mrp>i.price?" <span class='small'>MRP ₹"+i.mrp.toFixed(2)+"</span>":"")+"</div>").join("");
+  document.getElementById("summaryItemTotal").textContent="₹"+itemTotal.toFixed(2);
+  document.getElementById("summaryProductDiscount").textContent="−₹"+productDiscount.toFixed(2);
+  document.getElementById("summaryCouponDiscount").textContent="−₹"+couponDiscount.toFixed(2);
+  document.getElementById("summaryDelivery").textContent=delivery?"₹"+delivery.toFixed(2):"FREE";
+  document.getElementById("summaryTotal").textContent="₹"+total.toFixed(2);
+}
+async function refreshCheckoutSummary(){
+  const r=await loadCheckoutItems();
+  if(!r.error)renderCheckoutSummary(r.items);
+}
+async function applyCheckoutCoupon(){
+  checkoutCouponCode=(document.getElementById("couponInput")?.value||"").trim().toUpperCase();
+  if(checkoutCouponCode && checkoutCouponCode!=="WELCOME10"){
+    checkoutCouponCode="";
+    note("Coupon valid nahi hai. Demo coupon: WELCOME10",true);
+  }else{
+    note(checkoutCouponCode?"Coupon apply ho gaya ✅":"Coupon hata diya.");
+  }
+  await refreshCheckoutSummary();
+}
+
 /* CHECKOUT UI */
 
 function paymentChoice(){
@@ -708,6 +747,24 @@ async function checkout(){
         <br>
         <button class="btn alt" onclick="changeCheckoutAddress()">Change Address</button>
       </div>
+      <h3>Delivery Method</h3>
+      <label class="payoption"><input type="radio" name="delivery_method" value="standard" checked onchange="refreshCheckoutSummary()"> Standard Delivery — ₹40 / ₹0 above ₹499</label>
+      <label class="payoption"><input type="radio" name="delivery_method" value="fast" onchange="refreshCheckoutSummary()"> Fast Delivery — ₹49</label>
+      <label class="payoption"><input type="radio" name="delivery_method" value="express" onchange="refreshCheckoutSummary()"> Express Delivery — ₹99</label>
+      <label class="payoption"><input type="radio" name="delivery_method" value="scheduled" onchange="refreshCheckoutSummary()"> Scheduled Delivery — ₹79</label>
+
+      <div id="checkoutSummary" class="panel">
+        <h3>Price Details</h3>
+        <div id="checkoutItemsSummary"></div>
+        <div>Item Total <b id="summaryItemTotal" style="float:right">₹0.00</b></div>
+        <div>Product Discount <b id="summaryProductDiscount" style="float:right">−₹0.00</b></div>
+        <div>Coupon Discount <b id="summaryCouponDiscount" style="float:right">−₹0.00</b></div>
+        <div>Delivery Charges <b id="summaryDelivery" style="float:right">FREE</b></div>
+        <hr><div style="font-size:18px"><b>Total Payable</b><b id="summaryTotal" style="float:right">₹0.00</b></div>
+        <br><input id="couponInput" placeholder="Coupon code" style="max-width:160px">
+        <button class="btn" type="button" onclick="applyCheckoutCoupon()">Apply Coupon</button>
+      </div>
+
       <h3>Payment Method</h3>
 
       <label class="payoption">
