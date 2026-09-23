@@ -24,6 +24,8 @@ body{font-family:Arial,sans-serif;margin:0;background:#f6f7fb;color:#222}
 .btn{border:0;border-radius:9px;padding:10px 13px;background:#111;color:#fff;cursor:pointer;margin:4px 2px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn.alt{background:#eee;color:#111}
+.cart-link{position:relative}
+.cart-badge{display:inline-flex;min-width:20px;height:20px;align-items:center;justify-content:center;padding:0 5px;border-radius:10px;background:#ff6b00;color:#fff;font-size:12px;font-weight:700;margin-left:4px}
 .panel{background:#fff;padding:16px;border-radius:14px;margin:14px 0}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 input,select,textarea{padding:11px;border:1px solid #ddd;border-radius:9px;box-sizing:border-box;width:100%;margin:5px 0}
@@ -55,7 +57,7 @@ input,select,textarea{padding:11px;border:1px solid #ddd;border-radius:9px;box-s
 
 <div class="nav">
   <button class="btn" onclick="show('home')">Home</button>
-  <button class="btn" onclick="show('cart')">Cart 🛒</button>
+  <button class="btn cart-link" onclick="show('cart')">Cart 🛒 <span id="cartBadge" class="cart-badge">0</span></button>
   <button class="btn" onclick="show('orders')">My Orders</button>
   <button class="btn" onclick="show('account')">Account</button>
 </div>
