@@ -1,0 +1,33 @@
+/* ShubhMart shared mobile/UI/UX + performance-safe styles */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{overflow-x:hidden}
+img{max-width:100%;font-size:12px}
+button,input,select,textarea{font:inherit}
+button,.btn{min-height:42px;touch-action:manipulation}
+input,select,textarea{font-size:16px}
+.nav{align-items:stretch}
+.nav .btn{white-space:normal}
+.card{min-width:0;overflow-wrap:anywhere}
+@media (max-width:700px){
+  .top{padding:10px!important}
+  .wrap{padding:10px!important}
+  .brand{font-size:21px!important}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important}
+  .nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}
+  .nav .btn{width:100%;margin:0;min-height:44px;padding:9px 7px}
+  .row{gap:6px!important}
+  .row>input,.row>select,.row>textarea{width:100%!important;max-width:none!important}
+  .card{padding:10px!important;border-radius:12px}
+  .card img{height:150px!important}
+  .panel{padding:12px!important;border-radius:12px}
+  .payoption{padding:12px!important}
+  table{display:block;overflow-x:auto;max-width:100%}
+}
+@media (max-width:380px){
+  .grid{grid-template-columns:1fr}
+  .nav{grid-template-columns:1fr!important}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+}
