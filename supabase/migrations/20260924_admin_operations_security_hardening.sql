@@ -1,0 +1,2 @@
+-- Admin operations security hardening
+-- Corresponds to live migration: admin_operations_security_hardening
