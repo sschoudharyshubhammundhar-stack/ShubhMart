@@ -20,7 +20,7 @@ create policy "customers create own support tickets" on public.support_tickets f
 create policy "customers update own open tickets" on public.support_tickets for update to authenticated using(user_id=(select auth.uid()) and status in ('Open','Waiting for Customer')) with check(user_id=(select auth.uid()));
 create policy "admin manage support tickets" on public.support_tickets for all to authenticated using((select private.is_admin())) with check((select private.is_admin()));
 create or replace function public.create_support_ticket(p_subject text,p_category text,p_message text,p_order_id uuid default null,p_priority text default 'Normal')
-returns uuid language plpgsql security definer set search_path=public as $$ declare tid uuid; begin
+returns uuid language plpgsql security invoker set search_path=public as $ declare tid uuid; begin
  if auth.uid() is null then raise exception 'Authentication required'; end if;
  if length(trim(coalesce(p_subject,''))) not between 3 and 200 then raise exception 'Invalid subject'; end if;
  if length(trim(coalesce(p_message,''))) not between 3 and 5000 then raise exception 'Invalid message'; end if;
@@ -43,4 +43,3 @@ revoke all on function public.admin_update_support_ticket(uuid,text,text,text) f
 grant execute on function public.admin_update_support_ticket(uuid,text,text,text) to authenticated;
 create index if not exists notifications_user_created_idx on public.notifications(user_id,created_at desc);
 create index if not exists notifications_user_unread_idx on public.notifications(user_id,created_at desc) where is_read=false;
-create policy "customers insert own notifications" on public.notifications for insert to authenticated with check(user_id=(select auth.uid()));
