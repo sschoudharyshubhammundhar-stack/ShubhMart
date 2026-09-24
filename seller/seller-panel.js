@@ -25,3 +25,59 @@ bootSeller();
 async function generateAIListing(){const input=document.getElementById("aiListingInput")?.value.trim();if(!input)return note("Product details likhiye.",true);const box=document.getElementById("aiListingResult");box.textContent="AI draft bana raha hai…";try{const r=await shubhAI("listing",{input});box.innerHTML='<div class="panel"><b>Title</b><input id="aiTitle" value="'+clean(r.title)+'"><b>Description</b><textarea id="aiDesc">'+clean(r.description)+'</textarea><b>Category</b><input id="aiCategory" value="'+clean(r.category)+'"><div>Quality score: <b>'+Number(r.quality_score||0)+'/100</b></div><div class="small">Keywords: '+clean((r.keywords||[]).join(", "))+'</div><button class="btn" onclick="useAIListing()">Use in Product Form</button><button class="btn alt" onclick="saveAIDraft()">Save Draft</button></div>';window._aiListing=r;}catch(e){box.textContent="AI service error: "+e.message;}}
 function useAIListing(){const r=window._aiListing||{};document.getElementById("prodName").value=r.title||"";document.getElementById("prodCategory").value=r.category||"";document.getElementById("prodDescription").value=r.description||"";note("AI draft product form mein aa gaya. Price/stock check karke submit kijiye.");}
 async function saveAIDraft(){if(!seller||!window._aiListing)return;const x=await sb.from("ai_listing_drafts").insert({seller_id:seller.id,input_text:document.getElementById("aiListingInput").value.trim(),output:window._aiListing,status:"Draft"});if(x.error)return note("AI draft save error: "+x.error.message,true);note("AI draft secure seller history mein save ho gaya.");}
+
+async function loadSellerReturns(){
+ const e=document.getElementById("sellerReturns"); if(!e||!seller)return;
+ const r=await sb.from("returns").select("id,order_id,status,return_type,reason_code,refund_amount,refund_status,pickup_status,requested_at,decision_at").order("requested_at",{ascending:false}).limit(50);
+ if(r.error){e.textContent=r.error.message;return;}
+ e.innerHTML=(r.data||[]).map(x=>"<div class='product'><b>Return "+clean(x.id.slice(0,8))+"…</b><br>Order: "+clean(x.order_id.slice(0,8))+"… | "+clean(x.return_type)+" | "+clean(x.status)+"<br>Reason: "+clean(x.reason_code||"-")+" | Refund: ₹"+Number(x.refund_amount||0).toFixed(2)+" ("+clean(x.refund_status||"-")+")<br>Pickup: "+clean(x.pickup_status||"-")+"</div>").join("")||"No return/RTO requests yet.";
+}
+async function loadSellerOffers(){
+ const e=document.getElementById("sellerOffers"); if(!e||!seller)return;
+ const r=await sb.from("product_offers").select("id,product_id,code,title,discount_type,discount_value,min_order_amount,max_discount,starts_at,ends_at,status").eq("seller_id",seller.id).order("created_at",{ascending:false}).limit(50);
+ if(r.error){e.textContent=r.error.message;return;}
+ e.innerHTML=(r.data||[]).map(x=>"<div class='product'><b>"+clean(x.title)+"</b> — "+clean(x.code)+"<br>Product: "+clean(x.product_id)+" | "+clean(x.discount_type)+" "+Number(x.discount_value||0)+" | Min ₹"+Number(x.min_order_amount||0).toFixed(2)+" | "+clean(x.status)+"<br><button class='btn alt' onclick=\"cancelSellerOffer('"+x.id+"')\">Cancel Offer</button></div>").join("")||"No offers yet.";
+}
+async function addSellerOffer(){
+ const productId=document.getElementById("offerProductId").value.trim(),code=document.getElementById("offerCode").value.trim(),title=document.getElementById("offerTitle").value.trim(),type=document.getElementById("offerType").value,discount=Number(document.getElementById("offerDiscount").value),min=Number(document.getElementById("offerMin").value||0),maxRaw=document.getElementById("offerMax").value, max=maxRaw===""?null:Number(maxRaw),start=document.getElementById("offerStart").value,endRaw=document.getElementById("offerEnd").value,end=endRaw?new Date(endRaw).toISOString():null;
+ if(!productId||!code||!title||!(discount>0)||min<0||(max!==null&&max<0))return note("Offer details aur valid discount bhariye.",true);
+ const r=await sb.rpc("seller_create_product_offer",{p_product_id:productId,p_code:code,p_title:title,p_discount_type:type,p_discount_value:discount,p_min_order_amount:min,p_max_discount:max,p_starts_at:start?new Date(start).toISOString():new Date().toISOString(),p_ends_at:end});
+ if(r.error)return note(r.error.message,true);
+ ["offerProductId","offerCode","offerTitle","offerDiscount","offerMin","offerMax","offerStart","offerEnd"].forEach(id=>{const x=document.getElementById(id);if(x)x.value=""});
+ await loadSellerOffers(); note("Offer Pending admin approval ke liye submit ho gaya.");
+}
+async function cancelSellerOffer(id){if(!confirm("Offer cancel karein?"))return;const r=await sb.rpc("seller_cancel_product_offer",{p_offer_id:id});if(r.error)return note(r.error.message,true);loadSellerOffers();note("Offer cancel ho gaya.");}
+async function loadSellerAnalytics(){
+ const e=document.getElementById("sellerAnalytics");if(!e||!seller)return;
+ const [p,o,c,ret]=await Promise.all([
+  sb.from("products").select("id,stock,status",{count:"exact"}).eq("seller_id",seller.id),
+  sb.from("Orders").select("id,order_status,total_amount,payment_status",{count:"exact"}).eq("seller_id",seller.id),
+  sb.from("commissions").select("seller_earning,commission_amount,status").eq("seller_id",seller.id),
+  sb.from("returns").select("id,status",{count:"exact"}).in("order_id",(await sb.from("Orders").select("id").eq("seller_id",seller.id)).data?.map(x=>x.id)||[])
+ ]);
+ if(p.error||o.error||c.error){e.textContent=(p.error||o.error||c.error).message;return;}
+ const products=p.data||[],orders=o.data||[],comm=c.data||[],low=products.filter(x=>Number(x.stock||0)<=5).length,active=products.filter(x=>x.status==="Active").length;
+ const sales=orders.reduce((a,x)=>a+Number(x.total_amount||0),0),earn=comm.reduce((a,x)=>a+Number(x.seller_earning||0),0),commission=comm.reduce((a,x)=>a+Number(x.commission_amount||0),0),returns=(ret.data||[]).length;
+ e.innerHTML="<div class='grid'><div><b>Products</b><br>"+(p.count||products.length)+"</div><div><b>Active</b><br>"+active+"</div><div><b>Orders</b><br>"+(o.count||orders.length)+"</div><div><b>Sales value</b><br>₹"+sales.toFixed(2)+"</div><div><b>Seller earning</b><br>₹"+earn.toFixed(2)+"</div><div><b>Commission</b><br>₹"+commission.toFixed(2)+"</div><div><b>Returns</b><br>"+returns+"</div><div><b>Low stock</b><br>"+low+"</div></div>";
+}
+async function sellerSupportTicket(){
+ const subject=document.getElementById("sellerTicketSubject").value.trim(),message=document.getElementById("sellerTicketMessage").value.trim();
+ if(subject.length<3||message.length<3)return note("Subject aur message bhariye.",true);
+ const r=await sb.rpc("create_support_ticket",{p_order_id:null,p_subject:subject,p_category:"Seller",p_message:message});
+ if(r.error)return note(r.error.message,true);
+ document.getElementById("sellerTicketSubject").value="";document.getElementById("sellerTicketMessage").value="";loadSellerSupport();note("Support ticket create ho gaya.");
+}
+async function loadSellerSupport(){
+ const e=document.getElementById("sellerSupport");if(!e||!sellerUser)return;
+ const r=await sb.from("support_tickets").select("id,subject,status,priority,created_at").eq("user_id",sellerUser.id).eq("category","Seller").order("created_at",{ascending:false}).limit(20);
+ if(r.error){e.textContent=r.error.message;return;}
+ e.innerHTML=(r.data||[]).map(x=>"<div class='product'><b>"+clean(x.subject)+"</b> | "+clean(x.status)+" | "+clean(x.priority)+"<br>"+new Date(x.created_at).toLocaleString()+"</div>").join("")||"No seller support tickets.";
+}
+async function loadSellerNotifications(){
+ const e=document.getElementById("sellerNotifications");if(!e||!sellerUser)return;
+ const r=await sb.from("notifications").select("title,body,type,is_read,created_at").eq("user_id",sellerUser.id).order("created_at",{ascending:false}).limit(20);
+ if(r.error){e.textContent=r.error.message;return;}
+ e.innerHTML=(r.data||[]).map(x=>"<div class='product'><b>"+clean(x.title||"Notification")+"</b> "+(x.is_read?"":"🔔")+"<br>"+clean(x.body||"")+"<br><small>"+new Date(x.created_at).toLocaleString()+"</small></div>").join("")||"No notifications.";
+}
+const _oldShowDashboard=showDashboard;
+showDashboard=function(){_oldShowDashboard();loadSellerReturns();loadSellerOffers();loadSellerAnalytics();loadSellerSupport();loadSellerNotifications();};
