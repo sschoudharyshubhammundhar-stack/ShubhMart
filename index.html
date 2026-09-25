@@ -24,7 +24,7 @@
 .sm-delight .sm-gift{font-size:52px;margin-bottom:4px}.sm-delight h3{margin:5px 0;color:#111827;font-size:25px}.sm-delight p{color:#667085;margin:8px 0 16px;line-height:1.5}.sm-delight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.sm-delight-item{background:#f7f8fb;border:1px solid #e7e9ef;border-radius:14px;padding:12px 6px;font-size:12px;font-weight:800;cursor:pointer}.sm-delight-item:hover{background:#fff8d1;border-color:#f2d451;transform:translateY(-2px)}.sm-delight-item b{display:block;font-size:23px;margin-bottom:5px}.sm-delight-close{margin-top:16px;border:0;border-radius:11px;background:#111827;color:#fff;padding:10px 20px;font-weight:800;cursor:pointer}
 @media(max-width:1050px){.logo-surprise{left:calc(100% + 6px);right:auto;top:50%;bottom:auto;transform:translateY(-50%)}}
 .shubh-daily{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#fff,#f7f0ff);border:1px solid #e4d8f8;border-radius:14px;padding:8px 11px;box-shadow:0 6px 18px rgba(75,22,143,.12);cursor:pointer;white-space:nowrap;z-index:3}.shubh-daily-icon{width:30px;height:30px;border-radius:10px;background:#fff3c4;display:grid;place-items:center;font-size:17px}.shubh-daily b{display:block;font-size:11px;color:#32105f}.shubh-daily small{display:block;font-size:9px;color:#777;margin-top:2px}@media(max-width:1050px){.shubh-daily{left:calc(100% + 6px);padding:7px 9px}}@media(max-width:700px){.header{display:block}.brandbar{margin-bottom:22px}.shubh-daily{position:absolute;left:calc(100% + 5px);right:auto;top:50%;bottom:auto;transform:translateY(-50%);padding:6px 8px}.shubh-daily-icon{width:27px;height:27px;font-size:15px}.shubh-daily b{font-size:10px}.shubh-daily small{font-size:8px}}@media(max-width:700px){.logo-surprise{font-size:9px;padding:5px 8px;left:calc(100% + 5px);right:auto;top:50%;bottom:auto;transform:translateY(-50%)}.sm-delight{padding:20px}.sm-delight-grid{gap:7px}}
-</style><link rel="stylesheet" href="assets/shubhmart-library-home.css?v=20260925-1"></head>
+.shubh-magic{margin:15px 0 4px;padding:14px 16px;border-radius:18px;background:linear-gradient(110deg,#20103f,#4b168f 55%,#7c3aed);color:#fff;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;box-shadow:0 12px 30px rgba(75,22,143,.2);position:relative;overflow:hidden}.shubh-magic:after{content:'✦';position:absolute;right:26%;top:-22px;font-size:110px;opacity:.08}.magic-kicker{font-size:10px;font-weight:900;letter-spacing:1px}.magic-copy h2{margin:4px 0;font-size:19px}.magic-copy p{margin:0;color:#ddd3f2;font-size:11px;max-width:620px}.magic-reveal{border:2px solid #fff;background:#ffd83d;color:#17120a;border-radius:999px;padding:11px 15px;font-weight:900;cursor:pointer;box-shadow:0 6px 18px #0003;white-space:nowrap}.magic-reveal span{margin-right:4px}.magic-result{grid-column:1/-1;background:#fff;color:#211832;border-radius:14px;padding:8px;display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:10px;box-shadow:0 6px 18px #0002}.magic-result img{width:58px;height:58px;border-radius:10px;object-fit:cover;background:#eee}.magic-result small{display:block;color:#7c3aed;font-weight:800;font-size:9px}.magic-result b{display:block;font-size:12px;margin:2px 0}.magic-result strong{font-size:13px}.magic-result>button{border:0;background:#f1ecfa;color:#4b168f;width:38px;height:38px;border-radius:50%;font-size:20px;cursor:pointer}@media(max-width:700px){.shubh-magic{grid-template-columns:1fr;padding:13px}.magic-reveal{justify-self:start}.magic-result{grid-template-columns:52px 1fr auto}.magic-result img{width:52px;height:52px}}</style><link rel="stylesheet" href="assets/shubhmart-library-home.css?v=20260925-1"></head>
 <body><div id="shubhDelight" class="sm-delight-backdrop hidden" onclick="if(event.target===this)closeShubhSurprise()"><div class="sm-delight" role="dialog" aria-modal="true"><div class="sm-gift">🎁✨</div><h3>Shubh Surprise!</h3><p id="shubhDelightText">Aapke liye ShubhMart ka chhota sa surprise तैयार है.</p><div class="sm-delight-grid"><button class="sm-delight-item" onclick="surprisePick('deal')"><b>🔥</b>Hot Deals</button><button class="sm-delight-item" onclick="surprisePick('new')"><b>🆕</b>New Finds</button><button class="sm-delight-item" onclick="surprisePick('magic')"><b>💫</b>Magic Tip</button></div><button class="sm-delight-close" onclick="closeShubhSurprise()">Continue Shopping</button></div></div>
 
 <div id="productModal" class="product-modal hidden" onclick="if(event.target===this)closeProductModal()"><div class="product-modal-inner"><button class="modal-close" onclick="closeProductModal()" aria-label="Close">×</button><div id="productModalContent"></div></div></div>
@@ -70,6 +70,19 @@
       </aside>
       <div>
         <div class="hero"><div><div class="hero-kicker">WELCOME TO SHUBHMART</div><h1>Better Products. <span>Happier You.</span></h1><p>Fashion, beauty, electronics, home essentials aur daily needs — sab kuch ek jagah.</p><button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button></div></div>
+<div class="shubh-magic" id="shubhMagic">
+  <div class="magic-copy">
+    <span class="magic-kicker">⚡ SHUBHMART MAGIC DROP</span>
+    <h2>Ek tap. Ek surprise. ✨</h2>
+    <p>Har baar ek real ShubhMart product randomly discover kijiye — phir kisi friend ko share kijiye.</p>
+  </div>
+  <button class="magic-reveal" type="button" onclick="revealMagicDrop()"><span>🎁</span> Tap to Reveal</button>
+  <div class="magic-result hidden" id="magicResult">
+    <img id="magicImg" alt="ShubhMart Magic product">
+    <div><small>✨ Aapka Magic Pick</small><b id="magicName">Loading...</b><strong id="magicPrice"></strong></div>
+    <button type="button" onclick="shareMagicDrop()" aria-label="Share Magic Pick">↗</button>
+  </div>
+</div>
         <div class="chips">
           <div class="chip" onclick="filterCategory('Women Fashion')"><span class="cico">👜</span><span>Women Fashion</span></div><div class="chip" onclick="filterCategory('Beauty & Personal Care')"><span class="cico">💄</span><span>Beauty</span></div><div class="chip" onclick="filterCategory('Mobile Accessories')"><span class="cico">🎧</span><span>Electronics</span></div><div class="chip" onclick="filterCategory('Home & Kitchen')"><span class="cico">🍳</span><span>Home & Kitchen</span></div><div class="chip" onclick="filterCategory('Mobile Accessories')"><span class="cico">📱</span><span>Accessories</span></div><div class="chip" onclick="filterCategory('Baby & Kids')"><span class="cico">🧸</span><span>Kids</span></div><div class="chip" onclick="filterCategory('Sports & Fitness')"><span class="cico">🏋️</span><span>Sports</span></div><div class="chip" onclick="filterCategory('')"><span class="cico">▦</span><span>More</span></div>
         </div>
@@ -245,5 +258,29 @@ sb.auth.onAuthStateChange((_e,s)=>{currentUser=s?.user||null;loadAccount();if(cu
 function openShubhSurprise(){const e=document.getElementById('shubhDelight');if(e)e.classList.remove('hidden');}
 function closeShubhSurprise(){const e=document.getElementById('shubhDelight');if(e)e.classList.add('hidden');}
 function surprisePick(type){const t=document.getElementById('shubhDelightText');if(!t)return;if(type==='deal')t.textContent='🔥 Hot Deals: aaj ke best-value products dekhne ke liye neeche product section explore kijiye.';if(type==='new')t.textContent='🆕 New Finds: har visit par kuch naya discover karne ke liye categories aur latest products check kijiye.';if(type==='magic')t.textContent='💫 Shubh Tip: product par tap karke details, price aur available actions ko ek hi jagah dekhiye.';}
+function magicFallback(){const r=document.getElementById('magicResult');if(!r)return;r.classList.remove('hidden');document.getElementById('magicImg').src='assets/shubhmart-logo.png?v=20260925';document.getElementById('magicName').textContent='Aaj ka ShubhMart surprise';document.getElementById('magicPrice').textContent='✨ Discover something new';}
+async function revealMagicDrop(){
+ const r=document.getElementById('magicResult');if(!r)return;
+ r.classList.remove('hidden');
+ document.getElementById('magicName').textContent='Finding your pick...';
+ document.getElementById('magicPrice').textContent='';
+ try{
+   const {data,error}=await sb.from('products').select('id,name,price,image_url,status').eq('status','Active').limit(30);
+   if(error||!data||!data.length) throw error||new Error('No products');
+   const p=data[Math.floor(Math.random()*data.length)];
+   document.getElementById('magicImg').src=p.image_url||'assets/shubhmart-logo.png?v=20260925';
+   document.getElementById('magicName').textContent=p.name||'ShubhMart Product';
+   document.getElementById('magicPrice').textContent=p.price!=null?'₹'+Number(p.price).toLocaleString('en-IN'):'See product';
+   r.dataset.productId=p.id||'';
+   document.getElementById('magicImg').onclick=()=>p.id&&openProductById(p.id);
+   document.getElementById('magicName').onclick=()=>p.id&&openProductById(p.id);
+ }catch(e){magicFallback();}
+}
+async function shareMagicDrop(){
+ const name=document.getElementById('magicName')?.textContent||'ShubhMart Magic Pick';
+ const text='✨ Mera ShubhMart Magic Pick: '+name+' — aapka kya niklega?';
+ if(navigator.share){try{await navigator.share({title:'ShubhMart Magic Drop',text,url:location.href});return}catch(e){}}
+ try{await navigator.clipboard.writeText(text+' '+location.href);note('Share text copy ho gaya — ab WhatsApp par bhej sakte hain.');}catch(e){note(text);}
+}
 </script>
 </body></html>
