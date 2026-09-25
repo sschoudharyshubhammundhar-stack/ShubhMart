@@ -9,8 +9,37 @@ input,select,textarea{font-size:16px}
 .nav{align-items:stretch}
 .nav .btn{white-space:normal}
 .card{min-width:0;overflow-wrap:anywhere}
+
+/* Library master visual system: dark/navy + white + ShubhMart yellow */
+:root{--sm-ink:#0b1020;--sm-navy:#111827;--sm-navy2:#182235;--sm-yellow:#f5c400;--sm-yellow2:#ffd83d;--sm-red:#e53935;--sm-bg:#f7f8fb;--sm-line:#e7e9ef;--sm-muted:#667085}
+body{font-family:Inter,Arial,sans-serif!important;background:var(--sm-bg)!important;color:var(--sm-ink)!important}
+.top{background:linear-gradient(135deg,#080b12,#172033)!important;color:#fff!important;padding:14px 0!important;box-shadow:0 3px 18px rgba(0,0,0,.16)!important;border-bottom:1px solid rgba(245,196,0,.22)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.top b{font-weight:900;letter-spacing:.2px;color:#fff}
+.top .wrap>div:last-child{color:#d9dee8;font-size:13px;margin-top:3px}
+.wrap{max-width:1200px!important}
+.panel,.card{background:#fff!important;border:1px solid var(--sm-line)!important;border-radius:16px!important;box-shadow:0 6px 22px rgba(17,24,39,.06)!important}
+.panel h2,.panel h3,.panel h4{color:var(--sm-ink)}
+.panel h2{font-weight:900}
+.btn{border:0!important;border-radius:11px!important;padding:10px 15px!important;background:var(--sm-yellow)!important;color:#111!important;font-weight:800!important;box-shadow:0 3px 10px rgba(245,196,0,.2)}
+.btn:hover{filter:brightness(1.03);transform:translateY(-1px)}
+.btn.alt{background:#eef0f4!important;color:#172033!important;box-shadow:none}
+.btn.danger{background:#ffe8e8!important;color:#a51d1d!important}
+input,select,textarea{border:1px solid #d9dde6!important;border-radius:11px!important;background:#fff!important;color:#111827!important;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--sm-yellow)!important;box-shadow:0 0 0 3px rgba(245,196,0,.16)!important}
+.msg{border-radius:11px!important}
+.small{color:var(--sm-muted)!important}
+.product{border-color:var(--sm-line)!important;border-radius:14px!important;background:#fff}
+.hidden{display:none!important}
+.top+.wrap>.btn.alt:first-child{border:1px solid #dfe3ea!important}
+.grid{gap:12px!important}
+table{border-collapse:separate;border-spacing:0;width:100%}
+th{background:var(--sm-navy)!important;color:#fff!important}
+td,th{padding:10px!important;border-bottom:1px solid var(--sm-line)}
 @media (max-width:700px){
-  .top{padding:10px!important}
+  .top{padding:10px 0!important}
+  .top .wrap{display:block}
+  .top .wrap>div:last-child{margin-top:2px}
   .wrap{padding:10px!important}
   .brand{font-size:21px!important}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important}
@@ -18,16 +47,15 @@ input,select,textarea{font-size:16px}
   .nav .btn{width:100%;margin:0;min-height:44px;padding:9px 7px}
   .row{gap:6px!important}
   .row>input,.row>select,.row>textarea{width:100%!important;max-width:none!important}
-  .card{padding:10px!important;border-radius:12px}
+  .card{padding:10px!important;border-radius:12px!important}
   .card img{height:150px!important}
-  .panel{padding:12px!important;border-radius:12px}
+  .panel{padding:12px!important;border-radius:12px!important}
   .payoption{padding:12px!important}
   table{display:block;overflow-x:auto;max-width:100%}
+  .btn{min-height:44px}
 }
 @media (max-width:380px){
   .grid{grid-template-columns:1fr}
   .nav{grid-template-columns:1fr!important}
 }
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
