@@ -19,7 +19,7 @@ body{background:var(--sm-bg)!important;color:var(--sm-ink)!important}
   box-shadow:0 4px 22px rgba(7,11,20,.22)!important;
 }
 .header{padding:12px 0!important;gap:16px!important}
-.brandbar{height:82px!important;width:320px!important;min-width:320px!important}
+.brandbar{height:82px!important;width:320px!important;min-width:320px!important;background:#fff!important;border-radius:16px!important;padding:5px 10px!important;box-shadow:0 4px 14px rgba(0,0,0,.14)!important}
 .brand-full-logo{width:305px!important;height:82px!important;object-position:left center!important;filter:drop-shadow(0 5px 10px rgba(0,0,0,.28))!important}
 .searchwrap{
   background:#fff!important;
@@ -148,7 +148,7 @@ body{background:var(--sm-bg)!important;color:var(--sm-ink)!important}
   .sidebar{display:none!important}
 }
 @media(max-width:700px){
-  .brandbar{width:185px!important;min-width:185px!important;height:60px!important}
+  .brandbar{width:185px!important;min-width:185px!important;height:60px!important;background:#fff!important;border-radius:13px!important;padding:3px 7px!important}
   .brand-full-logo{width:180px!important;height:60px!important}
   .top{padding-bottom:0!important}
   .hero{padding:28px 22px!important;min-height:270px!important}
@@ -161,7 +161,7 @@ body{background:var(--sm-bg)!important;color:var(--sm-ink)!important}
 }
 @media(max-width:430px){
   .header{padding-top:9px!important}
-  .brandbar{width:165px!important;min-width:165px!important;height:54px!important}
+  .brandbar{width:165px!important;min-width:165px!important;height:54px!important;background:#fff!important;border-radius:12px!important;padding:2px 6px!important}
   .brand-full-logo{width:160px!important;height:54px!important}
   .hero h1{font-size:28px!important}
   .chips{gap:6px!important}
