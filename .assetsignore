@@ -2,3 +2,13 @@
 .github/
 docs/
 README.md
+LICENSE*
+CONTRIBUTING*
+CHANGELOG*
+.env
+.env.*
+*.sql
+*.sqlite
+*.db
+netlify.toml
+wrangler.toml
