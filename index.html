@@ -31,16 +31,15 @@
 <div class="top">
   <div class="wrap header">
     <div class="brandbar" onclick="show('home')" role="link" tabindex="0" aria-label="Go to ShubhMart Home" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();show('home')}">
-      <img class="brand-full-logo" src="assets/shubhmart-logo.png?v=20260925" alt="ShubhMart 3D logo — Har Zaroorat, Ek Jagah">
+      <img class="brand-full-logo" src="assets/shubhmart-logo.png?v=20260926-3" alt="ShubhMart 3D logo — Har Zaroorat, Ek Jagah">
       
-      <div class="shubh-daily" onclick="event.stopPropagation();openShubhSurprise()" role="button" tabindex="0" aria-label="Open ShubhMart Daily" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openShubhSurprise()}"><span class="shubh-daily-icon">✨</span><span><b>ShubhMart Daily</b><small>Deal • New • Tip</small></span></div>
-    </div>
-    <div class="searchwrap"><span class="searchicon">⌕</span><input id="search" class="search" placeholder="Search products, brands..." autocomplete="off" aria-label="Search products" oninput="searchChanged()" onkeydown="if(event.key==='Enter'){event.preventDefault();runSearch()}"/><button class="clearsearch" id="clearSearchBtn" style="visibility:hidden" type="button" onclick="clearSearch()" aria-label="Clear search">×</button><button class="searchbtn" type="button" onclick="runSearch()" aria-label="Search">🔍</button><div id="searchSuggest" class="searchsuggest hidden"></div></div>
+      </div><div class="searchwrap"><span class="searchicon">⌕</span><input id="search" class="search" placeholder="Search products, brands..." autocomplete="off" aria-label="Search products" oninput="searchChanged()" onkeydown="if(event.key==='Enter'){event.preventDefault();runSearch()}"/><button class="clearsearch" id="clearSearchBtn" style="visibility:hidden" type="button" onclick="clearSearch()" aria-label="Clear search">×</button><button class="searchbtn" type="button" onclick="runSearch()" aria-label="Search">🔍</button><div id="searchSuggest" class="searchsuggest hidden"></div></div>
     <div class="head-actions">
-      <button class="head-action" onclick="show('notifications')"><span class="ico">🔔</span><span>Notifications</span><span class="badge" id="notifBadge">0</span></button>
+      <button class="head-action" onclick="show('home')"><span class="ico">⌂</span><span>Home</span></button>
       <button class="head-action" onclick="show('wishlist')"><span class="ico">♡</span><span>Wishlist</span></button>
-      <button class="head-action" onclick="show('cart')"><span class="ico">🛒</span><span>Cart</span></button>
-      <div class="user-mini"><div class="avatar">S</div><div><small>Hello</small><br><b>Shubh</b></div></div>
+      <button class="head-action" onclick="show('cart')"><span class="ico">🛒</span><span>Cart</span><span class="badge" id="notifBadge">0</span></button>
+      <button class="head-action" onclick="show('account')"><span class="ico">♙</span><span>Account</span></button>
+    </div>
     </div>
   </div>
   <div class="wrap subnav">
@@ -113,7 +112,22 @@
         <div class="side-deal"><div class="emoji">⚡</div><b>Today's Deals</b><p class="small">Big savings • Limited time</p><button class="btn" onclick="loadProducts()">View Deals →</button></div>
       </aside>
       <div>
-        <div class="hero"><div><div class="hero-kicker">WELCOME TO SHUBHMART</div><h1>Better Products. <span>Happier You.</span></h1><p>Fashion, beauty, electronics, home essentials aur daily needs — sab kuch ek jagah.</p><button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button></div></div>
+        <div class="hero shubh-reference-hero">
+  <div class="hero-copy">
+    <div class="hero-kicker">WELCOME TO</div>
+    <h1><b>SHUBH</b><span>MART</span></h1>
+    <div class="hero-script">Better Products. Happier You.</div>
+    <p>Fashion, beauty, electronics, home essentials<br>aur daily needs — sab kuch ek jagah.</p>
+    <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button>
+  </div>
+  <div class="hero-3d-scene" aria-label="ShubhMart 3D shopping scene">
+    <div class="hero-awning"></div>
+    <div class="hero-phone"><div class="hero-phone-screen"><img src="assets/shubhmart-logo.png?v=20260926-3" alt="ShubhMart 3D logo"><b>Har Zaroorat, Ek Jagah</b><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button></div></div>
+    <div class="hero-cart"><span class="cart-handle"></span><div class="cart-basket"><i>🛍️</i><i>🎁</i><i>📦</i></div><div class="cart-wheel one"></div><div class="cart-wheel two"></div></div>
+    <div class="hero-prop prop-shoe">👠</div><div class="hero-prop prop-watch">⌚</div><div class="hero-prop prop-gift">🎁</div>
+    <div class="hero-notes"><b>Badiya Products</b><b>Behtar Prices</b><b>Fast Delivery</b><span>♡</span></div>
+  </div>
+</div>
 <div class="shubh-magic" id="shubhMagic">
   <div class="magic-copy">
     <span class="magic-kicker">⚡ SHUBHMART MAGIC DROP</span>
