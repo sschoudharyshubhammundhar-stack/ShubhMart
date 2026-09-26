@@ -173,19 +173,18 @@ function patchLoadOrders(){
  const wrap=async function(){
    await old();
    const box=$('ordersbox');if(!box)return;
-   const panels=[...box.querySelectorAll('.panel')];
+   const panels=[...box.querySelectorAll('.order-card[data-order-id]')];
    for(const panel of panels){
      if(panel.dataset.smPro==='1')continue;
-     const m=panel.textContent.match(/Order #([a-f0-9]{8})/i);if(!m)continue;
-     const idGuess=m[1];const s=sbx(),u=user();if(!s||!u)continue;
-     const r=await s.from('Orders').select('id,order_status,payment_status').eq('customer_id',u.id).order('created_at',{ascending:false}).limit(100);
-     const o=(r.data||[]).find(x=>String(x.id).startsWith(idGuess));if(!o)continue;
+     const id=panel.dataset.orderId;
+     const status=panel.dataset.orderStatus||'';
+     if(!id)continue;
      const row=document.createElement('div');row.className='sm-pro-actions';
-     const track=document.createElement('button');track.className='sm-pro-secondary';track.textContent='📍 Track';track.onclick=()=>orderTimeline(o.id);
-     const buy=document.createElement('button');buy.className='sm-pro-secondary';buy.textContent='🔁 Buy Again';buy.onclick=()=>reorder(o.id);row.append(track,buy);
-     if(['Pending','Confirmed'].includes(o.order_status)){const c=document.createElement('button');c.className='sm-pro-secondary';c.textContent='✕ Cancel';c.onclick=()=>cancelOrder(o.id);row.appendChild(c)}
-     if(o.order_status==='Delivered'){const rt=document.createElement('button');rt.className='sm-pro-secondary';rt.textContent='↩ Return';rt.onclick=()=>safeReturn(o.id,'Return');const ex=document.createElement('button');ex.className='sm-pro-secondary';ex.textContent='⇄ Exchange';ex.onclick=()=>safeReturn(o.id,'Exchange');row.append(rt,ex)}
-     const bp=document.createElement('button');bp.className='sm-pro-secondary';bp.textContent='🛡 Buyer Protection';bp.onclick=()=>protection(o.id);row.appendChild(bp);
+     const track=document.createElement('button');track.className='sm-pro-secondary';track.textContent='📍 Track';track.onclick=()=>orderTimeline(id);row.appendChild(track);
+     if(status==='Delivered'){
+       const ex=document.createElement('button');ex.className='sm-pro-secondary';ex.textContent='⇄ Exchange';ex.onclick=()=>safeReturn(id,'Exchange');row.appendChild(ex);
+     }
+     const bp=document.createElement('button');bp.className='sm-pro-secondary';bp.textContent='🛡 Buyer Protection';bp.onclick=()=>protection(id);row.appendChild(bp);
      panel.appendChild(row);panel.dataset.smPro='1';
    }
  };
