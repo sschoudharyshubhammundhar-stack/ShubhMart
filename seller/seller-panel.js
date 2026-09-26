@@ -80,8 +80,27 @@ async function loadSellerNotifications(){
  e.innerHTML=(r.data||[]).map(x=>"<div class='product'><b>"+clean(x.title||"Notification")+"</b> "+(x.is_read?"":"🔔")+"<br>"+clean(x.body||"")+"<br><small>"+new Date(x.created_at).toLocaleString()+"</small></div>").join("")||"No notifications.";
 }
 const _oldShowDashboard=showDashboard;
-showDashboard=function(){_oldShowDashboard();loadSellerReturns();loadSellerOffers();loadSellerWholesaleInquiries();loadSellerAnalytics();loadSellerSupport();loadSellerNotifications();};
+showDashboard=function(){_oldShowDashboard();loadSellerReturns();loadSellerOffers();loadSellerWholesaleInquiries();loadSellerWholesaleMarket();loadSellerAnalytics();loadSellerSupport();loadSellerNotifications();};
 
+async function loadSellerWholesaleMarket(){
+ const e=document.getElementById('sellerWholesaleMarket'); if(!e||!seller)return;
+ e.textContent='Wholesale products loading...';
+ const r=await sb.from('products').select('id,name,category,price,stock,image_url,wholesale_moq,wholesale_price,seller_id').eq('status','Active').eq('is_live',true).eq('wholesale_enabled',true).not('wholesale_price','is',null).neq('seller_id',seller.id).gt('stock',0).order('created_at',{ascending:false}).limit(30);
+ if(r.error){e.textContent=r.error.message;return}
+ e.innerHTML=(r.data||[]).length?(r.data||[]).map(p=>'<div class="product"><img src="'+clean(p.image_url||'https://placehold.co/500x300?text=Wholesale')+'" alt="'+clean(p.name)+'"><b>'+clean(p.name)+'</b><div>'+clean(p.category||'')+' · Retail ₹'+Number(p.price||0).toFixed(0)+'</div><div style="color:#075985;font-weight:900">Wholesale ₹'+Number(p.wholesale_price||0).toFixed(0)+' / piece</div><div>MOQ: '+Number(p.wholesale_moq||1)+' · Stock: '+Number(p.stock||0)+'</div><div class="small">🔒 Direct seller contact hidden</div><button class="btn" onclick="sendSellerWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'No approved wholesale products available.';
+}
+async function sendSellerWholesaleInquiry(productId){
+ if(!sellerUser)return note('Pehle Seller Panel mein login kijiye.',true);
+ const qty=Math.floor(Number(prompt('Wholesale quantity / MOQ se kam nahi:')||0)); if(!qty)return;
+ const targetRaw=prompt('Target price per piece (optional):'); const target=targetRaw?Number(targetRaw):null;
+ if(targetRaw && !(target>0))return note('Valid target price dijiye.',true);
+ const noteText=(prompt('Requirement note (optional):')||'').slice(0,500);
+ const prod=await sb.from('products').select('seller_id').eq('id',productId).maybeSingle();
+ if(prod.error||!prod.data?.seller_id)return note('Wholesale seller information unavailable.',true);
+ const r=await sb.from('wholesale_inquiries').insert({buyer_id:sellerUser.id,product_id:productId,seller_id:prod.data.seller_id,quantity:qty,target_price:target,note:noteText,status:'Pending'});
+ if(r.error)return note('Wholesale inquiry send nahi hui: '+r.error.message,true);
+ note('Wholesale inquiry ShubhMart ke through bhej di gayi ✅'); await loadSellerWholesaleMarket();
+}
 async function loadSellerWholesaleInquiries(){const e=document.getElementById("sellerWholesaleInquiries");if(!e||!seller)return;const r=await sb.from("wholesale_inquiries").select("id,product_id,quantity,target_price,quoted_price,status,note,created_at").eq("seller_id",seller.id).order("created_at",{ascending:false}).limit(50);if(r.error)return e.textContent=r.error.message;e.innerHTML=(r.data||[]).map(x=>"<div class='product'><b>Inquiry "+clean(x.id.slice(0,8))+"…</b><br>Qty: "+x.quantity+" | Target: "+(x.target_price?"₹"+Number(x.target_price).toFixed(2):"—")+" | Status: "+clean(x.status)+"<br>"+clean(x.note||"")+(x.status==="Pending"?'<br><button class="btn alt" onclick="quoteWholesaleInquiry(\''+x.id+'\')">Quote</button><button class="btn alt" onclick="rejectWholesaleInquiry(\''+x.id+'\')">Reject</button>':"")+"</div>").join("")||"No wholesale inquiries.";}
 async function quoteWholesaleInquiry(id){const q=Number(prompt("Quote per piece (₹):"));if(!(q>0))return;const r=await sb.rpc("seller_update_wholesale_inquiry",{p_inquiry_id:id,p_status:"Quoted",p_quoted_price:q});if(r.error)return note(r.error.message,true);await loadSellerWholesaleInquiries();note("Wholesale quote sent.");}
 async function rejectWholesaleInquiry(id){if(!confirm("Inquiry reject karein?"))return;const r=await sb.rpc("seller_update_wholesale_inquiry",{p_inquiry_id:id,p_status:"Rejected",p_quoted_price:null});if(r.error)return note(r.error.message,true);await loadSellerWholesaleInquiries();note("Wholesale inquiry rejected.");}
