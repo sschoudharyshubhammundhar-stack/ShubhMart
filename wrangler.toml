@@ -6,3 +6,4 @@ directory = "."
 
 # Automatic deployment trigger
 # Deployment connection verified after secret update
+# CI trigger check
