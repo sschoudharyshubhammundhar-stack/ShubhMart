@@ -18,7 +18,16 @@ jobs:
       - name: Validate JavaScript syntax
         shell: bash
         run: |
-          find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -print0 | xargs -0 -n1 node --check
+          set -e
+          failed=0
+          while IFS= read -r -d '' file; do
+            echo "Checking $file"
+            if ! node --check "$file"; then
+              echo "SYNTAX ERROR: $file"
+              failed=1
+            fi
+          done < <(find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -print0)
+          exit $failed
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v4
