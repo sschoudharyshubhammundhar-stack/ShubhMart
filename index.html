@@ -162,7 +162,7 @@ async function openProductByName(name){
  const cleanName=String(name||'').trim();
  document.getElementById('search').value=cleanName;
  document.getElementById('clearSearchBtn').style.visibility='visible';
- let {data,error}=await sb.from('products').select('*').eq('status','Active').ilike('name',`%${cleanName}%`).limit(1);
+ let {data,error}=await sb.from('products').select('*').eq('status','Active').or('seller_id.is.null,is_live.eq.true').ilike('name',`%${cleanName}%`).limit(1);
  if(error){note('Product open error: '+error.message,true);return}
  if(!data||!data.length){note('Product nahi mila',true);return}
  openProduct(data[0]);
