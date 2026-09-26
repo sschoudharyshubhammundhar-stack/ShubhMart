@@ -1,4 +1,5 @@
-ShubhMart Customer Section 1 — 100% source-level completion pass
-Customer hardening completed: live/approved product visibility, stock-safe cart, account recovery, address edit/default/delete, order actions, buy-again, cancellation, return/exchange, tracking, buyer protection, wishlist, compare, saved, recent, coupons, reviews/Q&A, support, notifications, accessibility, SEO and mobile resilience.
-Design lock preserved. Section 2 not started until Customer lock.
-Deployment refresh requested: 2026-09-26T08:45:00Z
+ShubhMart Customer Section 1 — second point-by-point QA + runtime hardening
+Verified/fixed: customer script parse issue in checkout address loader, live-product enforcement in search/product/cart/recommendations/reorder, cancellation UI alignment, return ownership/status validation, duplicate return payload cleanup, secure stock reservation/release during order lifecycle, approved/live product enforcement inside create_order_from_cart.
+Verified database: required customer order RPCs exist; RLS is enabled on core customer tables; no negative stock or stale stock reservations found; verified-purchase review unique index exists.
+Design lock preserved. Section 2 remains locked until Customer Section 1 QA is accepted.
+Deployment refresh requested: 2026-09-26T08:55:00Z
