@@ -172,8 +172,8 @@ function patchLoadOrders(){
      if(panel.dataset.smPro==='1')continue;
      const m=panel.textContent.match(/Order #([a-f0-9]{8})/i);if(!m)continue;
      const idGuess=m[1];const s=sbx(),u=user();if(!s||!u)continue;
-     const r=await s.from('Orders').select('id,order_status,payment_status').eq('customer_id',u.id).ilike('id',idGuess+'%').maybeSingle();
-     const o=r.data;if(!o)continue;
+     const r=await s.from('Orders').select('id,order_status,payment_status').eq('customer_id',u.id).order('created_at',{ascending:false}).limit(100);
+     const o=(r.data||[]).find(x=>String(x.id).startsWith(idGuess));if(!o)continue;
      const row=document.createElement('div');row.className='sm-pro-actions';
      const track=document.createElement('button');track.className='sm-pro-secondary';track.textContent='📍 Track';track.onclick=()=>orderTimeline(o.id);
      const buy=document.createElement('button');buy.className='sm-pro-secondary';buy.textContent='🔁 Buy Again';buy.onclick=()=>reorder(o.id);row.append(track,buy);
@@ -194,7 +194,7 @@ function accessibility(){
 async function coins(){
  const s=sbx(),u=user();if(!s||!u)return;
  const r=await s.rpc('ensure_shubhcoins_wallet');if(r.error)return;
- const w=r.data; if(!$('smCoins')){const el=document.createElement('div');el.id='smCoins';el.className='sm-pro-pill';el.textContent='🪙 '+Number(w?.balance||0)+' ShubhCoins';el.onclick=()=>noteSafe('ShubhCoins balance: '+Number(w?.balance||0));$('head-actions')?.appendChild(el)}
+ const w=Array.isArray(r.data)?r.data[0]:r.data; if(!$('smCoins')){const el=document.createElement('div');el.id='smCoins';el.className='sm-pro-pill';el.textContent='🪙 '+Number(w?.balance||0)+' ShubhCoins';el.onclick=()=>noteSafe('ShubhCoins balance: '+Number(w?.balance||0));$('head-actions')?.appendChild(el)}
 }
 function inject(){
  css();recentSearches();accessibility();patchOpenProduct();patchLoadOrders();
