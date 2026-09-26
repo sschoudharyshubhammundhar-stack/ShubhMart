@@ -120,10 +120,10 @@ window.smBuyerProtection=protection;
 
 async function reorder(orderId){
  const s=sbx(),u=user();if(!s||!u)return noteSafe('Login kijiye.');
- const {data,error}=await s.from('Order_items').select('product_id,quantity,products(id,name,stock,status)').eq('order_id',orderId);
+ const {data,error}=await s.from('Order_items').select('product_id,quantity,products(id,name,stock,status,is_live)').eq('order_id',orderId);
  if(error)return noteSafe(error.message);
  let added=0;
- for(const i of data||[]){if(i.products?.status==='Active'&&Number(i.products?.stock||0)>0){const r=await s.from('cart').upsert({customer_id:u.id,product_id:i.product_id,quantity:Math.max(1,Number(i.quantity||1))},{onConflict:'customer_id,product_id'});if(!r.error)added++}}
+ for(const i of data||[]){if(i.products?.status==='Active'&&i.products?.is_live===true&&Number(i.products?.stock||0)>0){const r=await s.from('cart').upsert({customer_id:u.id,product_id:i.product_id,quantity:Math.max(1,Number(i.quantity||1))},{onConflict:'customer_id,product_id'});if(!r.error)added++}}
  noteSafe(added+' product(s) Buy Again ke liye cart mein add ho gaye.');if(typeof window.loadCart==='function')window.loadCart();if(typeof window.show==='function')window.show('cart');
 }
 window.smReorder=reorder;
@@ -150,7 +150,7 @@ async function loadRecommendations(){
  const s=sbx(),root=$('smProRecommendations');if(!s||!root)return;
  const recent=read(LS.recent,[]);
  const cat=recent[0]?.category;
- let q=s.from('products').select('id,name,price,mrp,image_url,category,stock').eq('status','Active').gt('stock',0).limit(8);
+ let q=s .from('products').select('id,name,price,mrp,image_url,category,stock').eq('status','Active').eq('is_live',true).gt('stock',0).limit(8);
  if(cat)q=q.eq('category',cat);
  const {data,error}=await q.order('created_at',{ascending:false});if(error)return;
  root.innerHTML=(data||[]).length?'<div class="sm-pro-panel"><div class="section-head"><h2>✨ Aapke liye</h2></div><div class="sm-pro-grid">'+data.map(p=>'<div class="sm-pro-card"><img src="'+esc(p.image_url||'https://placehold.co/400x300?text=ShubhMart')+'"><b>'+esc(p.name)+'</b><div>₹'+Number(p.price||0).toFixed(0)+'</div><div class="sm-pro-actions"><button class="sm-pro-primary" onclick="openProductById(\''+p.id+'\')">View</button><button class="sm-pro-secondary" onclick="addCart(\''+p.id+'\')">Cart</button></div></div>').join('')+'</div></div>':'';
