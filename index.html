@@ -362,8 +362,36 @@ async function loadProducts(){loadWholesaleProducts();
  <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button></div>`}).join(''):'No active products found.';
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function addCart(id){if(!currentUser){note('Pehle login/signup kijiye',true);show('account');return}const {data:p}=await sb.from('products').select('id,stock,status,is_live').eq('id',id).maybeSingle();if(!p||p.status!=='Active'||p.is_live!==true||Number(p.stock||0)<1)return note('Product abhi available nahi hai.',true);const {data:existing}=await sb.from('cart').select('quantity').eq('customer_id',currentUser.id).eq('product_id',id).maybeSingle();if(existing&&Number(existing.quantity)>=Number(p.stock))return note('Available stock limit reached.',true);const {error}=await sb.from('cart').upsert({customer_id:currentUser.id,product_id:id,quantity:Math.min(Number(existing?.quantity||0)+1,Number(p.stock))},{onConflict:'customer_id,product_id'});if(error)note(error.message,true);else note('Cart mein add ho gaya ✅');}
-async function buy(id){await addCart(id);show('cart')}
+async function addCart(id,variantId=null){
+ if(!currentUser){note('Pehle login/signup kijiye',true);show('account');return false}
+ const {data:p,error:pe}=await sb.from('products').select('id,stock,status,is_live').eq('id',id).maybeSingle();
+ if(pe||!p||p.status!=='Active'||p.is_live!==true)return note('Product abhi available nahi hai.',true),false;
+ let variant=null;
+ const {data:variants,error:ve}=await sb.from('product_variants').select('id,product_id,variant_name,option_value,price,mrp,stock,status,image_url').eq('product_id',id).eq('status','Active').order('created_at',{ascending:true}).limit(50);
+ if(ve)return note('Product variant load nahi hua.',true),false;
+ if((variants||[]).length&&!variantId){
+   window.smPendingVariantProduct=id;
+   openProduct(p);
+   return note('Pehle apna variant select kijiye.',true),false;
+ }
+ if(variantId){
+   variant=(variants||[]).find(v=>String(v.id)===String(variantId))||null;
+   if(!variant)return note('Selected variant available nahi hai.',true),false;
+ }
+ const availableStock=variant?Number(variant.stock||0):Number(p.stock||0);
+ if(availableStock<1)return note('Product abhi out of stock hai.',true),false;
+ const {data:existing,error:ee}=await sb.from('cart').select('id,quantity,variant_id').eq('customer_id',currentUser.id).eq('product_id',id).maybeSingle();
+ if(ee)return note(ee.message,true),false;
+ const next=Math.min(Number(existing?.quantity||0)+1,availableStock);
+ if(existing&&Number(existing.quantity)>=availableStock&&String(existing.variant_id||'')===String(variant?.id||''))return note('Available stock limit reached.',true),false;
+ const payload={customer_id:currentUser.id,product_id:id,variant_id:variant?.id||null,quantity:next};
+ const {error}=existing
+   ? await sb.from('cart').update({variant_id:payload.variant_id,quantity:next}).eq('id',existing.id).eq('customer_id',currentUser.id)
+   : await sb.from('cart').insert(payload);
+ if(error)return note(error.message,true),false;
+ note(variant?'Selected variant cart mein add ho gaya ✅':'Cart mein add ho gaya ✅');return true;
+}
+async function buy(id){const ok=await addCart(id);if(ok)show('cart')}
 async function loadCart(){
  if(!currentUser){document.getElementById('cartbox').innerHTML='Login kijiye.';document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden');return}
  const {data,error}=await sb.from('cart').select('id,quantity,product_id,products(id,name,price,mrp,image_url,stock,status,is_live)').eq('customer_id',currentUser.id);
