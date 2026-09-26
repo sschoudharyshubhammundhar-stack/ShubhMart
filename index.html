@@ -366,9 +366,19 @@ async function loadCart(){
  if(!currentUser){document.getElementById('cartbox').innerHTML='Login kijiye.';document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden');return}
  const {data,error}=await sb.from('cart').select('id,quantity,product_id,products(id,name,price,mrp,image_url,stock,status,is_live)').eq('customer_id',currentUser.id);
  if(error){document.getElementById('cartbox').textContent='Cart error: '+error.message;note(error.message,true);return}
- let total=0;const box=document.getElementById('cartbox');
- if(data?.length){box.innerHTML=data.map(x=>{total+=Number(x.products?.price||0)*x.quantity;return `<div class="panel row"><img src="${x.products?.image_url||'https://placehold.co/100x80'}" style="width:80px;height:60px;object-fit:cover;border-radius:8px"><div style="flex:1"><b>${esc(x.products?.name)}</b><br>₹${x.products?.price} × ${x.quantity}<br><span class="small">Stock: ${x.products?.stock??'—'}</span></div><button class="btn" onclick="changeQty('${x.id}',${x.quantity-1})">−</button><button class="btn" onclick="changeQty('${x.id}',${x.quantity+1})">+</button><button class="btn alt" onclick="removeCart('${x.id}')">Remove</button></div>`}).join('')+`<h3>Total: ₹${total.toFixed(2)}</h3>`;document.getElementById('checkoutStart').classList.remove('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden');}
- else{box.innerHTML='Cart empty.';document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden')}
+ let total=0;let unavailable=0;const box=document.getElementById('cartbox');
+ if(data?.length){
+   box.innerHTML=data.map(x=>{
+     const live=x.products?.status==='Active'&&x.products?.is_live===true&&Number(x.products?.stock||0)>0;
+     const stock=Math.max(0,Number(x.products?.stock||0));
+     if(!live){unavailable++;return '<div class="panel row" style="border-color:#fecaca;background:#fff7f7"><div style="flex:1"><b>'+esc(x.products?.name||'Product')+'</b><br><span class="danger">Product abhi available nahi hai. Kripya Remove kijiye.</span></div><button class="btn alt" onclick="removeCart(\''+esc(x.id)+'\')">Remove</button></div>'}
+     const qty=Math.min(Math.max(1,Number(x.quantity||1)),stock);total+=Number(x.products?.price||0)*qty;
+     return '<div class="panel row"><img src="'+esc(x.products?.image_url||'https://placehold.co/100x80')+'" alt="'+esc(x.products?.name||'Product')+'" style="width:80px;height:60px;object-fit:cover;border-radius:8px"><div style="flex:1"><b>'+esc(x.products?.name||'Product')+'</b><br>₹'+Number(x.products?.price||0).toFixed(2)+' × '+qty+'<br><span class="small">Stock: '+stock+'</span></div><button class="btn" onclick="changeQty(\''+esc(x.id)+'\','+(qty-1)+')">−</button><button class="btn" onclick="changeQty(\''+esc(x.id)+'\','+(qty+1)+')">+</button><button class="btn alt" onclick="removeCart(\''+esc(x.id)+'\')">Remove</button></div>';
+   }).join('');
+   box.innerHTML+=(unavailable?'<div class="errorbox">Kuch cart items available nahi hain. Checkout se pehle unhe remove kijiye.</div>':'')+'<h3>Total: ₹'+total.toFixed(2)+'</h3>';
+   if(unavailable){document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden')}
+   else{document.getElementById('checkoutStart').classList.remove('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden')}
+ }else{box.innerHTML='Cart empty.';document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden')}
 }
 function beginCheckout(){if(!currentUser){note('Pehle login kijiye',true);show('account');return}document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.remove('hidden');document.getElementById('checkoutbox').classList.add('hidden');loadCheckoutAddresses();}
 function backToAddress(){document.getElementById('checkoutbox').classList.add('hidden');document.getElementById('addressCheckout').classList.remove('hidden');loadCheckoutAddresses()}
