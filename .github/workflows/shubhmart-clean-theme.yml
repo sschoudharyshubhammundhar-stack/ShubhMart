@@ -1,32 +1,8 @@
-name: ShubhMart clean theme
+name: ShubhMart clean theme (disabled)
 on:
-  push:
-    branches: [main]
-permissions:
-  contents: write
+  workflow_dispatch:
 jobs:
-  clean:
-    if: github.event.head_commit.message != 'Auto: clean logo buttons and refresh theme'
+  disabled:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Remove floating logo buttons and refresh theme
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('index.html')
-          s=p.read_text()
-          import re
-          s=re.sub(r'\s*<span class="logo-surprise">.*?</span>', '', s, flags=re.S)
-          s=re.sub(r'\s*<button class="shubh-front-pick".*?</button>', '', s, flags=re.S)
-          s=re.sub(r'\s*<div class="shubh-daily".*?</div>\s*</div>', '</div>', s, flags=re.S)
-          theme='''\n/* ShubhMart refreshed premium theme */\n:root{--bg:#f4f7ff;--card:#ffffff;--line:#e5e9f5;--purple:#35207a;--purple2:#6741d9;--orange:#ff7a18;--ink:#172033}body{background:radial-gradient(circle at 8% 0%,#efe7ff 0,#f4f7ff 32%,#f8fbff 72%,#fff 100%)}.top{background:rgba(255,255,255,.94);backdrop-filter:blur(14px);box-shadow:0 4px 24px rgba(43,31,91,.10)}.subnav{background:linear-gradient(90deg,#f8f4ff,#fff8f3);border-top-color:#eeeaf7}.hero{background:linear-gradient(115deg,#e9e2ff 0%,#f7edff 38%,#fff1e8 100%);box-shadow:0 12px 32px rgba(65,39,126,.12)}.hero:before{content:'✦  ✧  ✦';position:absolute;right:35px;top:25px;font-size:28px;color:#fff;opacity:.65;letter-spacing:12px}.chip{background:rgba(255,255,255,.9);border-color:#e5e4ef;box-shadow:0 4px 15px rgba(44,33,87,.04)}.card,.panel,.sidebar{box-shadow:0 5px 20px rgba(40,30,80,.05)}.searchwrap{border-color:#dfe3f0;box-shadow:0 4px 15px rgba(44,33,87,.06)}.footer{background:linear-gradient(135deg,#17122d,#25164b)}\n'''
-          if 'ShubhMart refreshed premium theme' not in s:
-              s=s.replace('</style>',theme+'</style>',1)
-          p.write_text(s)
-          PY
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git diff --cached --quiet || git commit -m 'Auto: clean logo buttons and refresh theme'
-          git push
+      - run: echo "Disabled to preserve the locked 3D reference design."
