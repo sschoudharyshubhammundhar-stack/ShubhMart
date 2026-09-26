@@ -42,17 +42,26 @@
     </div>
     </div>
   </div>
+  <div class="wrap benefit-topbar">
+    <div><b>🚚 Free Delivery</b><span>On orders above ₹499</span></div>
+    <div><b>🛡️ Secure Payments</b><span>100% Safe &amp; Trusted</span></div>
+    <div><b>↩️ Easy Returns</b><span>Hassle Free</span></div>
+    <div><b>◉ 24/7 Support</b><span>We're Here to Help</span></div>
+  </div>
   <div class="wrap subnav">
-    <button class="navlink active" onclick="show('home')">⌂ Home</button>
-    <button class="navlink" onclick="document.getElementById('categoryFilter').focus();document.getElementById('categoryFilter').scrollIntoView({behavior:'smooth',block:'center'})">All Categories</button>
-    <button class="navlink" onclick="filterCategory('Women Fashion')">Women Fashion</button>
+    <button class="navlink category-main" onclick="document.getElementById('categoryFilter').focus();document.getElementById('categoryFilter').scrollIntoView({behavior:'smooth',block:'center'})">☰ &nbsp;All Categories⌄</button>
+    <button class="navlink active" onclick="show('home')">Home</button>
+    <button class="navlink" onclick="filterCategory('Women Fashion')">Fashion</button>
     <button class="navlink" onclick="filterCategory('Beauty & Personal Care')">Beauty & Personal Care</button>
     <button class="navlink" onclick="filterCategory('Mobile Accessories')">Electronics</button>
     <button class="navlink" onclick="filterCategory('Home & Kitchen')">Home & Kitchen</button>
-    <button class="navlink" onclick="show('orders')">Orders</button>
-    <button class="navlink" onclick="show('account')">Account</button>
-    <button class="navlink" onclick="openSellerLogin()">🛍️ Seller Login</button>
-    <button class="navlink wholesale-nav" onclick="openWholesaleMarket()">🏢 Wholesale Market</button>
+    <button class="navlink" onclick="filterCategory('Toys & Games')">Toys & Games</button>
+    <button class="navlink" onclick="filterCategory('Sports & Fitness')">Sports & Fitness</button>
+    <button class="navlink" onclick="show('home')">More⌄</button>
+    <button class="navlink nav-extra" onclick="show('orders')">Orders</button>
+    <button class="navlink nav-extra" onclick="show('account')">Account</button>
+    <button class="navlink nav-extra" onclick="openSellerLogin()">🛍️ Seller Login</button>
+    <button class="navlink nav-extra wholesale-nav" onclick="openWholesaleMarket()">🏢 Wholesale Market</button>
   </div>
 </div>
 <div class="wrap main">
@@ -114,10 +123,10 @@
       <div>
         <div class="hero shubh-reference-hero">
   <div class="hero-copy">
-    <div class="hero-kicker">WELCOME TO</div>
-    <h1><b>SHUBH</b><span>MART</span></h1>
-    <div class="hero-script">Better Products. Happier You.</div>
-    <p>Fashion, beauty, electronics, home essentials<br>aur daily needs — sab kuch ek jagah.</p>
+    <div class="hero-kicker">SHUBHMART</div>
+    <h1><b>Shubh</b><span>Mart</span></h1>
+    <div class="hero-script">Har Zaroorat, Ek Jagah</div>
+    <p>Badi Soch, Bada Shopping Experience!<br>Fashion, beauty, electronics, home essentials — sab kuch ek jagah.</p>
     <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button>
   </div>
   <div class="hero-3d-scene" aria-label="ShubhMart 3D shopping scene">
@@ -144,8 +153,13 @@
         <div class="chips">
           <div class="chip" onclick="filterCategory('Women Fashion')"><span class="cico">👜</span><span>Women Fashion</span></div><div class="chip" onclick="filterCategory('Beauty & Personal Care')"><span class="cico">💄</span><span>Beauty</span></div><div class="chip" onclick="filterCategory('Mobile Accessories')"><span class="cico">🎧</span><span>Electronics</span></div><div class="chip" onclick="filterCategory('Home & Kitchen')"><span class="cico">🍳</span><span>Home & Kitchen</span></div><div class="chip" onclick="filterCategory('Mobile Accessories')"><span class="cico">📱</span><span>Accessories</span></div><div class="chip" onclick="filterCategory('Baby & Kids')"><span class="cico">🧸</span><span>Kids</span></div><div class="chip" onclick="filterCategory('Sports & Fitness')"><span class="cico">🏋️</span><span>Sports</span></div><div class="chip" onclick="filterCategory('')"><span class="cico">▦</span><span>More</span></div>
         </div>
-        <div class="section-head"><h2>Featured Products</h2><button class="btn alt" onclick="filterCategory('')">View All →</button></div>
-        <div class="panel"><div class="toolbar"><div class="small">Find your next favorite product</div><div class="row"><select id="categoryFilter" onchange="loadProducts()"><option value="">All Categories</option><option>Beauty & Personal Care</option><option>Women Fashion</option><option>Men Fashion</option><option>Baby & Kids</option><option>Home & Kitchen</option><option>Mobile & Electronics</option><option>Mobile Accessories</option><option>Jewellery & Accessories</option><option>Shoes & Footwear</option><option>Bags & Luggage</option><option>Grocery & Daily Needs</option><option>Toys & Games</option><option>Sports & Fitness</option><option>Car & Bike Accessories</option><option>Pet Supplies</option><option>Books & Stationery</option><option>Tools & Hardware</option><option>Home Decor</option><option>Gifts & Occasions</option><option>Other</option></select><select id="sortFilter" onchange="loadProducts()"><option value="new">Newest</option><option value="price_asc">Price Low → High</option><option value="price_desc">Price High → Low</option><option value="name">Name A → Z</option></select></div></div><div id="products" class="grid">Loading...</div></div>
+        <section class="promo-showcase" aria-label="ShubhMart promotional categories">
+          <article class="promo-tile promo-fashion"><div><b>Latest Fashion</b><strong>Trendy Looks<br>For You</strong><button onclick="filterCategory('Women Fashion')">Explore Now →</button></div><span>👗👜👟</span></article>
+          <article class="promo-tile promo-beauty"><div><b>Beauty &amp; Glow</b><strong>Self Care, Every Day</strong><small>Up to 50% OFF</small><button onclick="filterCategory('Beauty & Personal Care')">Shop Now →</button></div><span>💄🌹✨</span></article>
+          <article class="promo-tile promo-electronics"><div><b>Electronics</b><strong>Smart Tech<br>Better Life</strong><small>Up to 70% OFF</small><button onclick="filterCategory('Mobile Accessories')">Shop Now →</button></div><span>⌚🎧📱</span></article>
+        </section>
+        <div class="section-head reference-section-head"><h2>🔥 Best Selling Products</h2><button class="btn alt" onclick="filterCategory('')">View All →</button></div>
+        <div class="panel reference-products-panel"><div class="toolbar"><div class="small">Find your next favorite product</div><div class="row"><select id="categoryFilter" onchange="loadProducts()"><option value="">All Categories</option><option>Beauty & Personal Care</option><option>Women Fashion</option><option>Men Fashion</option><option>Baby & Kids</option><option>Home & Kitchen</option><option>Mobile & Electronics</option><option>Mobile Accessories</option><option>Jewellery & Accessories</option><option>Shoes & Footwear</option><option>Bags & Luggage</option><option>Grocery & Daily Needs</option><option>Toys & Games</option><option>Sports & Fitness</option><option>Car & Bike Accessories</option><option>Pet Supplies</option><option>Books & Stationery</option><option>Tools & Hardware</option><option>Home Decor</option><option>Gifts & Occasions</option><option>Other</option></select><select id="sortFilter" onchange="loadProducts()"><option value="new">Newest</option><option value="price_asc">Price Low → High</option><option value="price_desc">Price High → Low</option><option value="name">Name A → Z</option></select></div></div><div id="products" class="grid">Loading...</div></div>
 
         <section id="wholesaleMarket" class="panel wholesale-market">
           <div class="section-head">
