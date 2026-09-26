@@ -1,2 +1,2 @@
-ShubhMart Cloudflare deployment trigger — 2026-09-26
-Premium 3D visual lock deployment trigger.
+ShubhMart marketplace completion deployment trigger — 2026-09-26
+Non-external marketplace feature layer completed and wired.
