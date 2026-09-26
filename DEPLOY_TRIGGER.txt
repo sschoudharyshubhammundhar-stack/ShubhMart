@@ -1,3 +1,4 @@
-ShubhMart final marketplace deployment trigger — 2026-09-26T17:07:40.441Z
-Locked approved design and current main integration verified.
-Production deployment refresh requested.
+ShubhMart customer module QA/deployment trigger
+Customer Section 1 hardening applied: accessibility, SEO metadata, image optimization, keyboard dismissal, offline/online state, resilient UI error logging.
+Design lock preserved. Customer/Seller/Wholesale separation preserved.
+Production refresh requested: 2026-09-26T08:00:00Z
