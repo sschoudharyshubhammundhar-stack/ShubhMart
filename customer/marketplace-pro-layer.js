@@ -82,7 +82,7 @@ async function safeReview(pid){
  if(!order)return noteSafe('Is product ke delivered order ke baad hi review de sakte hain.');
  const rating=Number(prompt('Rating 1-5:',5));if(!Number.isInteger(rating)||rating<1||rating>5)return;
  const text=String(prompt('Review likhiye:','Product achha laga.')||'').trim();if(!text)return;
- const {error}=await s.from('product_reviews').insert({product_id:pid,customer_id:u.id,order_id:order.id,rating,review_text:text,media_urls:[],status:'pending'});
+ const {error}=await s.from('product_reviews').insert({product_id:pid,customer_id:u.id,order_id:order.id,rating,review_text:text,media_urls:[],status:'Pending'});
  if(error)return noteSafe('Review submit nahi hua: '+error.message);
  noteSafe('Review submit ho gaya. Admin moderation ke baad show hoga.');
 }
