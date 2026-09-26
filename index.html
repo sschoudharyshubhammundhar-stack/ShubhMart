@@ -119,10 +119,11 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
       <img class="brand-full-logo" src="assets/shubhmart-logo.png?v=20260926-3" alt="ShubhMart 3D logo — Har Zaroorat, Ek Jagah">
       
       </div><div class="searchwrap"><span class="searchicon">⌕</span><input id="search" class="search" placeholder="Search products, brands..." autocomplete="off" aria-label="Search products" oninput="searchChanged()" onkeydown="if(event.key==='Enter'){event.preventDefault();runSearch()}"/><button class="clearsearch" id="clearSearchBtn" style="visibility:hidden" type="button" onclick="clearSearch()" aria-label="Clear search">×</button><button class="searchbtn" type="button" onclick="runSearch()" aria-label="Search">🔍</button><div id="searchSuggest" class="searchsuggest hidden"></div></div>
-    <div class="head-actions">
+    <div id="head-actions" class="head-actions">
       <button class="head-action" onclick="show('home')"><span class="ico">⌂</span><span>Home</span></button>
       <button class="head-action" onclick="show('wishlist')"><span class="ico">♡</span><span>Wishlist</span></button>
-      <button class="head-action" onclick="show('cart')"><span class="ico">🛒</span><span>Cart</span><span class="badge" id="notifBadge">0</span></button>
+      <button class="head-action" onclick="show('cart')"><span class="ico">🛒</span><span>Cart</span><span class="badge" id="cartBadge">0</span></button>
+      <button class="head-action" onclick="show('notifications')"><span class="ico">🔔</span><span>Notifications</span><span class="badge" id="notifBadge">0</span></button>
       <button class="head-action" onclick="show('account')"><span class="ico">♙</span><span>Account</span></button>
     </div>
     </div>
@@ -144,6 +145,7 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
     <button class="navlink" onclick="filterCategory('Sports & Fitness')">Sports & Fitness</button>
     <button class="navlink" onclick="show('home')">More⌄</button>
     <button class="navlink nav-extra" onclick="show('orders')">Orders</button>
+    <button class="navlink nav-extra" onclick="show('notifications')">Notifications</button>
     <button class="navlink nav-extra" onclick="show('account')">Account</button>
     <button class="navlink nav-extra" onclick="openSellerLogin()">🛍️ Seller Login</button>
     <button class="navlink nav-extra wholesale-nav" onclick="openWholesaleMarket()">🏢 Wholesale Market</button>
@@ -325,7 +327,7 @@ async function openProductByName(name){
 function openProduct(p){
  const modal=document.getElementById('productModal');const box=document.getElementById('productModalContent');
  const mrp=Number(p.mrp||0),price=Number(p.price||0);const off=mrp>price?Math.round((1-price/mrp)*100):0;
- box.innerHTML=`<div class="product-modal-grid"><img src="${p.image_url||'https://placehold.co/600x500?text=ShubhMart'}" alt="${esc(p.name)}"><div><div class="small">${esc(p.category||'')}</div><h2>${esc(p.name)}</h2><p class="small">${esc(p.description||'Demo product for ShubhMart')}</p><p><span class="price">₹${price.toFixed(0)}</span> ${mrp>price?`<span class="old">₹${mrp.toFixed(0)}</span> <span class="discount">${off}% OFF</span>`:''}</p><p class="stock">${Number(p.stock||0)>0?'In Stock: '+p.stock:'Out of Stock'}</p><div class="row"><button class="btn" ${Number(p.stock||0)<=0?'disabled':''} onclick="addCart('${p.id}');closeProductModal()">Add to Cart</button><button class="btn alt" onclick="closeProductModal()">Close</button></div></div></div>`;
+ box.innerHTML=`<div class="product-modal-grid"><img src="${esc(p.image_url||'https://placehold.co/600x500?text=ShubhMart')}" alt="${esc(p.name)}"><div><div class="small">${esc(p.category||'')}</div><h2>${esc(p.name)}</h2><p class="small">${esc(p.description||'Demo product for ShubhMart')}</p><p><span class="price">₹${price.toFixed(0)}</span> ${mrp>price?`<span class="old">₹${mrp.toFixed(0)}</span> <span class="discount">${off}% OFF</span>`:''}</p><p class="stock">${Number(p.stock||0)>0?'In Stock: '+p.stock:'Out of Stock'}</p><div class="row"><button class="btn" ${Number(p.stock||0)<=0?'disabled':''} onclick="addCart('${p.id}');closeProductModal()">Add to Cart</button><button class="btn alt" onclick="closeProductModal()">Close</button></div></div></div>`;
  modal.classList.remove('hidden');
 }
 function closeProductModal(){document.getElementById('productModal').classList.add('hidden')}
@@ -351,7 +353,7 @@ async function loadProducts(){loadWholesaleProducts();
  let wishIds=new Set();
  if(currentUser){const {data:wishes}=await sb.from('wishlist').select('product_id').eq('customer_id',currentUser.id);(wishes||[]).forEach(w=>wishIds.add(String(w.product_id)))}
  el.innerHTML=data?.length?data.map(p=>{const wished=wishIds.has(String(p.id));return `<div class="card">
- <img src="${p.image_url||'https://placehold.co/500x400?text=ShubhMart'}" alt="${esc(p.name)}" onclick="openProductById('${p.id}')" style="cursor:pointer"><h3 onclick="openProductById('${p.id}')" style="cursor:pointer">${esc(p.name)}</h3>
+ <img src="${esc(p.image_url||'https://placehold.co/500x400?text=ShubhMart')}" alt="${esc(p.name)}" onclick="openProductById('${p.id}')" style="cursor:pointer"><h3 onclick="openProductById('${p.id}')" style="cursor:pointer">${esc(p.name)}</h3>
  <div class="price">₹${Number(p.price||0).toFixed(0)} <span class="old">₹${Number(p.mrp||0).toFixed(0)}</span></div>
  <div class="small">${esc(p.category||'')} ${Number(p.mrp)>Number(p.price)?' • '+Math.round((1-Number(p.price)/Number(p.mrp))*100)+'% OFF':''}</div>
  <div class="small">${Number(p.stock||0)>0?'In Stock':'Out of Stock'}</div>
@@ -387,7 +389,7 @@ async function removeCart(id){await sb.from('cart').delete().eq('id',id).eq('cus
 async function forgotPassword(){const email=String(document.getElementById('email')?.value||'').trim();if(!email)return note('Pehle email enter kijiye.',true);const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)return note(error.message,true);note('Password reset link email par bhej diya gaya.');}
 async function signup(){const email=document.getElementById('email').value,password=document.getElementById('password').value;if(!email||!password)return note('Email/password bhariye',true);const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:prompt('Aapka naam?')||'',phone:prompt('Mobile number?')||''}}});if(error)note(error.message,true);else note(data.session?'Signup successful':'Signup successful. Email verification required.')}
 async function login(){const {data,error}=await sb.auth.signInWithPassword({email:document.getElementById('email').value,password:document.getElementById('password').value});if(error)note(error.message,true);else{currentUser=data.user;note('Login successful ✅');loadAccount()}}
-async function logout(){await sb.auth.signOut();currentUser=null;selectedAddress=null;localStorage.removeItem('shubhmart_selected_address');note('Logout ho gaya');loadAccount()}
+async function logout(){await sb.auth.signOut();currentUser=null;selectedAddress=null;localStorage.removeItem('shubhmart_selected_address');document.getElementById('cartBadge')&&(document.getElementById('cartBadge').textContent='0');document.getElementById('notifBadge')&&(document.getElementById('notifBadge').textContent='0');note('Logout ho gaya');loadAccount()}
 async function loadAccount(){
  const box=document.getElementById('userbox'), lb=document.getElementById('loginbox'), ab=document.getElementById('addressbox');
  if(!currentUser){box.innerHTML='<div class="small">Customer login/signup karein.</div>';lb.classList.remove('hidden');ab.classList.add('hidden');return}
@@ -422,7 +424,7 @@ async function loadWishlist(){
  const e=document.getElementById('wishlistbox'); if(!currentUser){e.innerHTML='Login kijiye.';return}
  const {data,error}=await sb.from('wishlist').select('id,product_id,products(id,name,price,mrp,image_url,stock)').eq('customer_id',currentUser.id);
  if(error){e.textContent=error.message;return}
- e.innerHTML=data?.length?data.map(w=>`<div class="panel row"><img src="${w.products?.image_url||'https://placehold.co/100x80'}" style="width:80px;height:60px;object-fit:cover;border-radius:8px">
+ e.innerHTML=data?.length?data.map(w=>`<div class="panel row"><img src="${esc(w.products?.image_url||'https://placehold.co/100x80')}" style="width:80px;height:60px;object-fit:cover;border-radius:8px">
  <div style="flex:1"><b>${esc(w.products?.name||'Product')}</b><br>₹${w.products?.price||0}</div>
  <button class="btn" onclick="addCart('${w.product_id}')">Add to Cart</button><button class="btn alt" onclick="toggleWishlist('${w.product_id}')">Remove</button></div>`).join(''):'Wishlist empty.';
 }
@@ -459,7 +461,7 @@ async function checkout(){
  },modal:{ondismiss:async function(){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});note('Payment cancel ho gaya. Order create nahi hua ✅',true);show('cart');loadCart()} }};
  const rz=new Razorpay(options);rz.on('payment.failed',async function(){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});note('Payment failed/cancelled. Dobara try karein.',true);show('cart');loadCart()});rz.open();
 }
-async function loadNotifications(){const e=document.getElementById('notificationsbox');if(!currentUser){e.innerHTML='Login kijiye.';return}const {data,error}=await sb.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);if(error){e.innerHTML='Notification error: '+esc(error.message);return}e.innerHTML=data?.length?data.map(n=>`<div class="panel ${n.is_read?'':'msg'}" onclick="markNotificationRead('${n.id}')"><b>${esc(n.title)}</b><br>${esc(n.body)}<br><span class="small">${new Date(n.created_at).toLocaleString('en-IN')}</span>${n.is_read?'':'<br><span class="small">Tap to mark read</span>'}</div>`).join(''):'No notifications yet.';const unread=(data||[]).filter(n=>!n.is_read).length;document.title=unread?`(${unread}) ShubhMart — Live Marketplace`:'ShubhMart — Live Marketplace';}
+async function loadNotifications(){const e=document.getElementById('notificationsbox');if(!currentUser){e.innerHTML='Login kijiye.';return}const {data,error}=await sb.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);if(error){e.innerHTML='Notification error: '+esc(error.message);return}e.innerHTML=data?.length?data.map(n=>`<div class="panel ${n.is_read?'':'msg'}" onclick="markNotificationRead('${n.id}')"><b>${esc(n.title)}</b><br>${esc(n.body)}<br><span class="small">${new Date(n.created_at).toLocaleString('en-IN')}</span>${n.is_read?'':'<br><span class="small">Tap to mark read</span>'}</div>`).join(''):'No notifications yet.';const unread=(data||[]).filter(n=>!n.is_read).length;const nb=document.getElementById('notifBadge');if(nb)nb.textContent=String(unread);document.title=unread?`(${unread}) ShubhMart — Live Marketplace`:'ShubhMart — Live Marketplace';}
 async function markNotificationRead(id){const {error}=await sb.from('notifications').update({is_read:true}).eq('id',id).eq('user_id',currentUser.id);if(error)return note(error.message,true);loadNotifications()}
 async function markAllNotificationsRead(){if(!currentUser)return;const {error}=await sb.from('notifications').update({is_read:true}).eq('user_id',currentUser.id).eq('is_read',false);if(error)return note(error.message,true);loadNotifications();note('All notifications read ✅')}
 let notificationChannel=null;function startNotificationRealtime(){if(notificationChannel)sb.removeChannel(notificationChannel);if(!currentUser)return;notificationChannel=sb.channel('customer-notifications-'+currentUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:`user_id=eq.${currentUser.id}`},payload=>{const n=payload.new;note('🔔 '+n.title+' — '+n.body);if('Notification' in window && Notification.permission==='granted')new Notification(n.title,{body:n.body});loadNotifications()}).subscribe(status=>{if(status==='CHANNEL_ERROR')console.warn('Notification realtime channel error')})}
