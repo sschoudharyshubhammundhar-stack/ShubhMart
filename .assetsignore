@@ -1,5 +1,7 @@
 .git/
 .github/
+node_modules/
+.wrangler/
 docs/
 README.md
 LICENSE*
@@ -12,3 +14,4 @@ CHANGELOG*
 *.db
 netlify.toml
 wrangler.toml
+*.log
