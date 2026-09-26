@@ -69,11 +69,24 @@ async function enhanceProduct(p){
  (p.warranty_details?'<p><b>Warranty:</b> '+esc(p.warranty_details)+'</p>':'')+
  (p.return_eligible?'<p><b>Returns:</b> Eligible as per policy</p>':'<p><b>Returns:</b> Product-specific policy</p>')+
  (seller?'<p><b>Seller:</b> '+esc(seller.shop_name||seller.seller_name)+' · '+esc(seller.status||'Pending')+'</p>':'')+
- (vars.length?'<h4>Variants</h4><div class="sm-pro-actions">'+vars.map(v=>'<button class="sm-pro-pill" onclick="smSelectVariant(\''+v.id+'\')">'+esc(v.variant_name||'Variant')+': '+esc(v.option_value||'')+' · ₹'+Number(v.price).toFixed(0)+' · Stock '+Number(v.stock||0)+'</button>').join('')+'</div>':'')+
+ (vars.length?'<h4>Variants</h4><div class="sm-pro-actions">'+vars.map(v=>'<button class="sm-pro-pill" type="button" onclick="smSelectVariant(\''+v.id+'\',\''+p.id+'\')">'+esc(v.variant_name||'Variant')+': '+esc(v.option_value||'')+' · ₹'+Number(v.price).toFixed(0)+' · Stock '+Number(v.stock||0)+'</button>').join('')+'</div>':'')+
  '</div>';
  window.smVariantCache=vars;
+ window.smVariantProductId=p.id;
 }
-window.smSelectVariant=id=>{const v=(window.smVariantCache||[]).find(x=>x.id===id);if(v)noteSafe('Variant selected: '+(v.variant_name||'Variant')+' — '+(v.option_value||'')+' · ₹'+Number(v.price).toFixed(0))};
+window.smSelectVariant=id=>{const v=(window.smVariantCache||[]).find(x=>String(x.id)===String(id));if(v)noteSafe('Variant selected: '+(v.variant_name||'Variant')+' — '+(v.option_value||'')+' · ₹'+Number(v.price).toFixed(0))};
+window.smSelectVariant= function(id,productId){
+ const v=(window.smVariantCache||[]).find(x=>String(x.id)===String(id));if(!v)return;
+ window.smSelectedVariants=window.smSelectedVariants||{};
+ window.smSelectedVariants[productId]=v.id;
+ const price=$('smModalPrice');if(price)price.textContent='₹'+Number(v.price||0).toFixed(0);
+ const stock=$('smModalStock');if(stock)stock.textContent=Number(v.stock||0)>0?'In Stock: '+Number(v.stock||0):'Out of Stock';
+ const img=$('smModalImage');if(img&&v.image_url)img.src=v.image_url;
+ let n=$('smSelectedVariantNotice');if(!n){n=document.createElement('div');n.id='smSelectedVariantNotice';n.className='sm-pro-pill';const inner=$('smProProductDetails');inner?.prepend(n)}
+ if(n)n.textContent='✓ Selected: '+(v.variant_name||'Variant')+(v.option_value?' — '+v.option_value:'');
+ if(typeof window.note==='function')window.note('Variant selected ✅');
+};
+
 
 async function safeReview(pid){
  const u=user(),s=sbx();if(!u||!s)return noteSafe('Review dene ke liye login kijiye.');
