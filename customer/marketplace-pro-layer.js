@@ -74,14 +74,13 @@ async function enhanceProduct(p){
  window.smVariantCache=vars;
  window.smVariantProductId=p.id;
 }
-window.smSelectVariant=id=>{const v=(window.smVariantCache||[]).find(x=>String(x.id)===String(id));if(v)noteSafe('Variant selected: '+(v.variant_name||'Variant')+' — '+(v.option_value||'')+' · ₹'+Number(v.price).toFixed(0))};
 window.smSelectVariant= function(id,productId){
  const v=(window.smVariantCache||[]).find(x=>String(x.id)===String(id));if(!v)return;
  window.smSelectedVariants=window.smSelectedVariants||{};
  window.smSelectedVariants[productId]=v.id;
  const price=$('smModalPrice');if(price)price.textContent='₹'+Number(v.price||0).toFixed(0);
  const stock=$('smModalStock');if(stock)stock.textContent=Number(v.stock||0)>0?'In Stock: '+Number(v.stock||0):'Out of Stock';
- const img=$('smModalImage');if(img&&v.image_url)img.src=v.image_url;
+ const img=$('smModalImage');if(img&&v.image_url)img.src=v.image_url;const add=$('smModalAddButton');if(add)add.disabled=Number(v.stock||0)<1;
  let n=$('smSelectedVariantNotice');if(!n){n=document.createElement('div');n.id='smSelectedVariantNotice';n.className='sm-pro-pill';const inner=$('smProProductDetails');inner?.prepend(n)}
  if(n)n.textContent='✓ Selected: '+(v.variant_name||'Variant')+(v.option_value?' — '+v.option_value:'');
  if(typeof window.note==='function')window.note('Variant selected ✅');
