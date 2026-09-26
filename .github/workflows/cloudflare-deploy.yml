@@ -15,6 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -print0 | xargs -0 -n1 node --check
+
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v4
         with:
