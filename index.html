@@ -367,8 +367,8 @@ async function buy(id){await addCart(id);show('cart')}
 async function loadCart(){
  if(!currentUser){document.getElementById('cartbox').innerHTML='Login kijiye.';document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden');return}
  const {data,error}=await sb.from('cart').select('id,quantity,product_id,products(id,name,price,mrp,image_url,stock,status,is_live)').eq('customer_id',currentUser.id);
- if(error){document.getElementById('cartbox').textContent='Cart error: '+error.message;note(error.message,true);return}
- let total=0;let unavailable=0;const box=document.getElementById('cartbox');
+ if(error){document.getElementById('cartbox').textContent='Cart error: '+error.message;const cb=document.getElementById('cartBadge');if(cb)cb.textContent='0';note(error.message,true);return}
+ let total=0;let unavailable=0;const box=document.getElementById('cartbox');const cartCount=(data||[]).reduce((sum,x)=>sum+(Number(x.quantity)||0),0);const cb=document.getElementById('cartBadge');if(cb)cb.textContent=String(cartCount);
  if(data?.length){
    box.innerHTML=data.map(x=>{
      const live=x.products?.status==='Active'&&x.products?.is_live===true&&Number(x.products?.stock||0)>0;
