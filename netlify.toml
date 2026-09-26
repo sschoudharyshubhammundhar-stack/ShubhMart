@@ -1,6 +1,11 @@
 [build]
   publish = "."
 
+[[redirects]]
+  from = "/legal"
+  to = "/legal-center.html"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
