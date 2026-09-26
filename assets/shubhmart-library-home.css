@@ -33,3 +33,29 @@ body{background:radial-gradient(circle at 8% 0%,#fff7e8 0,#faf7ff 30%,#f5f7ff 68
 .shubh-daily b{font-size:8px!important}.shubh-daily small{font-size:6.5px!important}.shubh-daily-icon{width:22px!important;height:22px!important;font-size:13px!important;flex:0 0 22px!important}
 @media(max-width:1050px){.shubh-daily{left:calc(100% + 5px)!important;width:98px!important;max-width:98px!important}}
 @media(max-width:700px){.brandbar{margin-bottom:10px!important}.shubh-daily{left:calc(100% + 5px)!important;top:50%!important;bottom:auto!important;transform:translateY(-50%)!important;width:96px!important;max-width:96px!important}}
+
+
+/* 2026-09-26 responsive header hardening: Daily badge stays inside brand area */
+.header{grid-template-columns:minmax(320px,340px) minmax(0,1fr) auto!important}
+.brandbar{width:340px!important;min-width:340px!important;position:relative!important}
+.brand-full-logo{width:220px!important;max-width:220px!important}
+.shubh-daily{left:auto!important;right:4px!important;top:50%!important;transform:translateY(-50%)!important;width:108px!important;max-width:108px!important}
+@media(max-width:1050px){
+  .header{grid-template-columns:minmax(320px,340px) minmax(0,1fr)!important}
+  .brandbar{width:340px!important;min-width:340px!important}
+  .brand-full-logo{width:220px!important;max-width:220px!important}
+  .shubh-daily{left:auto!important;right:4px!important;width:104px!important;max-width:104px!important}
+}
+@media(max-width:700px){
+  .header{display:block!important}
+  .brandbar{width:100%!important;min-width:0!important;height:60px!important;margin-bottom:10px!important;padding:3px 7px!important}
+  .brand-full-logo{width:190px!important;max-width:190px!important;height:60px!important}
+  .shubh-daily{right:4px!important;left:auto!important;width:104px!important;max-width:104px!important;top:50%!important}
+}
+@media(max-width:430px){
+  .brandbar{height:54px!important}
+  .brand-full-logo{width:165px!important;max-width:165px!important;height:54px!important}
+  .shubh-daily{width:98px!important;max-width:98px!important;padding:5px 6px!important}
+  .shubh-daily b{font-size:8px!important}
+  .shubh-daily small{font-size:6px!important}
+}
