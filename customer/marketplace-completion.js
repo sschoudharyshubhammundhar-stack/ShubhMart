@@ -40,4 +40,44 @@ window.openMarketplaceHub=openHub;window.closeMarketplaceHub=closeHub;window.rem
 function injectCompletionUI(){if(document.getElementById('smMarketplaceHubBtn'))return;const b=document.createElement('button');b.id='smMarketplaceHubBtn';b.className='sm-hub-fab';b.textContent='🛍️ Marketplace';b.onclick=openHub;document.body.appendChild(b);installProductEnhancements()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',injectCompletionUI);else injectCompletionUI();
 setTimeout(installProductEnhancements,1000);setTimeout(installProductEnhancements,3000);
+/* SHUBHMART CUSTOMER FINAL HARDENING v1 — customer experience QA */
+(function(){
+'use strict';
+if(window.__smCustomerHardening)return;window.__smCustomerHardening=true;
+const $=s=>document.querySelector(s);
+function injectStyle(){
+ if($('#sm-customer-hardening-style'))return;
+ const st=document.createElement('style');st.id='sm-customer-hardening-style';
+ st.textContent=`.sm-statusbar{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:3000;background:#071638;color:#fff;padding:9px 14px;border-radius:999px;font-size:12px;font-weight:800;box-shadow:0 8px 25px #07163844;display:none}.sm-statusbar.show{display:block}.sm-skip{position:fixed;left:10px;top:-60px;z-index:4000;background:#ffd21a;color:#071638;padding:9px 13px;border-radius:9px;font-weight:900}.sm-skip:focus{top:10px}@media(max-width:700px){.sm-statusbar{top:6px;font-size:11px;max-width:92%;text-align:center}.sm-skip{font-size:12px}}`;
+ document.head.appendChild(st);
+}
+function seo(){
+ const set=(name,content)=>{let m=document.querySelector('meta[name="'+name+'"]');if(!m){m=document.createElement('meta');m.name=name;document.head.appendChild(m)}m.content=content};
+ set('description','ShubhMart — Har Zaroorat, Ek Jagah. Shop fashion, beauty, electronics, home essentials and more from marketplace sellers.');
+ set('theme-color','#06142f');set('robots','index,follow,max-image-preview:large');
+ if(!document.querySelector('link[rel="canonical"]')){const l=document.createElement('link');l.rel='canonical';l.href=location.origin+location.pathname;document.head.appendChild(l)}
+ if(!document.querySelector('meta[property="og:title"]')){const m=document.createElement('meta');m.setAttribute('property','og:title');m.content='ShubhMart — Har Zaroorat, Ek Jagah';document.head.appendChild(m)}
+ if(!document.getElementById('sm-marketplace-schema')){const s=document.createElement('script');s.id='sm-marketplace-schema';s.type='application/ld+json';s.textContent=JSON.stringify({'@context':'https://schema.org','@type':'WebSite','name':'ShubhMart','url':location.origin+location.pathname,'potentialAction':{'@type':'SearchAction','target':location.origin+location.pathname+'?q={search_term_string}','query-input':'required name=search_term_string'}});document.head.appendChild(s)}
+}
+function accessibility(){
+ const skip=document.createElement('a');skip.className='sm-skip';skip.href='#main';skip.textContent='Skip to main content';document.body.prepend(skip);
+ const main=$('.main');if(main&&!main.id)main.id='main';
+ document.querySelectorAll('img').forEach((im,i)=>{if(!im.getAttribute('alt'))im.alt='ShubhMart product image';if(i>2&&!im.loading)im.loading='lazy';im.decoding='async'});
+ document.querySelectorAll('button').forEach(b=>{const t=(b.textContent||'').trim();if(!b.getAttribute('aria-label')&&(t==='×'||t==='🔍'||t==='❤️'||t==='♡'||t==='🛒'))b.setAttribute('aria-label',t==='×'?'Close':t==='🔍'?'Search':t.includes('🛒')?'Cart':'Wishlist')});
+}
+function networkStatus(){
+ let bar=document.getElementById('smStatusBar');if(!bar){bar=document.createElement('div');bar.id='smStatusBar';bar.className='sm-statusbar';document.body.appendChild(bar)}
+ window.addEventListener('offline',()=>{bar.textContent='Internet connection lost';bar.classList.add('show')});
+ window.addEventListener('online',()=>{bar.textContent='Back online';bar.classList.add('show');setTimeout(()=>bar.classList.remove('show'),1800)});
+}
+function keyboard(){
+ document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;document.querySelectorAll('.product-modal,.sm-delight-backdrop,.sm-pro-modal').forEach(x=>{if(!x.classList.contains('hidden'))x.remove()});const s=document.getElementById('searchsuggest');if(s)s.classList.add('hidden')});
+}
+function safety(){
+ window.addEventListener('error',e=>{if(e&&e.message)console.warn('ShubhMart customer UI error:',e.message)});
+ window.addEventListener('unhandledrejection',e=>console.warn('ShubhMart customer async error:',e&&e.reason||e));
+}
+function customerChecks(){injectStyle();seo();accessibility();networkStatus();keyboard();safety()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',customerChecks);else customerChecks();
+setTimeout(customerChecks,1200);
 })();
