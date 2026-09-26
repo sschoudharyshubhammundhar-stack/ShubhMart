@@ -1,2 +1,2 @@
 ShubhMart marketplace completion deployment trigger — 2026-09-26
-Non-external marketplace feature layer completed and wired.
+Syntax fix verified path.
