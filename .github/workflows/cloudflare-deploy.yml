@@ -18,16 +18,27 @@ jobs:
       - name: Validate JavaScript syntax
         shell: bash
         run: |
-          set -e
+          set +e
+          : > syntax-report.txt
           failed=0
           while IFS= read -r -d '' file; do
-            echo "Checking $file"
-            if ! node --check "$file"; then
-              echo "SYNTAX ERROR: $file"
+            echo "Checking $file" | tee -a syntax-report.txt
+            node --check "$file" >>syntax-report.txt 2>&1
+            rc=$?
+            if [ "$rc" -ne 0 ]; then
+              echo "SYNTAX ERROR: $file" | tee -a syntax-report.txt
               failed=1
             fi
           done < <(find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -print0)
           exit $failed
+
+      - name: Upload syntax report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shubhmart-syntax-report
+          path: syntax-report.txt
+          if-no-files-found: ignore
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v4
