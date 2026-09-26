@@ -53,7 +53,7 @@
     <button class="navlink" onclick="show('orders')">Orders</button>
     <button class="navlink" onclick="show('account')">Account</button>
     <button class="navlink" onclick="openSellerLogin()">🛍️ Seller Login</button>
-    <button class="navlink wholesale-nav" onclick="openWholesaleLogin()">🏢 Wholesale Login</button>
+    <button class="navlink wholesale-nav" onclick="openWholesaleMarket()">🏢 Wholesale Market</button>
   </div>
 </div>
 <div class="wrap main">
@@ -136,7 +136,7 @@
         <section id="wholesaleMarket" class="panel wholesale-market">
           <div class="section-head">
             <div><h2>🏢 Wholesale Price Marketplace</h2><div class="small">Bulk buyers ke liye alag business space — seller/customer contact details kabhi public nahi dikhengi.</div></div>
-            <button class="btn" onclick="openWholesaleLogin()">Wholesale Login</button>
+            <button class="btn" onclick="openWholesaleMarket()">View Wholesale Market</button>
           </div>
           <div class="msg">Retail aur Wholesale interaction ShubhMart ke platform ke through rahega. Direct mobile/email/contact sharing nahi dikhayi jayegi.</div>
           <div id="wholesaleProducts" class="grid"><div class="loaderr">Wholesale products load ho rahe hain…</div></div>
@@ -151,7 +151,7 @@
   <section id="account" class="hidden"><div class="panel"><h2>👤 Account</h2><div id="userbox"></div><div id="sellerDash" class="panel hidden"><h3>🏪 ShubhMart Seller Panel</h3><div id="sellerInfo"></div><div class="row" style="margin:10px 0">
 <a class="btn" href="seller.html">🚀 Seller Panel / Login</a>
 <a class="btn alt" href="wholesale.html">⚙️ Seller Wholesale Hub</a>
-<button class="btn" onclick="openWholesaleLogin()">🏢 Wholesale Buyer Login</button>
+
 </div><div id="sellerForm" class="hidden"><div class="panel" style="background:#faf8ff"><h4>✨ Quick Professional Listing</h4><p class="small">Ek real product photo + basic facts dijiye. AI Listing Studio बाकी title, highlights, SEO, attributes aur media workflow तैयार करेगा. AI facts invent नहीं करेगा.</p><div class="grid"><input id="spName" placeholder="Product Name / Basic Name"><input id="spCategory" placeholder="Category"><input id="spSubCategory" placeholder="Sub-category"><input id="spBrand" placeholder="Brand (if applicable)"><input id="spOrigin" placeholder="Country of Origin"><input id="spMrp" type="number" placeholder="MRP"><input id="spPrice" type="number" placeholder="Selling Price"><input id="spCost" type="number" placeholder="Cost Price (optional)"><input id="spStock" type="number" placeholder="Stock"><input id="spTax" type="number" placeholder="Tax Rate %"><input id="spSku" placeholder="Seller SKU"><input id="spHsn" placeholder="HSN (if applicable)"></div><input id="spImage" type="url" placeholder="Real product image URL (full upload in Full Seller Panel)"><textarea id="spDesc" rows="3" placeholder="Basic factual description"></textarea><textarea id="spHighlights" rows="2" placeholder="Known product highlights (comma separated)"></textarea><textarea id="spLicence" rows="2" placeholder="Licence / compliance / manufacturer details if applicable"></textarea><div class="panel" style="margin-top:10px"><b>🏷️ Optional Wholesale</b><div class="grid"><input id="spWholesaleMoq" type="number" placeholder="MOQ"><input id="spWholesalePrice" type="number" placeholder="Wholesale Price"></div><div class="small">AI अगर product/category के facts और आपकी pricing देखकर wholesale opportunity suggest करे, तो यही listing से Wholesale भी activate किया जा सकता है.</div></div><button class="btn" onclick="sellerAddProduct()">Submit Product for AI + Compliance Review</button><div id="sellerMsg"></div></div><h4>My Products</h4><div id="sellerProducts">Login kijiye.</div></div><div id="loginbox"><input id="email" placeholder="Email"><input id="password" type="password" placeholder="Password"><button class="btn" onclick="login()">Login</button><button class="btn alt" onclick="signup()">New account / Signup</button></div><div id="addressbox" class="hidden"><h3>Delivery Address</h3><input id="aname" placeholder="Name"><input id="amobile" placeholder="Mobile"><input id="ahouse" placeholder="House/Shop"><input id="aarea" placeholder="Area"><input id="acity" placeholder="City"><input id="astate" placeholder="State"><input id="apin" placeholder="PIN code"><button class="btn" onclick="saveAddress()">Save Address</button><div id="addresses"></div><div id="selectedAddressBox" class="msg">No address selected.</div><button class="btn alt" onclick="logout()">Logout</button></div></div></section>
 </div>
 <footer class="footer"><div class="wrap footer-grid"><div><h3>ShubhMart</h3><p>Har Zaroorat, Ek Jagah — multi-vendor marketplace.</p><p class="small">Policies are provided for platform use and should be reviewed with a qualified legal/tax professional before launch.</p></div><div><h3>Quick Links</h3><ul><li><button class="footlink" onclick="show('home')">Home</button></li><li><button class="footlink" onclick="show('orders')">My Orders</button></li><li><button class="footlink" onclick="show('wishlist')">Wishlist</button></li><li><button class="footlink" onclick="show('account')">Account</button></li><li><button class="footlink" onclick="show('support')">Help & Complaints</button></li></ul></div><div><h3>Policies</h3><ul><li><button class="footlink" onclick="openLegal('terms')">Terms & Conditions</button></li><li><button class="footlink" onclick="openLegal('privacy')">Privacy Policy</button></li><li><button class="footlink" onclick="openLegal('returns')">Returns & Refunds</button></li><li><button class="footlink" onclick="openLegal('shipping')">Shipping & Delivery</button></li><li><button class="footlink" onclick="openLegal('cancellation')">Cancellation</button></li></ul></div><div><h3>Marketplace</h3><ul><li><button class="footlink" onclick="openLegal('seller')">Seller Agreement</button></li><li><button class="footlink" onclick="openLegal('prohibited')">Prohibited Products</button></li><li><button class="footlink" onclick="openLegal('grievance')">Grievance & Support</button></li><li>🔒 Secure Payments</li><li>🚚 Delivery</li></ul></div></div></footer>
@@ -180,8 +180,10 @@ function searchChanged(){
 function chooseSearch(value){document.getElementById('search').value=value;document.getElementById('searchSuggest').classList.add('hidden');document.getElementById('clearSearchBtn').style.visibility='visible';loadProducts()}
 function runSearch(){document.getElementById('searchSuggest').classList.add('hidden');loadProducts();document.getElementById('products')?.scrollIntoView({behavior:'smooth',block:'start'})}
 function clearSearch(){document.getElementById('search').value='';document.getElementById('clearSearchBtn').style.visibility='hidden';document.getElementById('searchSuggest').classList.add('hidden');loadProducts();document.getElementById('search').focus()}
-function openSellerLogin(){window.location.href='seller.html'}
-function openWholesaleLogin(){show('account');setTimeout(()=>{document.getElementById('email')?.focus();note('Wholesale Buyer Login: login karke Wholesale Price Marketplace se bulk inquiry bhejiye. Direct seller contact details share nahi hongi.')},50)}
+function openSellerLogin(){window.location.href='seller/seller-panel.html'}
+function openWholesaleMarket(){show('home');setTimeout(()=>{document.getElementById('wholesaleMarket')?.scrollIntoView({behavior:'smooth',block:'start'});loadWholesaleProducts()},0)}
+function openWholesaleLogin(){openWholesaleMarket();note('Wholesale Market dekhne ke liye login ki zarurat nahi hai. Inquiry/quote bhejne par hi customer login maanga jayega.')}
+
 async function loadWholesaleProducts(){
  const e=document.getElementById('wholesaleProducts'); if(!e)return;
  e.innerHTML='<div class="loaderr">Wholesale products load ho rahe hain…</div>';
@@ -190,7 +192,7 @@ async function loadWholesaleProducts(){
  e.innerHTML=(data||[]).length?(data||[]).map(p=>'<div class="card"><img src="'+(p.image_url||'https://placehold.co/500x400?text=Wholesale')+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">WHOLESALE</span><h3>'+esc(p.name)+'</h3><div class="small">'+esc(p.category||'')+'</div><div><span class="wholesale-price">₹'+Number(p.wholesale_price||0).toFixed(0)</span> <span class="small">per piece</span></div><div class="small">Retail ₹'+Number(p.price||0).toFixed(0)+' · Stock '+Number(p.stock||0)+'</div><span class="wholesale-moq">MOQ: '+Number(p.wholesale_moq||1)+'</span><div class="contact-shield">🔒 Seller contact hidden · Inquiry only through ShubhMart</div><button class="btn" onclick="sendWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'Abhi koi approved wholesale product available nahi hai.';
 }
 async function sendWholesaleInquiry(productId){
- if(!currentUser){openWholesaleLogin();return}
+ if(!currentUser){show('account');setTimeout(()=>document.getElementById('email')?.focus(),50);note('Wholesale Market open hai. Inquiry bhejne ke liye pehle normal ShubhMart customer login/signup kijiye.',true);return}
  const qty=Math.floor(Number(prompt('Wholesale quantity / MOQ se kam nahi:')||0));
  if(!qty)return;
  const targetRaw=prompt('Target price per piece (optional):');
