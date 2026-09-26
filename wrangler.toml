@@ -7,3 +7,4 @@ directory = "."
 # Automatic deployment trigger
 # Deployment connection verified after secret update
 # CI trigger check
+# LOCKED APPROVED DESIGN: deploy current main exactly as-is
