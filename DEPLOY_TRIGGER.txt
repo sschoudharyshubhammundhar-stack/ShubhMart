@@ -1,5 +1,21 @@
-ShubhMart Customer Section 1 — second point-by-point QA + runtime hardening
-Verified/fixed: customer script parse issue in checkout address loader, live-product enforcement in search/product/cart/recommendations/reorder, cancellation UI alignment, return ownership/status validation, duplicate return payload cleanup, secure stock reservation/release during order lifecycle, approved/live product enforcement inside create_order_from_cart.
-Verified database: required customer order RPCs exist; RLS is enabled on core customer tables; no negative stock or stale stock reservations found; verified-purchase review unique index exists.
-Design lock preserved. Section 2 remains locked until Customer Section 1 QA is accepted.
-Deployment refresh requested: 2026-09-26T08:55:00Z
+ShubhMart Customer Section 1 — FINAL point-by-point QA + hardening lock
+Verified/fixed in this pass:
+1. Checkout JS syntax: removed duplicate async keyword from buy() and repaired loadCheckoutAddresses().
+2. Cart quantity validation: changeQty now reads is_live and enforces Active + live + stock limits.
+3. Cart availability: unavailable/offline products are visibly blocked from checkout until removed.
+4. Buy Again: customer ownership, Active/live status and stock are rechecked; quantities are clamped.
+5. Cancel: customer ownership/status is rechecked before secure cancellation RPC and confirmation is shown.
+6. Return/Replacement: direct returns insert removed from customer code; secure request_order_return RPC is used.
+7. Address selection: owner-bound selectAddressById added; raw address objects are no longer embedded in onclick.
+8. Customer database hardening: direct authenticated INSERT access removed from Orders, Order_items and payments; secure order RPC remains the write path.
+9. Verified reviews: product_reviews INSERT policy now requires the authenticated customer to own a Delivered order containing the reviewed product.
+10. Core customer RLS re-verified on Orders, Order_items, cart, addresses, reviews, questions, returns, support tickets, notifications, saved items, buyer protection, payments and refunds.
+11. Data integrity rechecked: 0 reserved orders, 0 negative-stock products, 0 orphan customer order-items, 0 invalid pending reviews.
+12. Inline customer click handlers audited: 46 handler references checked; no missing customer function definitions found.
+13. Static IDs audited: 115 HTML IDs, 96 getElementById references; no missing/duplicate static IDs found.
+14. Approved premium 3D/mobile design lock preserved; no visual redesign made in this QA pass.
+
+Important: broader Supabase security/performance advisor warnings remain elsewhere in the project (including seller/admin functions). Those belong to later sections and were not changed here.
+Design lock preserved.
+Section 2 remains locked until Customer Section 1 is accepted.
+Deployment refresh requested: 2026-09-26T09:35:00Z
