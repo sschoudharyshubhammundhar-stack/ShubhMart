@@ -139,14 +139,22 @@ async function reorder(orderId){
  const s=sbx(),u=user();if(!s||!u)return noteSafe('Login kijiye.');
  const {data:order,error:orderError}=await s.from('Orders').select('id').eq('id',orderId).eq('customer_id',u.id).maybeSingle();
  if(orderError||!order)return noteSafe(orderError?.message||'Order nahi mila.');
- const {data,error}=await s.from('Order_items').select('product_id,quantity,products(id,name,stock,status,is_live)').eq('order_id',orderId);
+ const {data,error}=await s.from('Order_items').select('product_id,variant_id,quantity,products(id,name,stock,status,is_live),variant:product_variants(id,name,variant_name,option_value,stock,status)').eq('order_id',orderId);
  if(error)return noteSafe(error.message);
  let added=0,skipped=0;
- for(const i of data||[]){const stock=Number(i.products?.stock||0);if(i.products?.status==='Active'&&i.products?.is_live===true&&stock>0){const qty=Math.min(Math.max(1,Number(i.quantity||1)),stock);const r=await s.from('cart').upsert({customer_id:u.id,product_id:i.product_id,quantity:qty},{onConflict:'customer_id,product_id'});if(!r.error)added++;else skipped++}else skipped++}
- noteSafe(added?added+' product(s) Buy Again ke liye cart mein add ho gaye.'+(skipped?' '+skipped+' unavailable item(s) skip hue.':''):'Order ke products ab available nahi hain.');if(typeof window.loadCart==='function')window.loadCart();if(typeof window.show==='function')window.show('cart');
+ for(const i of data||[]){
+   const stock=i.variant_id?Number(i.variant?.stock||0):Number(i.products?.stock||0);
+   const variantOk=!i.variant_id||Boolean(i.variant&&i.variant.status==='Active');
+   if(i.products?.status==='Active'&&i.products?.is_live===true&&variantOk&&stock>0){
+     const qty=Math.min(Math.max(1,Number(i.quantity||1)),stock);
+     const r=await s.from('cart').upsert({customer_id:u.id,product_id:i.product_id,variant_id:i.variant_id||null,quantity:qty},{onConflict:'customer_id,product_id'});
+     if(!r.error)added++;else skipped++;
+   }else skipped++;
+ }
+ noteSafe(added?added+' product(s) Buy Again ke liye cart mein add ho gaye.'+(skipped?' '+skipped+' unavailable item(s) skip hue.':''):'Order ke products ab available nahi hain.');
+ if(typeof window.loadCart==='function')window.loadCart();
+ if(typeof window.show==='function')window.show('cart');
 }
-window.smReorder=reorder;
-
 async function orderTimeline(orderId){
  const s=sbx();if(!s)return;
  const {data:sh}=await s.from('shipments').select('id,tracking_number,shipment_status,estimated_delivery_at').eq('order_id',orderId).maybeSingle();
