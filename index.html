@@ -61,21 +61,33 @@
   <div class="section-head"><h2>Seller Registration & KYC</h2><button class="btn alt" onclick="show('home')">Close</button></div>
   <div class="msg">Seller account activate karne se pehle required business/KYC details aur applicable licences verify kiye jayenge.</div>
   <div class="row">
-    <div style="flex:1"><label>Seller Type</label><select id="sellerType"><option value="individual">Individual / Proprietor</option><option value="business">Registered Business</option><option value="company">Company / LLP</option></select></div>
-    <div style="flex:1"><label>Business / Seller Name</label><input id="sellerName" placeholder="Seller ya business name"></div>
+    <div style="flex:1"><label>Seller Type</label><select id="sellerType"><option value="individual">Individual</option><option value="proprietorship">Proprietorship</option><option value="company">Company</option><option value="partnership">Partnership / LLP</option><option value="wholesaler">Wholesaler</option><option value="manufacturer">Manufacturer</option><option value="distributor">Distributor</option><option value="retailer">Retail Seller</option></select></div>
+    <div style="flex:1"><label>Entity Type</label><select id="sellerEntityType"><option value="individual">Individual</option><option value="proprietorship">Proprietorship</option><option value="partnership">Partnership</option><option value="llp">LLP</option><option value="company">Company</option></select></div>
   </div>
   <div class="row">
+    <div style="flex:1"><label>Business / Seller Name</label><input id="sellerName" placeholder="Seller ya business name"></div>
     <div style="flex:1"><label>Mobile</label><input id="sellerMobile" inputmode="tel" placeholder="10 digit mobile"></div>
-    <div style="flex:1"><label>Email</label><input id="sellerEmail" type="email" placeholder="seller@email.com"></div>
   </div>
-  <label>Business / Pickup Address</label><textarea id="sellerAddress" placeholder="Complete address"></textarea>
+  <div class="row">
+    <div style="flex:1"><label>Email</label><input id="sellerEmail" type="email" placeholder="seller@email.com"></div>
+    <div style="flex:1"><label>Primary Product Category</label><input id="sellerCategory" placeholder="e.g. Beauty, Fashion"></div>
+  </div>
+  <label>Business Address</label><textarea id="sellerAddress" placeholder="Registered / business address"></textarea>
+  <div class="row">
+    <div style="flex:1"><label>Pickup Address</label><textarea id="sellerPickup" placeholder="Where orders will be picked up"></textarea></div>
+    <div style="flex:1"><label>Billing Address</label><textarea id="sellerBilling" placeholder="Billing / invoice address"></textarea></div>
+  </div>
   <div class="row">
     <div style="flex:1"><label>PAN</label><input id="sellerPan" placeholder="PAN"></div>
-    <div style="flex:1"><label>GSTIN (where applicable)</label><input id="sellerGstin" placeholder="GSTIN"></div>
+    <div style="flex:1"><label>GST Status</label><select id="sellerGstStatus"><option value="registered">GST Registered</option><option value="not_registered">Non-GST / Unregistered (where legally applicable)</option><option value="composition">Composition / special status (where applicable)</option><option value="not_provided">Not provided yet</option></select></div>
+  </div>
+  <div class="row">
+    <div style="flex:1"><label>GSTIN (if applicable)</label><input id="sellerGstin" placeholder="GSTIN"></div>
+    <div style="flex:1"><label>Udyam / MSME</label><select id="sellerUdyam"><option value="no">Not registered</option><option value="yes">Udyam registered</option></select><input id="sellerUdyamNo" placeholder="Udyam Registration Number (if applicable)"></div>
   </div>
   <div class="row">
     <div style="flex:1"><label>Bank / Payout Details</label><input id="sellerBank" placeholder="Bank account / payout details"></div>
-    <div style="flex:1"><label>Primary Product Category</label><input id="sellerCategory" placeholder="e.g. Beauty, Fashion"></div>
+    <div style="flex:1"><label>Wholesale</label><select id="sellerWholesale"><option value="no">Retail only</option><option value="yes">Retail + Wholesale</option></select></div>
   </div>
   <label>Applicable Licence / Certificate details (if required for your category)</label>
   <textarea id="sellerLicence" placeholder="FSSAI / Legal Metrology / BIS / drug licence etc., where applicable"></textarea>
@@ -337,11 +349,13 @@ async function shareMagicDrop(){
 function openSellerRegistration(){document.getElementById('sellerCompliancePanel')?.classList.remove('hidden');document.getElementById('sellerCompliancePanel')?.scrollIntoView({behavior:'smooth',block:'start'});}
 async function submitSellerCompliance(){
  const m=document.getElementById('sellerComplianceMsg');
- const required=['sellerName','sellerMobile','sellerEmail','sellerAddress','sellerPan','sellerCategory'];
+ const required=['sellerName','sellerMobile','sellerEmail','sellerAddress','sellerPickup','sellerBilling','sellerPan','sellerCategory'];
  if(required.some(id=>!document.getElementById(id)?.value.trim())){m.innerHTML='<div class="errorbox">Required details complete kijiye.</div>';return;}
  if(!document.getElementById('sellerDeclaration').checked||!document.getElementById('sellerAgreement').checked){m.innerHTML='<div class="errorbox">Seller declaration aur agreement accept karna zaroori hai.</div>';return;}
  if(!currentUser){m.innerHTML='<div class="errorbox">Seller KYC submit karne se pehle login kijiye.</div>';return;}
- const payload={seller_id:currentUser.id,seller_type:document.getElementById('sellerType').value,seller_name:document.getElementById('sellerName').value.trim(),mobile:document.getElementById('sellerMobile').value.trim(),email:document.getElementById('sellerEmail').value.trim(),address:document.getElementById('sellerAddress').value.trim(),pan:document.getElementById('sellerPan').value.trim().toUpperCase(),gstin:document.getElementById('sellerGstin').value.trim().toUpperCase(),bank_details:document.getElementById('sellerBank').value.trim(),category:document.getElementById('sellerCategory').value.trim(),licence_details:document.getElementById('sellerLicence').value.trim(),kyc_status:'Pending'};
+ const gstStatus=document.getElementById('sellerGstStatus').value,gstin=document.getElementById('sellerGstin').value.trim().toUpperCase();
+ if(gstStatus==='registered'&&!gstin){m.innerHTML='<div class="errorbox">GST Registered select kiya hai, GSTIN dijiye.</div>';return;}
+ const payload={seller_id:currentUser.id,seller_type:document.getElementById('sellerType').value,entity_type:document.getElementById('sellerEntityType').value,seller_name:document.getElementById('sellerName').value.trim(),mobile:document.getElementById('sellerMobile').value.trim(),email:document.getElementById('sellerEmail').value.trim(),address:document.getElementById('sellerAddress').value.trim(),business_address:document.getElementById('sellerAddress').value.trim(),pickup_address:document.getElementById('sellerPickup').value.trim(),billing_address:document.getElementById('sellerBilling').value.trim(),pan:document.getElementById('sellerPan').value.trim().toUpperCase(),gst_status:gstStatus,gstin,udyam_registered:document.getElementById('sellerUdyam').value==='yes',udyam_number:document.getElementById('sellerUdyamNo').value.trim()||null,bank_details:document.getElementById('sellerBank').value.trim(),category:document.getElementById('sellerCategory').value.trim(),licence_details:document.getElementById('sellerLicence').value.trim(),wholesale_enabled:document.getElementById('sellerWholesale').value==='yes',declaration_accepted:true,agreement_accepted:true,agreement_version:'1.0',kyc_status:'Pending'};
  const {error}=await sb.from('seller_applications').upsert(payload,{onConflict:'seller_id'});
  if(error){m.innerHTML='<div class="errorbox">KYC save nahi hua: '+esc(error.message)+'</div>';return;}
  m.innerHTML='<div class="msg">Seller KYC submit ho gaya. Status: Pending verification.</div>';
