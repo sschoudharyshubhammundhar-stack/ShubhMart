@@ -1,4 +1,4 @@
-ShubhMart Customer Section 1 — final QA deployment trigger
-Completed customer-side pass: live search suggestions, orders actions, buy-again, cancellation flow, verified product-specific reviews, accessibility/SEO/resilience hardening.
-Design lock preserved. No Seller/Wholesale merge.
-Refresh requested: 2026-09-26T08:20:00Z
+ShubhMart Customer Section 1 — 100% source-level completion pass
+Customer hardening completed: live/approved product visibility, stock-safe cart, account recovery, address edit/default/delete, order actions, buy-again, cancellation, return/exchange, tracking, buyer protection, wishlist, compare, saved, recent, coupons, reviews/Q&A, support, notifications, accessibility, SEO and mobile resilience.
+Design lock preserved. Section 2 not started until Customer lock.
+Deployment refresh requested: 2026-09-26T08:45:00Z
