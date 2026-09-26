@@ -308,7 +308,7 @@ async function sendWholesaleInquiry(productId){
 }
 
 async function openProductById(id){
- const {data,error}=await sb.from('products').select('*').eq('id',id).eq('status','Active').maybeSingle();
+ const {data,error}=await sb.from('products').select('*').eq('id',id).eq('status','Active').eq('is_live',true).maybeSingle();
  if(error||!data){note(error?.message||'Product nahi mila',true);return}
  openProduct(data);
 }
@@ -338,7 +338,7 @@ async function loadProducts(){loadWholesaleProducts();
  const sellerFilter=new URLSearchParams(location.search).get('seller')||'';
  const cat=document.getElementById('categoryFilter')?.value||'';
  const sort=document.getElementById('sortFilter')?.value||'new';
- let query=sb.from('products').select('*').eq('status','Active');
+ let query=sb.from('products').select('*').eq('status','Active').eq('is_live',true);
  if(q)query=query.ilike('name','%'+q+'%');
  if(sellerFilter)query=query.eq('seller_id',sellerFilter);
  if(cat)query=query.eq('category',cat);
