@@ -217,13 +217,140 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
     <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button>
   </div>
   <div class="hero-3d-scene" aria-label="ShubhMart premium 3D shopping experience">
+    <div class="hero-visual-art" aria-hidden="true">
+      <svg class="hero-visual-svg" viewBox="0 0 720 360" role="img" aria-label="3D ShubhMart shopping scene">
+        <defs>
+          <linearGradient id="sceneWall" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#183f7f"/><stop offset=".55" stop-color="#0b2858"/><stop offset="1" stop-color="#24144d"/>
+          </linearGradient>
+          <linearGradient id="sceneFloor" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#173a6f"/><stop offset=".6" stop-color="#0d2550"/><stop offset="1" stop-color="#2a174d"/>
+          </linearGradient>
+          <linearGradient id="dress" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ff68b4"/><stop offset=".45" stop-color="#ef1a82"/><stop offset="1" stop-color="#6d1d74"/>
+          </linearGradient>
+          <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffe1cf"/><stop offset=".6" stop-color="#f2ae8b"/><stop offset="1" stop-color="#d67e69"/>
+          </linearGradient>
+          <linearGradient id="cartMetal" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f5f8fd"/><stop offset=".45" stop-color="#b8c4d5"/><stop offset="1" stop-color="#78869c"/>
+          </linearGradient>
+          <filter id="softShadow" x="-30%" y="-30%" width="160%" height="180%">
+            <feDropShadow dx="14" dy="18" stdDeviation="12" flood-color="#000" flood-opacity=".34"/>
+          </filter>
+          <filter id="tinyShadow" x="-30%" y="-30%" width="160%" height="180%">
+            <feDropShadow dx="5" dy="7" stdDeviation="5" flood-color="#000" flood-opacity=".28"/>
+          </filter>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="12"/>
+          </filter>
+        </defs>
+
+        <ellipse cx="395" cy="297" rx="290" ry="34" fill="#000" opacity=".18" filter="url(#glow)"/>
+        <g filter="url(#tinyShadow)">
+          <rect x="70" y="40" width="560" height="205" rx="26" fill="url(#sceneWall)" stroke="#ffffff" stroke-opacity=".13"/>
+          <g opacity=".35">
+            <rect x="106" y="94" width="92" height="112" rx="9" fill="#8eb0e8"/>
+            <rect x="214" y="94" width="92" height="112" rx="9" fill="#9cc1f0"/>
+            <rect x="322" y="94" width="92" height="112" rx="9" fill="#93b0e4"/>
+            <rect x="430" y="94" width="92" height="112" rx="9" fill="#7fa8dc"/>
+            <rect x="538" y="94" width="58" height="112" rx="9" fill="#89a9db"/>
+          </g>
+          <rect x="77" y="44" width="546" height="10" rx="5" fill="#fff" opacity=".12"/>
+          <path d="M88 63 H617" stroke="#fff" stroke-opacity=".18"/>
+          <g transform="translate(103 68)">
+            <rect width="205" height="27" rx="10" fill="#fff" opacity=".96"/>
+            <text x="102" y="18" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="900" fill="#d51c85">SHUBHMART • SHOPPING</text>
+          </g>
+          <g transform="translate(92 31)">
+            <path d="M0 32 Q18 20 36 32 T72 32 T108 32 T144 32 T180 32 T216 32" fill="none" stroke="#ff3e95" stroke-width="16"/>
+            <path d="M0 32 Q18 44 36 32 T72 32 T108 32 T144 32 T180 32 T216 32" fill="none" stroke="#fff" stroke-width="16" stroke-dasharray="18 18"/>
+          </g>
+        </g>
+
+        <path d="M54 247 Q355 218 666 248 L625 324 Q365 345 90 321 Z" fill="url(#sceneFloor)" stroke="#fff" stroke-opacity=".12"/>
+        <path d="M75 276 Q350 252 642 274" stroke="#fff" stroke-opacity=".09" stroke-width="2"/>
+        <path d="M92 296 Q350 273 626 292" stroke="#fff" stroke-opacity=".08" stroke-width="2"/>
+
+        <g transform="translate(184 67)" filter="url(#softShadow)">
+          <path d="M32 56 C20 27 35 5 61 0 C95 -7 116 14 115 43 C114 70 97 87 68 88 C49 90 37 78 32 56 Z" fill="#4b211c"/>
+          <path d="M36 31 C39 11 55 2 77 3 C99 3 113 17 113 38 C105 25 92 20 79 18 C65 16 51 20 36 31Z" fill="#2a1517"/>
+          <ellipse cx="75" cy="49" rx="34" ry="39" fill="url(#skin)"/>
+          <path d="M61 48 Q66 42 71 48" stroke="#36211f" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M83 48 Q88 42 93 48" stroke="#36211f" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M74 66 Q80 71 87 65" stroke="#a52e58" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M67 86 L67 106 L85 106 L85 86" fill="url(#skin)"/>
+          <path d="M37 105 Q74 90 111 105 L130 220 Q76 246 19 220 Z" fill="url(#dress)"/>
+          <path d="M36 112 Q18 120 11 159" stroke="#ef338f" stroke-width="19" fill="none" stroke-linecap="round"/>
+          <path d="M111 112 Q135 120 146 153" stroke="#ff4da4" stroke-width="19" fill="none" stroke-linecap="round"/>
+          <path d="M16 220 L49 220 L45 294 L12 294 Z" fill="#23304c"/>
+          <path d="M79 220 L112 220 L124 294 L91 294 Z" fill="#23304c"/>
+          <path d="M11 294 Q29 284 48 294 L56 303 L7 303 Q0 300 11 294Z" fill="#101827"/>
+          <path d="M91 294 Q108 284 126 294 L135 303 L87 303 Q82 299 91 294Z" fill="#101827"/>
+          <g transform="translate(-10 135)">
+            <rect width="45" height="51" rx="8" fill="#fff"/>
+            <path d="M10 16 Q22 5 35 16" stroke="#7e2cc7" stroke-width="5" fill="none"/>
+            <path d="M8 18 Q22 4 37 18" stroke="#ef2b83" stroke-width="4" fill="none"/>
+          </g>
+          <g transform="translate(112 134)">
+            <rect width="48" height="53" rx="8" fill="#ffcf24"/>
+            <path d="M10 17 Q24 3 38 17" stroke="#7e2cc7" stroke-width="5" fill="none"/>
+            <path d="M8 19 Q24 3 40 19" stroke="#fff" stroke-width="4" fill="none"/>
+          </g>
+        </g>
+
+        <g transform="translate(388 65)" filter="url(#softShadow)">
+          <path d="M18 23 Q73 1 116 20 L118 178 Q72 202 16 179 Z" fill="#131a2a" stroke="#eef2f8" stroke-opacity=".9" stroke-width="5"/>
+          <rect x="27" y="37" width="82" height="128" rx="15" fill="#f6f9fd"/>
+          <circle cx="68" cy="45" r="3.5" fill="#111827"/>
+          <g transform="translate(37 63)">
+            <rect width="62" height="47" rx="9" fill="#e9eff8"/>
+            <text x="31" y="20" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="7" font-weight="900" fill="#10275a">SHUBHMART</text>
+            <text x="31" y="32" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="7" font-weight="800" fill="#e51c7e">BIG DEAL</text>
+            <circle cx="31" cy="42" r="3" fill="#ffd21a"/>
+          </g>
+          <rect x="42" y="120" width="52" height="13" rx="7" fill="#ffd21a"/>
+          <text x="68" y="129" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="6" font-weight="900" fill="#151515">SHOP NOW</text>
+        </g>
+
+        <g transform="translate(502 182)" filter="url(#softShadow)">
+          <path d="M0 0 H34 L52 18" stroke="#202938" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M35 17 L182 17 L157 93 L53 93 Z" fill="url(#cartMetal)" stroke="#293447" stroke-width="7"/>
+          <path d="M48 35 H169 M43 54 H163 M38 73 H157" stroke="#7e8b9f" stroke-width="3" opacity=".75"/>
+          <rect x="68" y="-6" width="43" height="49" rx="8" fill="#ffce2c" transform="rotate(-7 68 -6)"/>
+          <rect x="121" y="-1" width="40" height="43" rx="7" fill="#f51b83" transform="rotate(6 121 -1)"/>
+          <rect x="150" y="7" width="35" height="37" rx="6" fill="#7e3bdc" transform="rotate(10 150 7)"/>
+          <circle cx="70" cy="101" r="12" fill="#171c28"/><circle cx="150" cy="101" r="12" fill="#171c28"/>
+          <circle cx="70" cy="101" r="5" fill="#68778d"/><circle cx="150" cy="101" r="5" fill="#68778d"/>
+        </g>
+
+        <g transform="translate(87 221)" filter="url(#tinyShadow)">
+          <path d="M0 52 L55 17 L86 54 L28 89 Z" fill="#ff4b9d"/>
+          <path d="M14 44 L51 20" stroke="#fff" stroke-opacity=".8" stroke-width="6"/>
+          <path d="M55 17 L70 7" stroke="#202938" stroke-width="7" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(575 74)" filter="url(#tinyShadow)">
+          <circle cx="29" cy="29" r="27" fill="#fff7da" stroke="#ffd21a" stroke-width="5"/>
+          <circle cx="29" cy="29" r="21" fill="#111827"/>
+          <path d="M29 13 V29 L40 38" stroke="#ffd21a" stroke-width="4" stroke-linecap="round" fill="none"/>
+        </g>
+        <g font-family="Inter,Arial,sans-serif" font-weight="900">
+          <g transform="translate(501 122) rotate(-7)">
+            <rect width="120" height="27" rx="12" fill="#fff" opacity=".94"/>
+            <text x="60" y="18" text-anchor="middle" font-size="10" fill="#d61c82">Badiya Products</text>
+          </g>
+          <g transform="translate(525 153) rotate(-7)">
+            <rect width="105" height="27" rx="12" fill="#fff4a8" opacity=".97"/>
+            <text x="52" y="18" text-anchor="middle" font-size="10" fill="#6e4d00">Behtar Prices</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="hero-girl" aria-hidden="true"></div>
+    <div class="hero-phone"><div class="hero-phone-screen"><img src="assets/shubhmart-logo.png?v=20260926-3" alt="ShubhMart 3D logo"><b>Big Shopping<br>Bigger Smiles</b><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button></div></div>
+    <div class="hero-cart"></div>
     <div class="hero-awning"></div>
     <div class="hero-store-sign">✦ ShubhMart</div>
-    <div class="hero-girl" aria-hidden="true"><div class="girl-hair"></div><div class="girl-face"></div><div class="girl-body"><span>🛍️</span><span>🛍️</span></div></div>
-    <div class="hero-phone"><div class="hero-phone-screen"><img src="assets/shubhmart-logo.png?v=20260926-3" alt="ShubhMart 3D logo"><b>Big Shopping<br>Bigger Smiles</b><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button></div></div>
-    <div class="hero-cart"><span class="cart-handle"></span><div class="cart-basket"><i>🛍️</i><i>🎁</i><i>📦</i></div><div class="cart-wheel one"></div><div class="cart-wheel two"></div></div>
-    <div class="hero-prop prop-shoe">👠</div><div class="hero-prop prop-watch">⌚</div><div class="hero-prop prop-gift">🎁</div>
-    <div class="hero-notes"><b>Badiya Products</b><b>Behtar Prices</b><b>Fast Delivery</b><span>♡</span></div>
   </div>
   <div class="hero-trust-stack" aria-label="ShubhMart shopping benefits">
     <div><b>🏷️ Top Brands</b><small>Original Products</small></div>
