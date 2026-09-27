@@ -556,3 +556,35 @@ body{background:
  .hero-cart{right:-16%!important;transform:scale(.52) rotateY(-15deg)!important}
  .reference-category-row .chip span:last-child{font-size:6.6px!important}
 }
+
+
+/* SHUBHMART_3D_ARTWORK_FINISH_20260927 */
+.hero-visual-art{position:absolute!important;inset:0!important;z-index:10!important;pointer-events:none!important;overflow:visible!important}
+.hero-visual-svg{position:absolute!important;width:100%!important;height:100%!important;right:0!important;top:0!important;display:block!important;filter:saturate(1.06) contrast(1.03)!important}
+.hero-3d-scene>.hero-girl,
+.hero-3d-scene>.hero-phone,
+.hero-3d-scene>.hero-cart,
+.hero-3d-scene>.hero-awning,
+.hero-3d-scene>.hero-store-sign{display:none!important}
+.hero-trust-stack>div{backdrop-filter:blur(10px)!important}
+@media(min-width:1181px){.hero-visual-svg{transform:translate3d(2%,0,0) scale(1.02)!important;transform-origin:center!important}}
+@media(max-width:1180px){.hero-visual-svg{transform:translateY(2px) scale(1.03)!important}}
+@media(max-width:820px){
+ .hero-visual-svg{width:116%!important;height:116%!important;left:-8%!important;top:18px!important;transform:none!important}
+ .shubh-reference-hero .hero-copy{z-index:40!important}
+ .hero-trust-stack{position:relative!important;z-index:60!important}
+}
+@media(max-width:600px){
+ .head-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;margin-top:7px!important;width:100%!important}
+ .head-actions .head-action{display:grid!important;grid-template-columns:auto 1fr;align-items:center;justify-content:center;min-width:0!important;padding:7px 5px!important;font-size:10px!important;background:rgba(255,255,255,.08)!important;color:#fff!important;border:1px solid rgba(255,255,255,.12)!important}
+ .head-actions .head-action:nth-child(1),
+ .head-actions .head-action:nth-child(4){display:none!important}
+ .head-actions .head-action .ico{font-size:20px!important;line-height:20px!important}
+ .head-actions .badge{top:2px!important;right:22%!important;font-size:8px!important;padding:2px 5px!important}
+ .hero-visual-svg{width:136%!important;height:136%!important;left:-18%!important;top:22px!important}
+ .shubh-reference-hero{overflow:hidden!important}
+}
+@media(max-width:390px){
+ .head-actions .head-action{font-size:9px!important}
+ .hero-visual-svg{width:148%!important;height:148%!important;left:-24%!important;top:22px!important}
+}
