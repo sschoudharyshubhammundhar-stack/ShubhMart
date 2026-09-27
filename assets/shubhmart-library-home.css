@@ -685,3 +685,42 @@ body{background:
  .shubh-reference-hero{max-height:none!important;overflow:hidden!important}
  .hero-copy{overflow:visible!important}
 }
+
+/* SHUBHMART_DEEP_REFERENCE_AUDIT_20260927
+   Final cleanup: remove duplicate overlay artwork so the approved SVG 3D scene is the single source of truth.
+   Preserve all marketplace functionality; visual-only changes. */
+.shubh-reference-hero > .hero-3d-scene > .hero-girl,
+.shubh-reference-hero > .hero-3d-scene > .hero-phone,
+.shubh-reference-hero > .hero-3d-scene > .hero-cart,
+.shubh-reference-hero > .hero-3d-scene > .hero-awning,
+.shubh-reference-hero > .hero-3d-scene > .hero-store-sign{
+  display:none!important;
+}
+.shubh-reference-hero > .hero-3d-scene > .hero-visual-art{
+  display:block!important;
+  position:relative!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:8!important;
+}
+.shubh-reference-hero > .hero-3d-scene > .hero-visual-art > .hero-visual-svg{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  overflow:visible!important;
+}
+.shubh-reference-hero ~ .shubh-magic{
+  display:none!important;
+}
+/* Keep the reference hero as one coherent visual composition on phones. */
+@media(max-width:700px){
+  .shubh-reference-hero > .hero-3d-scene > .hero-visual-art{
+    height:100%!important;
+    transform:scale(1.02)!important;
+    transform-origin:center center!important;
+  }
+  .shubh-reference-hero > .hero-3d-scene > .hero-visual-art > .hero-visual-svg{
+    width:100%!important;
+    height:100%!important;
+  }
+}
