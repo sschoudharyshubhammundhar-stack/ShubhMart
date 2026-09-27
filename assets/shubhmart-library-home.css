@@ -352,3 +352,11 @@ box-shadow:0 12px 32px rgba(9,24,58,.18)!important}
  .reference-category-row{grid-template-columns:repeat(5,1fr)!important}.reference-category-row .chip span:last-child{font-size:7px!important}
  .reference-products-panel .card img{height:128px!important}
 }
+
+
+/* SHUBHMART_REFERENCE_HEADER_CATEGORY_20260927 */
+.head-actions .head-action:nth-child(1),.head-actions .head-action:nth-child(4){display:none!important}
+.reference-category-head{margin:8px 0 8px!important}
+.reference-category-head h2{font-size:17px!important;color:#14213d!important;font-weight:900!important}
+.reference-category-head .btn{font-size:10px!important;padding:5px 9px!important;margin:0!important}
+@media(max-width:600px){.reference-category-head{margin:7px 0 6px!important}.reference-category-head h2{font-size:15px!important}.reference-category-head .btn{font-size:9px!important}}
