@@ -745,3 +745,63 @@ body{background:
   .reference-products-panel .card{min-width:0!important}
   .reference-products-panel .card img{height:160px!important}
 }
+
+
+/* SHUBHMART_3D_PREMIUM_FINISH_20260927 — deeper dimensional hero treatment */
+.shubh-reference-hero .hero-3d-scene{
+  perspective:1400px!important;
+  transform-style:preserve-3d!important;
+  isolation:isolate!important;
+}
+.shubh-reference-hero .hero-visual-art{
+  transform-style:preserve-3d!important;
+  filter:drop-shadow(0 22px 22px rgba(0,0,0,.20))!important;
+}
+.shubh-reference-hero .hero-visual-svg{
+  transform-style:preserve-3d!important;
+  transform:perspective(1200px) rotateY(-5deg) rotateX(1.5deg) scale(1.045)!important;
+  transform-origin:58% 55%!important;
+  filter:saturate(1.12) contrast(1.06) drop-shadow(0 18px 14px rgba(0,0,0,.20))!important;
+}
+.shubh-reference-hero .hero-3d-scene:before{
+  content:""!important;
+  position:absolute!important;
+  left:7%!important;right:7%!important;bottom:8px!important;height:42%!important;
+  border-radius:50%!important;
+  background:radial-gradient(ellipse,rgba(0,0,0,.34) 0%,rgba(0,0,0,.16) 34%,transparent 72%)!important;
+  filter:blur(9px)!important;
+  transform:translateZ(-30px)!important;
+  z-index:0!important;
+  pointer-events:none!important;
+}
+.shubh-reference-hero .hero-3d-scene:after{
+  content:""!important;
+  position:absolute!important;inset:2% 3% 5%!important;
+  border-radius:28px!important;
+  background:
+    radial-gradient(circle at 76% 32%,rgba(255,235,163,.25),transparent 22%),
+    linear-gradient(120deg,rgba(255,255,255,.10),transparent 35%,rgba(255,255,255,.06) 65%,transparent 82%)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.16),inset 0 -18px 35px rgba(0,0,0,.10)!important;
+  z-index:20!important;
+  pointer-events:none!important;
+}
+@media(max-width:1180px){
+  .shubh-reference-hero .hero-visual-svg{
+    transform:perspective(1100px) rotateY(-3deg) rotateX(1deg) scale(1.035)!important;
+  }
+}
+@media(max-width:600px){
+  .shubh-reference-hero .hero-3d-scene{
+    perspective:900px!important;
+  }
+  .shubh-reference-hero .hero-visual-svg{
+    transform:perspective(900px) rotateY(-2deg) rotateX(1deg) scale(1.055)!important;
+    transform-origin:55% 52%!important;
+    filter:saturate(1.10) contrast(1.04) drop-shadow(0 13px 10px rgba(0,0,0,.22))!important;
+  }
+  .shubh-reference-hero .hero-3d-scene:after{
+    inset:3% 1% 4%!important;
+    border-radius:20px!important;
+  }
+}
