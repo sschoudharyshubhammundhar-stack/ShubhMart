@@ -588,3 +588,20 @@ body{background:
  .head-actions .head-action{font-size:9px!important}
  .hero-visual-svg{width:148%!important;height:148%!important;left:-24%!important;top:22px!important}
 }
+
+
+/* SHUBHMART_LOGO_CONTRAST_LOCK_20260927 */
+.brandbar:before{
+ content:"";position:absolute;left:2px;top:7px;width:292px;height:64px;
+ border-radius:18px;
+ background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(239,246,255,.90));
+ box-shadow:0 8px 22px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.95);
+ z-index:0;pointer-events:none;
+}
+.brand-full-logo{position:relative!important;z-index:2!important}
+@media(max-width:1180px){.brandbar:before{width:238px}}
+@media(max-width:600px){
+ .brandbar:before{left:3px;top:4px;width:182px;height:47px;border-radius:14px}
+ .brand-full-logo{max-width:178px!important}
+}
+@media(max-width:390px){.brandbar:before{width:168px;height:45px}.brand-full-logo{width:164px!important}}
