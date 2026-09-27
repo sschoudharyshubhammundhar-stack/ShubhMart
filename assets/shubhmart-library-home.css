@@ -360,3 +360,199 @@ box-shadow:0 12px 32px rgba(9,24,58,.18)!important}
 .reference-category-head h2{font-size:17px!important;color:#14213d!important;font-weight:900!important}
 .reference-category-head .btn{font-size:10px!important;padding:5px 9px!important;margin:0!important}
 @media(max-width:600px){.reference-category-head{margin:7px 0 6px!important}.reference-category-head h2{font-size:15px!important}.reference-category-head .btn{font-size:9px!important}}
+
+/* SHUBHMART_REFERENCE_PRECISION_20260927 — final visual precision pass */
+:root{
+  --ref-deep:#06142f;--ref-mid:#123c7d;--ref-violet:#6b2aa8;
+  --ref-pink:#f51b83;--ref-gold:#ffd21a;--ref-surface:#ffffff;
+}
+body{background:
+ radial-gradient(900px 420px at 72% -80px,rgba(81,126,220,.13),transparent 70%),
+ linear-gradient(180deg,#f5f8fd 0%,#fff 58%,#f7f9fd 100%)!important}
+.top{background:linear-gradient(135deg,#040c1d 0%,#071a3e 48%,#10346f 100%)!important}
+.top .wrap{max-width:1420px!important}
+.header{grid-template-columns:310px minmax(360px,1fr) auto!important;gap:22px!important;padding:8px 0 7px!important}
+.brandbar{width:310px!important;min-width:310px!important;height:78px!important}
+.brand-full-logo{width:286px!important;height:78px!important;object-fit:contain!important;object-position:left center!important;filter:drop-shadow(0 8px 13px rgba(0,0,0,.42))!important}
+.searchwrap{height:48px!important;border:2px solid rgba(255,255,255,.24)!important;border-radius:15px!important;background:#fff!important;box-shadow:0 9px 28px rgba(0,0,0,.26)!important}
+.search{font-size:15px!important}
+.searchbtn{height:40px!important;width:44px!important;min-width:44px!important;border-radius:10px!important;background:linear-gradient(135deg,#f51b83,#7d35df)!important}
+.head-actions{gap:6px!important}
+.head-action{min-width:70px!important;border-radius:12px!important;color:#fff!important}
+.head-action:hover{background:rgba(255,255,255,.10)!important}
+.subnav{height:52px!important;background:#fff!important;border-bottom:1px solid #e5eaf2!important;box-shadow:0 3px 14px rgba(20,33,61,.07)!important}
+.navlink{font-size:12px!important;padding:13px 15px!important;color:#1a2740!important}
+.navlink.active{background:#edf4ff!important;color:#123b7b!important;border-bottom:3px solid #ffd21a!important}
+.category-main{background:linear-gradient(135deg,#0879e8,#146fd0)!important;color:#fff!important;border-radius:8px!important}
+
+.main{padding-top:14px!important}
+.shubh-reference-hero{
+ min-height:368px!important;
+ grid-template-columns:minmax(300px,.78fr) minmax(470px,1.42fr) 176px!important;
+ gap:8px!important;
+ padding:20px 26px!important;
+ border-radius:16px!important;
+ background:
+  radial-gradient(380px 240px at 69% 48%,rgba(255,215,74,.28),transparent 70%),
+  radial-gradient(300px 220px at 94% 12%,rgba(255,65,170,.27),transparent 72%),
+  linear-gradient(116deg,#061532 0%,#0d3677 43%,#652a92 72%,#ee2a83 100%)!important;
+ box-shadow:0 20px 48px rgba(7,22,55,.25)!important;
+}
+.shubh-reference-hero:after{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(180deg,rgba(255,255,255,.07),transparent 38%,rgba(0,0,0,.12));
+}
+.hero-copy{z-index:20!important}
+.shubh-reference-hero h1{font-size:64px!important;line-height:.92!important;letter-spacing:-3.5px!important}
+.shubh-reference-hero h1 b{color:#ffb70b!important}
+.shubh-reference-hero h1 span{color:#fff!important}
+.hero-script{font-size:23px!important;margin-top:5px!important}
+.shubh-reference-hero p{font-size:13px!important;max-width:490px!important}
+.shubh-reference-hero .hero-btn{background:linear-gradient(135deg,#ff1e83,#ffad18)!important}
+
+.hero-3d-scene{
+ height:325px!important;
+ perspective:1100px!important;
+ transform-style:preserve-3d!important;
+}
+.hero-3d-scene:before{
+ content:"";position:absolute;left:5%;right:5%;bottom:20px;height:118px;
+ border-radius:22px;
+ background:
+  linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.03)),
+  repeating-linear-gradient(90deg,rgba(255,255,255,.09) 0 2px,transparent 2px 42px),
+  linear-gradient(135deg,#173b70,#0c244d 58%,#251448);
+ box-shadow:inset 0 1px rgba(255,255,255,.16),0 18px 26px rgba(0,0,0,.20);
+ transform:perspective(700px) rotateX(52deg) translateZ(-15px);
+ transform-origin:center bottom;z-index:1;
+}
+.hero-3d-scene:after{
+ content:"";position:absolute;left:7%;right:7%;top:26px;height:92px;
+ border-radius:18px 18px 7px 7px;
+ background:
+  linear-gradient(90deg,rgba(255,255,255,.18) 0 2%,transparent 2% 33%,rgba(255,255,255,.13) 33% 35%,transparent 35% 66%,rgba(255,255,255,.12) 66% 68%,transparent 68%),
+  linear-gradient(180deg,#183e78,#091b3b);
+ border:1px solid rgba(255,255,255,.16);
+ box-shadow:0 12px 24px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.15);
+ z-index:2;
+}
+.hero-awning{z-index:7!important;left:17%!important;top:11px!important;width:215px!important;height:28px!important;border-radius:9px 9px 4px 4px!important}
+.hero-store-sign{z-index:12!important;right:12%!important;top:28px!important;box-shadow:0 10px 22px rgba(0,0,0,.35)!important}
+.hero-girl{z-index:14!important;left:20%!important;top:48px!important;width:188px!important;height:250px!important;transform:rotateY(-7deg) rotateZ(-1deg)!important;filter:drop-shadow(17px 23px 14px rgba(0,0,0,.30))!important}
+.girl-hair{
+ left:39px!important;top:0!important;width:112px!important;height:126px!important;
+ background:
+  radial-gradient(circle at 35% 22%,#a7633d 0 6%,transparent 7%),
+  radial-gradient(circle at 64% 30%,#4b241c 0 7%,transparent 8%),
+  linear-gradient(145deg,#1a0d13,#54251d 48%,#241019)!important;
+ box-shadow:inset -13px -7px 0 rgba(0,0,0,.18),inset 9px 4px 0 rgba(255,255,255,.05)!important;
+}
+.girl-face{
+ left:59px!important;top:30px!important;width:74px!important;height:86px!important;
+ background:linear-gradient(145deg,#ffe0cb 0%,#f4b08f 62%,#d98268 100%)!important;
+ box-shadow:inset -7px -5px 0 rgba(190,92,69,.12),0 3px 5px rgba(0,0,0,.08)!important;
+}
+.girl-face:before{content:"•  •"!important;top:24px!important;left:17px!important;font-size:18px!important;letter-spacing:8px!important;color:#35201e!important}
+.girl-face:after{content:"⌣"!important;left:29px!important;top:50px!important;font-size:22px!important;color:#a52e58!important}
+.girl-body{
+ left:29px!important;top:101px!important;width:139px!important;height:149px!important;
+ background:linear-gradient(145deg,#ff4aa1 0%,#e91678 52%,#751d73 100%)!important;
+ box-shadow:inset 14px 0 rgba(255,255,255,.12),inset -13px -8px rgba(0,0,0,.12)!important;
+}
+.girl-body:before,.girl-body:after{
+ background:linear-gradient(145deg,#ff75b8,#ed177b 70%)!important;
+ box-shadow:0 4px 6px rgba(0,0,0,.12)!important;
+}
+.girl-body span{font-size:56px!important;filter:drop-shadow(0 7px 5px rgba(0,0,0,.35))!important}
+.hero-phone{
+ left:51%!important;top:54px!important;width:142px!important;height:228px!important;
+ border-width:8px!important;z-index:18!important;
+ box-shadow:19px 24px 28px rgba(0,0,0,.34),inset 0 0 0 2px #fff!important;
+}
+.hero-phone:before{content:"";position:absolute;top:5px;left:50%;transform:translateX(-50%);width:45px;height:5px;border-radius:9px;background:#111827;z-index:5}
+.hero-phone-screen{background:linear-gradient(160deg,#fff,#eef4fb)!important}
+.hero-phone-screen img{width:100px!important;height:62px!important}
+.hero-cart{right:0!important;bottom:20px!important;z-index:20!important;filter:drop-shadow(10px 15px 9px rgba(0,0,0,.28))!important}
+.cart-basket{background:linear-gradient(145deg,#f4f7fb,#9da9bc)!important}
+.hero-prop{z-index:22!important}
+.hero-notes{z-index:25!important}
+
+.hero-trust-stack{z-index:30!important;gap:8px!important}
+.hero-trust-stack>div{min-height:55px!important;padding:10px 11px!important;border-radius:13px!important;box-shadow:0 10px 24px rgba(0,0,0,.22)!important}
+.hero-trust-stack b{font-size:10px!important}.hero-trust-stack small{font-size:8px!important}
+
+.reference-category-row{grid-template-columns:repeat(10,minmax(0,1fr))!important;gap:11px!important;margin:14px 0 17px!important}
+.reference-category-row .chip{aspect-ratio:1!important;min-width:0!important}
+.reference-category-row .chip .cico{font-size:30px!important}
+.reference-category-row .chip span:last-child{font-size:8.5px!important;font-weight:850!important}
+
+.promo-showcase{gap:13px!important;margin:4px 0 18px!important}
+.promo-tile{min-height:132px!important;border-radius:13px!important;padding:15px 17px!important;box-shadow:0 10px 25px rgba(20,33,61,.13)!important}
+.promo-tile>span{font-size:64px!important}
+.promo-tile strong{font-size:22px!important}
+
+.reference-products-panel .grid{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:10px!important}
+.reference-products-panel .card{min-width:0!important}
+.reference-products-panel .card img{height:154px!important}
+.reference-products-panel .card h3{font-size:11px!important}
+.reference-products-panel .price{font-size:15px!important}
+
+.reference-service-strip .benefits{grid-template-columns:repeat(4,1fr)!important}
+.reference-service-strip .benefit{min-height:56px!important}
+
+@media(max-width:1180px){
+ .header{grid-template-columns:250px minmax(280px,1fr) auto!important}
+ .brandbar{width:250px!important;min-width:250px!important}.brand-full-logo{width:230px!important}
+ .shubh-reference-hero{grid-template-columns:minmax(270px,.8fr) minmax(380px,1.3fr)!important}
+ .hero-trust-stack{grid-column:1/-1!important;grid-template-columns:repeat(4,1fr)!important}
+ .reference-category-row{grid-template-columns:repeat(8,1fr)!important}
+ .reference-products-panel .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:820px){
+ .header{grid-template-columns:210px 1fr!important}.brandbar{width:210px!important;min-width:210px!important}.brand-full-logo{width:195px!important}
+ .shubh-reference-hero{grid-template-columns:1fr!important;min-height:600px!important}
+ .hero-3d-scene{height:310px!important}
+ .reference-category-row{grid-template-columns:repeat(5,1fr)!important}
+}
+@media(max-width:600px){
+ .header{display:block!important;padding:7px 0!important}
+ .brandbar{width:100%!important;min-width:0!important;height:55px!important;margin-bottom:7px!important}
+ .brand-full-logo{width:178px!important;height:55px!important}
+ .searchwrap{height:45px!important}
+ .subnav{height:45px!important}
+ .main{padding-top:9px!important}
+ .shubh-reference-hero{min-height:555px!important;padding:18px 14px!important;border-radius:15px!important}
+ .shubh-reference-hero h1{font-size:43px!important}
+ .hero-3d-scene{height:275px!important;margin-top:-2px!important}
+ .hero-3d-scene:before{left:2%;right:2%;bottom:10px;height:92px}
+ .hero-3d-scene:after{left:4%;right:4%;top:20px;height:70px}
+ .hero-girl{left:14%!important;top:40px!important;transform:scale(.78) rotateY(-7deg)!important;transform-origin:top left!important}
+ .hero-phone{left:51%!important;top:54px!important;width:112px!important;height:180px!important}
+ .hero-awning{left:12%!important;width:155px!important;height:21px!important}
+ .hero-store-sign{right:3%!important;top:18px!important;font-size:8px!important;padding:6px 8px!important}
+ .hero-cart{right:-13%!important;bottom:2px!important;transform:scale(.58) rotateY(-15deg)!important}
+ .hero-notes{right:-1%!important;top:38px!important}
+ .hero-notes b{font-size:10px!important}
+ .hero-prop{font-size:32px!important}
+ .hero-trust-stack{grid-template-columns:repeat(2,1fr)!important;gap:6px!important}
+ .hero-trust-stack>div{min-height:48px!important;padding:7px 8px!important}
+ .reference-category-row{grid-template-columns:repeat(5,1fr)!important;gap:7px!important}
+ .reference-category-row .chip .cico{font-size:22px!important}
+ .reference-category-row .chip span:last-child{font-size:7px!important}
+ .promo-showcase{grid-template-columns:1fr!important;gap:8px!important}
+ .promo-tile{min-height:110px!important}
+ .promo-tile>span{font-size:50px!important}
+ .reference-products-panel .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .reference-products-panel .card img{height:142px!important}
+ .reference-service-strip .benefits{grid-template-columns:1fr 1fr!important}
+}
+@media(max-width:390px){
+ .brand-full-logo{width:164px!important}
+ .shubh-reference-hero{min-height:525px!important}
+ .shubh-reference-hero h1{font-size:38px!important}
+ .hero-3d-scene{height:250px!important}
+ .hero-girl{left:9%!important;transform:scale(.70) rotateY(-7deg)!important}
+ .hero-phone{left:48%!important;width:102px!important;height:168px!important}
+ .hero-cart{right:-16%!important;transform:scale(.52) rotateY(-15deg)!important}
+ .reference-category-row .chip span:last-child{font-size:6.6px!important}
+}
