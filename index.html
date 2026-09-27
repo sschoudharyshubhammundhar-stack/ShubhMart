@@ -210,18 +210,26 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
       <div>
         <div class="hero shubh-reference-hero">
   <div class="hero-copy">
-    <div class="hero-kicker">SHUBHMART</div>
+    <div class="hero-kicker">WELCOME TO SHUBHMART</div>
     <h1><b>Shubh</b><span>Mart</span></h1>
     <div class="hero-script">Har Zaroorat, Ek Jagah</div>
-    <p>Badi Soch, Bada Shopping Experience!<br>Fashion, beauty, electronics, home essentials — sab kuch ek jagah.</p>
+    <p><strong>Badi Soch, Bada Shopping Experience!</strong><br>Fashion, beauty, electronics, home essentials — sab kuch ek jagah.</p>
     <button class="hero-btn" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button>
   </div>
-  <div class="hero-3d-scene" aria-label="ShubhMart 3D shopping scene">
+  <div class="hero-3d-scene" aria-label="ShubhMart premium 3D shopping experience">
     <div class="hero-awning"></div>
-    <div class="hero-phone"><div class="hero-phone-screen"><img src="assets/shubhmart-logo.png?v=20260926-3" alt="ShubhMart 3D logo"><b>Har Zaroorat, Ek Jagah</b><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button></div></div>
+    <div class="hero-store-sign">✦ ShubhMart</div>
+    <div class="hero-girl" aria-hidden="true"><div class="girl-hair"></div><div class="girl-face"></div><div class="girl-body"><span>🛍️</span><span>🛍️</span></div></div>
+    <div class="hero-phone"><div class="hero-phone-screen"><img src="assets/shubhmart-logo.png?v=20260926-3" alt="ShubhMart 3D logo"><b>Big Shopping<br>Bigger Smiles</b><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button></div></div>
     <div class="hero-cart"><span class="cart-handle"></span><div class="cart-basket"><i>🛍️</i><i>🎁</i><i>📦</i></div><div class="cart-wheel one"></div><div class="cart-wheel two"></div></div>
     <div class="hero-prop prop-shoe">👠</div><div class="hero-prop prop-watch">⌚</div><div class="hero-prop prop-gift">🎁</div>
     <div class="hero-notes"><b>Badiya Products</b><b>Behtar Prices</b><b>Fast Delivery</b><span>♡</span></div>
+  </div>
+  <div class="hero-trust-stack" aria-label="ShubhMart shopping benefits">
+    <div><b>🏷️ Top Brands</b><small>Original Products</small></div>
+    <div><b>💜 Best Deals</b><small>Up to 70% OFF</small></div>
+    <div><b>🚚 Fast Delivery</b><small>Across India</small></div>
+    <div><b>🛡️ Secure Shopping</b><small>100% Safe</small></div>
   </div>
 </div>
 <div class="shubh-magic" id="shubhMagic">
@@ -237,8 +245,17 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
     <button type="button" onclick="shareMagicDrop()" aria-label="Share Magic Pick">↗</button>
   </div>
 </div>
-        <div class="chips">
-          <div class="chip" onclick="filterCategory('Women Fashion')"><span class="cico">👜</span><span>Women Fashion</span></div><div class="chip" onclick="filterCategory('Beauty & Personal Care')"><span class="cico">💄</span><span>Beauty</span></div><div class="chip" onclick="filterCategory('Mobile Accessories')"><span class="cico">🎧</span><span>Electronics</span></div><div class="chip" onclick="filterCategory('Home & Kitchen')"><span class="cico">🍳</span><span>Home & Kitchen</span></div><div class="chip" onclick="filterCategory('Mobile Accessories')"><span class="cico">📱</span><span>Accessories</span></div><div class="chip" onclick="filterCategory('Baby & Kids')"><span class="cico">🧸</span><span>Kids</span></div><div class="chip" onclick="filterCategory('Sports & Fitness')"><span class="cico">🏋️</span><span>Sports</span></div><div class="chip" onclick="filterCategory('')"><span class="cico">▦</span><span>More</span></div>
+        <div class="chips reference-category-row" aria-label="Shop by category">
+          <div class="chip" onclick="filterCategory('Women Fashion')"><span class="cico">👗</span><span>Women Fashion</span></div>
+          <div class="chip" onclick="filterCategory('Men Fashion')"><span class="cico">🧥</span><span>Men Fashion</span></div>
+          <div class="chip" onclick="filterCategory('Beauty & Personal Care')"><span class="cico">💄</span><span>Beauty &amp; Personal Care</span></div>
+          <div class="chip" onclick="filterCategory('Mobile Accessories')"><span class="cico">🎧</span><span>Electronics</span></div>
+          <div class="chip" onclick="filterCategory('Home & Kitchen')"><span class="cico">🍳</span><span>Home &amp; Kitchen</span></div>
+          <div class="chip" onclick="filterCategory('Toys & Games')"><span class="cico">🧸</span><span>Toys &amp; Games</span></div>
+          <div class="chip" onclick="filterCategory('Sports & Fitness')"><span class="cico">🏋️</span><span>Sports &amp; Fitness</span></div>
+          <div class="chip" onclick="filterCategory('Books & Stationery')"><span class="cico">📚</span><span>Books &amp; Stationery</span></div>
+          <div class="chip" onclick="filterCategory('Jewellery & Accessories')"><span class="cico">💎</span><span>Jewellery &amp; Accessories</span></div>
+          <div class="chip more-chip" onclick="filterCategory('')"><span class="cico">•••</span><span>More</span></div>
         </div>
         <section class="promo-showcase" aria-label="ShubhMart promotional categories">
           <article class="promo-tile promo-fashion"><div><b>Latest Fashion</b><strong>Trendy Looks<br>For You</strong><button onclick="filterCategory('Women Fashion')">Explore Now →</button></div><span>👗👜👟</span></article>
@@ -257,7 +274,12 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
           <div id="wholesaleProducts" class="grid"><div class="loaderr">Wholesale products load ho rahe hain…</div></div>
         </section>
 
-        <div class="why-shop"><div class="why-title">Why Shop with ShubhMart?</div><div class="benefits"><div class="benefit"><span>🚚</span><div><b>Fast Delivery</b><span>Across India</span></div></div><div class="benefit"><span>🛡️</span><div><b>Secure Payments</b><span>Safe & Trusted</span></div></div><div class="benefit"><span>🎧</span><div><b>24/7 Support</b><span>Always here to help</span></div></div></div></div>
+        <div class="why-shop reference-service-strip"><div class="why-title">More Than a Store — It's a Feeling 💙</div><div class="benefits">
+<div class="benefit"><span>🚚</span><div><b>Free Delivery</b><span>On orders above ₹499</span></div></div>
+<div class="benefit"><span>🛡️</span><div><b>Secure Payments</b><span>100% Safe &amp; Trusted</span></div></div>
+<div class="benefit"><span>↩️</span><div><b>Easy Returns</b><span>Hassle Free</span></div></div>
+<div class="benefit"><span>🎧</span><div><b>24/7 Support</b><span>We're here to help</span></div></div>
+</div></div>
       </div>
     </div>
   </section>
