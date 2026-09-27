@@ -665,3 +665,23 @@ body{background:
  .shubh-reference-hero .hero-3d-scene{height:238px!important;min-height:238px!important;flex-basis:238px!important}
  .hero-visual-svg{width:148%!important;height:148%!important;left:-24%!important;top:12px!important}
 }
+
+
+/* SHUBHMART_DEEP_QA_PASS_20260927_1342 — remove legacy visual noise + lock reference proportions */
+.logo-surprise,.shubh-daily{display:none!important}
+.shubh-reference-hero .hero-copy,.shubh-reference-hero .hero-3d-scene{min-width:0!important}
+@media(min-width:1101px){
+ .shubh-reference-hero{min-height:340px!important;max-height:360px!important}
+ .hero-3d-scene{height:300px!important}
+ .chips{margin-top:10px!important}
+}
+@media(max-width:1050px){
+ .shubh-reference-hero{max-height:none!important}
+}
+@media(max-width:700px){
+ .header{display:block!important}
+ .brandbar{justify-content:flex-start!important}
+ .searchwrap{width:100%!important}
+ .shubh-reference-hero{max-height:none!important;overflow:hidden!important}
+ .hero-copy{overflow:visible!important}
+}
