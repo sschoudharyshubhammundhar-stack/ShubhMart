@@ -1,28 +1,32 @@
 ShubhMart Customer Section 1 — DEEP FINAL QA + HARDENING LOCK
 Customer Section 1 remains locked and protected.
 
-Section 2 — Seller + Wholesale DEEP QA / HARDENING — RECHECK PASS
-1. Seller account state is admin-controlled; seller INSERT is now server-guarded to force Pending/KYC Pending and prevent self-approval or self-wholesale activation.
-2. Seller application INSERT is now server-guarded to force Pending KYC, clear review/admin fields, force ownership to auth.uid(), and prevent self-verification through crafted requests.
-3. Seller application review state remains admin-controlled; seller cannot directly update review/admin fields.
-4. Product creation requires Approved seller, Pending status, non-live state and pending compliance.
-5. Seller product updates retain seller ownership and cannot self-publish, self-approve or alter protected approval/compliance fields.
-6. Product admin-field protection is trigger-backed; dedicated wholesale RPC remains compatible for approved sellers.
-7. Seller order direct UPDATE access remains removed; fulfilment uses the narrow update_seller_order_status RPC with ownership and valid state transitions.
-8. Seller payout uses request_seller_payout RPC and checks Approved seller + available balance.
-9. Seller KYC submission uses authenticated ownership-checked RPC; KYC remains private to seller/admin.
-10. Product variants are ownership + Approved-seller + pending/rejected scoped; approval/admin fields are trigger-protected.
-11. Wholesale pricing insert/update is ownership-scoped, Approved-seller scoped, product-owner scoped and cannot self-activate pricing.
-12. Wholesale inquiry UPDATE was rechecked and hardened: seller can only change quote/status; buyer/seller/product/quantity/target-price/note remain immutable. Buyer can only cancel; immutable inquiry fields remain protected.
-13. Product offers remain ownership-scoped; sellers can directly manage only their own pending offers. Activation remains admin-controlled.
-14. AI listing drafts remain seller-scoped.
-15. Seller analytics reviews remain filtered to products owned by the current seller.
-16. Seller Growth Center approval-pending state and bulk-import approval gate remain active.
-17. Wholesale buyer contact data remains hidden; inquiry communication stays inside ShubhMart flow.
-18. Audited seller/wholesale tables have RLS enabled.
-19. Security-definer seller functions used by the UI are authenticated-only; trigger helper functions are not externally executable.
-20. Duplicate seller protection triggers were cleaned up; one intentional protection trigger per new guard remains.
-21. No seller-side admin approval shortcut remains in the audited database policies/triggers.
-22. Section 2 visual/design lock preserved; this recheck changed functional/security/database behavior only.
-Section 3 Admin remains locked until Section 2 is accepted.
-Deployment refresh requested: 2026-09-27T05:45:00Z
+Section 2 — Seller + Wholesale — FINAL POINT-BY-POINT HARDENING LOCK
+1. Seller account ownership: INSERT/UPDATE require the logged-in user to own the seller row; admin fields remain trigger-protected.
+2. Seller application ownership: INSERT requires auth.uid() = seller_id; admin review/KYC/wholesale fields are trigger-protected.
+3. Seller approval: no seller can self-approve, self-verify KYC, self-enable wholesale approval, or modify reviewed/admin state.
+4. Product creation: only an approved seller can create a seller-owned product; marketplace approval/live/compliance fields are trigger-protected.
+5. Product ownership: seller UPDATE cannot transfer seller_id; admin fields remain protected; unapproved sellers cannot activate products.
+6. Product live-state integrity: Active/live product requires approved seller and approved compliance; non-admin seller writes cannot force live/approval fields.
+7. Product variants: INSERT/UPDATE/DELETE are seller-owner scoped; seller-created variants must be Pending; variant product/status/approval ownership is trigger-protected.
+8. Wholesale pricing: INSERT/UPDATE are approved-seller scoped; seller cannot change owner/product identity; seller-created pricing starts Pending.
+9. Wholesale product/profile controls: approved seller ownership enforced; wholesale values validated server-side.
+10. Wholesale inquiry: seller can only quote/reject its own approved-seller inquiries; buyer can only cancel its own inquiry; immutable buyer/seller/product/quantity/target/note fields are trigger-protected.
+11. Wholesale order creation: buyer ownership, Accepted quote, approved seller, active product, address and stock are validated server-side.
+12. Wholesale PO: buyer ownership and non-cancelled wholesale order required; duplicate PO number protected.
+13. Seller offers: INSERT/UPDATE/DELETE are own-product + approved-seller scoped; seller writes remain Pending; activation remains admin-controlled.
+14. AI listing drafts: INSERT/UPDATE are seller-owned; drafts cannot be assigned to another seller.
+15. Seller KYC: submission is authenticated + seller-owned and always starts Pending; KYC status remains admin-controlled.
+16. Seller orders: SELECT is seller-owned; status changes use narrow RPC with valid transitions; seller cancellation is allowed only before fulfilment begins to avoid bypassing stock/refund handling.
+17. Seller stock: only approved owner can update own product stock through server-side RPC.
+18. Seller payouts: approved seller + available balance required; concurrent payout requests are serialized with an advisory transaction lock to prevent double-spend.
+19. Seller analytics: seller-specific data only; platform-wide customer/review data is not exposed as seller analytics.
+20. Notifications/support: seller reads/updates own notifications and creates/reads own support tickets; admin controls remain separate.
+21. RLS: audited seller/wholesale tables have RLS enabled.
+22. Security-definer seller/wholesale functions exposed to UI are authenticated-only; trigger helper functions are not externally executable.
+23. Data integrity audit: active products with unapproved seller = 0; active variants on non-live products = 0; active wholesale pricing for unapproved seller = 0; active offers for unapproved seller = 0; active offers on non-live products = 0; quoted/accepted wholesale inquiries for unapproved seller = 0; active payout rows for unapproved seller = 0.
+24. Direct-table bypass audit: seller INSERT policies now have explicit ownership/approved/pending WITH CHECK rules for Sellers, products, variants, wholesale pricing, offers and AI drafts; UPDATE policies have matching ownership WITH CHECK rules.
+25. Visual lock: existing premium responsive Seller + Wholesale design preserved; this pass changed security/business logic only.
+
+Section 2 is now treated as FINAL QA LOCK. Section 3 Admin remains locked until Section 2 deployment is confirmed successful.
+Deployment refresh requested: 2026-09-27T06:00:00Z
