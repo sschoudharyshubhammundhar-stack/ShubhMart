@@ -1,27 +1,28 @@
 ShubhMart Customer Section 1 — DEEP FINAL QA + HARDENING LOCK
-Verified/fixed in this pass:
-1. Restored missing SUPABASE_URL assignment in the browser bootstrap.
-2. Repaired checkout async syntax.
-3. Enforced Active + Live + stock checks across customer product/cart flows.
-4. Fixed lowercase/uppercase status mismatches for reviews, Q&A and offers.
-5. Removed direct customer writes to Orders, Order_items and payments; secure order RPC remains the write path.
-6. Strengthened verified-review INSERT and UPDATE authorization against Delivered orders containing the reviewed product.
-7. Return flow uses request_order_return RPC only; function uses hardened search_path and authenticated-only execution.
-8. Customer order cancellation validates ownership/status, releases reserved stock for both unpaid and paid cancellations, and creates a pending refund for paid cancellations.
-9. Buy Again / Reorder validates ownership, live product, selected variant and current stock.
-10. Added selected-variant support through cart, checkout, stock decrement/release, Buy Again/Reorder and order history.
-11. Product modal updates selected-variant price, stock and image; variant Add to Cart uses the selected variant.
-12. Removed duplicate order action controls from the Pro layer; tracking now uses the exact order-card ID instead of a fragile 8-character lookup / 100-order limit.
-13. Escaped dynamic product image URLs before HTML insertion.
-14. Notification and cart badges are wired; notifications are reachable from header and navigation.
-15. ShubhCoins wallet creation is protected by zero-balance insert policy and authenticated execution.
-16. Default customer address is atomic and constrained to one default per customer; RPC execution is authenticated-only.
-17. Selected delivery address PII is no longer persisted in localStorage; only the address ID is stored.
-18. Magic Drop now only uses Active + Live + in-stock products.
-19. Customer dependency audit: all customer-called tables exist and all verified customer core tables have RLS enabled.
-20. Current integrity checks: reserved orders 0; negative product stock 0; negative variant stock 0; invalid pending reviews 0; duplicate default-address rows 0.
-21. HTML/static reference audit: no duplicate static IDs; no missing getElementById references; no service_role exposed in customer files; dynamic image src values are escaped.
-22. Approved premium 3D/mobile design lock preserved; no visual redesign made during this deep functional/security QA.
-Section 2 Seller + Wholesale remains locked until Customer Section 1 is accepted.
-Note: broader project-level Supabase advisor warnings remain in seller/admin areas and are intentionally outside this customer-section lock.
-Deployment refresh requested: 2026-09-26T17:45:00Z
+Customer Section 1 remains locked and protected.
+
+Section 2 — Seller + Wholesale DEEP QA / HARDENING
+1. Seller account state is admin-controlled; sellers cannot self-approve, self-change KYC state, reviewed fields, wholesale approval or other admin fields.
+2. Seller application review state is admin-controlled; seller self-update policy removed.
+3. Product creation requires an Approved seller, Pending status, non-live state and pending compliance.
+4. Seller product updates retain seller ownership and cannot self-publish, self-approve or alter admin compliance/approval fields.
+5. Product admin-field protection is trigger-backed; dedicated wholesale RPC remains compatible for approved sellers.
+6. Seller order direct UPDATE access removed; fulfillment uses the narrow update_seller_order_status RPC with ownership and valid state transitions.
+7. Seller payout uses request_seller_payout RPC and checks approved seller + available balance.
+8. Seller KYC submission uses authenticated ownership-checked RPC; seller KYC is private to the seller/admin.
+9. Product variants no longer use a broad seller ALL policy; insert/update/delete are ownership + approved-seller + pending/rejected scoped.
+10. Variant approval/status/admin fields are trigger-protected.
+11. Wholesale pricing insert/update is ownership-scoped, approved-seller scoped, product-owner scoped and cannot self-activate pricing.
+12. Wholesale inquiry seller quote/reject flow uses authenticated approved-seller RPC and ownership checks.
+13. Product offers no longer use a broad seller ALL policy; sellers can directly manage only their own pending offers. Activation/approval remains admin-controlled; dedicated seller offer RPCs remain available.
+14. AI listing drafts are seller-scoped and seller ownership is protected on update.
+15. Seller analytics reviews are now filtered to products owned by the current seller; platform-wide review data is not exposed through the seller analytics screen.
+16. Seller Growth Center now clearly shows approval-pending state and blocks bulk product import for unapproved sellers.
+17. Customer contact data in wholesale flows remains hidden; inquiries go through ShubhMart RPC flow.
+18. Audited seller/wholesale tables have RLS enabled: Sellers, seller_applications, products, product_variants, wholesale_pricing, wholesale_inquiries, Orders, seller_kyc, support_tickets, notifications.
+19. Security-definer seller functions used by the UI are authenticated-only; trigger helper functions are not externally executable.
+20. No seller-side admin approval shortcut remains in the audited database policies.
+
+Section 2 visual/design lock: existing premium seller responsive design preserved; changes are functional/security hardening only.
+Section 3 Admin remains locked until Section 2 is accepted.
+Deployment refresh requested: 2026-09-27T05:30:00Z
