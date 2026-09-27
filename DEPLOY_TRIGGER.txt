@@ -7,8 +7,9 @@ Section 2 remains locked and protected.
 Section 3 — Admin — FINAL QA LOCK
 All previously locked security, RLS, RPC, seller, product, order, refund, payout, support, delivery and responsive-admin protections remain locked.
 
-Visual deployment trigger: apply the latest premium reference-inspired responsive ShubhMart design layer from commit c7a5622bcf9991700dd22bdce44c6f2d85096f5e.
+Visual deployment trigger: premium reference-inspired responsive ShubhMart design layer is active and linked from index.html.
 Reference target: premium dark-blue/3D ShubhMart visual direction, balanced desktop composition, proper mobile adaptation, premium hero treatment, categories, cards, navigation and footer; preserve all existing functionality and data integrations.
 
-DEPLOY_REFERENCE_DESIGN_20260927=2026-09-27T10:45:00Z
+DEPLOY_REFERENCE_DESIGN_20260927=2026-09-27T17:08:00+05:30
 DESIGN_COMMIT=c7a5622bcf9991700dd22bdce44c6f2d85096f5e
+DESIGN_ACTIVATION_COMMIT=eb59206b8c0bd6bb6b83b1e6956dec73be548630
