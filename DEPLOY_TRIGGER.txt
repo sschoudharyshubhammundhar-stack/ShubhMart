@@ -4,50 +4,11 @@ Customer Section 1 remains locked and protected.
 Section 2 — Seller + Wholesale — FINAL POINT-BY-POINT HARDENING LOCK
 Section 2 remains locked and protected.
 
-Section 3 — Admin — FINAL POINT-BY-POINT HARDENING LOCK
-1. Admin entry: admin.html redirects to the dedicated admin panel; login requires Supabase password authentication and an admin role check; non-admin sessions are signed out.
-2. Admin RPC authorization: all 24 admin_* mutation RPCs are SECURITY DEFINER, authenticated-only, with zero anonymous EXECUTE privilege; each mutation verifies admin server-side.
-3. Seller management: approve/reject/suspend/pending controls use server-side admin RPCs and audit entries.
-4. Seller application/KYC: dedicated admin views and moderation RPCs added; KYC verification/rejection is admin-controlled and audited.
-5. Product moderation: Active/Rejected/Pending status uses server-side approval gates; Active requires approved seller and approved product compliance.
-6. Variant/product live integrity remains protected by Section 2 database guards.
-7. Reviews moderation: admin can publish/reject/hide reviews through an audited RPC.
-8. Product Q&A moderation: admin can mark answered/reject/hide questions through an audited RPC.
-9. Coupons: admin can activate/deactivate coupons through an audited RPC.
-10. Category attribute templates: admin can activate/deactivate templates through an audited RPC.
-11. Orders: admin status changes now follow a strict lifecycle: Pending→Confirmed→Processing→Packed→Dispatched→Delivered; cancellation is a controlled branch and closed orders cannot be reopened.
-12. Admin cancellation: reserved product/variant stock is released; paid orders create a pending refund instead of silently changing financial state.
-13. Order side effects: existing order triggers for notifications and ShubhCoins remain active.
-14. Returns/refunds: admin return/refund actions require admin authorization; refund completion requires a gateway reference.
-15. Seller payouts: Pending/Processing→Processing/Paid/Rejected only; Paid requires payout reference; action is audited.
-16. Wholesale pricing: Active requires approved seller and Active product; action is audited.
-17. Wholesale inquiries/orders/POs: existing ownership and admin RLS controls remain enforced.
-18. Buyer Protection: admin status changes are server-side and audited.
-19. Fraud/Risk: admin-only risk flag reads and status RPC are protected.
-20. Feature Flags: admin-only management and audit path protected.
-21. Notifications: admin-only management policy remains separate from customer/seller own-notification policies.
-22. Support tickets: admin status/priority/note changes are validated and audited.
-23. Delivery partners: admin approval/suspension is server-side; shipment assignment requires an Approved partner.
-24. Shipments: admin create/assign flows are server-side, audited, and RLS-protected.
-25. Services: provider approval is required before a service can become Active; service status changes are audited.
-26. Service bookings/events/reviews/slots: admin RLS controls remain enforced.
-27. ShubhCredit: admin application/profile/transaction controls are protected by admin-only RLS/RPC paths.
-28. Finance data: payments, refunds, payouts and commissions are protected by admin RLS; customer/seller visibility remains scoped.
-29. Audit: admin_audit_logs is admin-readable and mutation actions added in this pass write audit records.
-30. Mobile/admin UI: admin panel is responsive; moderation controls work on narrow screens.
-31. Direct-table bypass: sensitive admin actions exposed through UI use RPCs rather than arbitrary client-side mutation calls.
-32. Integrity checks: active seller/product/wholesale/service/shipment gate gaps are 0; completed refund/order consistency gap is 0.
-33. Historical data note: two older demo/test orders are Delivered with Pending UPI payment status; they were not silently altered because changing financial history without gateway verification would be unsafe. The controlled admin transition path prevents creating this state going forward.
-34. No real payment, OTP, credit disbursement or external payout was executed during QA.
-35. Visual lock: Customer Section 1 and Seller/Wholesale Section 2 designs remain unchanged; Admin-only UI enhancements were added.
+Section 3 — Admin — FINAL QA LOCK
+All previously locked security, RLS, RPC, seller, product, order, refund, payout, support, delivery and responsive-admin protections remain locked.
 
-Section 3 is FINAL QA LOCK. Section 4, if any, remains closed until this Admin deployment is verified.
+Visual deployment trigger: apply the latest premium reference-inspired responsive ShubhMart design layer from commit c7a5622bcf9991700dd22bdce44c6f2d85096f5e.
+Reference target: premium dark-blue/3D ShubhMart visual direction, balanced desktop composition, proper mobile adaptation, premium hero treatment, categories, cards, navigation and footer; preserve all existing functionality and data integrations.
 
-Deployment refresh requested: 2026-09-27T07:10:00Z
-PRECISION_DESIGN_DEPLOY_20260927=29a0206069abb2243b132fce4d7a8b30ece42277
-DESIGN_DEEP_QA_20260927=1790493852293
-DEEP_QA_FINAL_20260927=2026-09-27T07:25:22.307Z
-FINAL_SYNTAX_RETRY_20260927=2026-09-27T07:26:22.038Z
-FINAL_QA_AFTER_ALL_FIXES_20260927=2026-09-27T07:26:56.914Z
-Last visual QA trigger: 2026-09-27 13:42 IST
-CURRENT_DEPLOY_TRIGGER=2026-09-27T10:00:00+05:30
+DEPLOY_REFERENCE_DESIGN_20260927=2026-09-27T10:45:00Z
+DESIGN_COMMIT=c7a5622bcf9991700dd22bdce44c6f2d85096f5e
