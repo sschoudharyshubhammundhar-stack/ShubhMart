@@ -724,3 +724,24 @@ body{background:
     height:100%!important;
   }
 }
+
+/* SHUBHMART_DEEP_AUDIT_02 — section consistency / responsive integrity */
+.shubh-reference-hero .hero-3d-scene{
+  position:relative!important;
+  overflow:visible!important;
+}
+.shubh-reference-hero .hero-visual-art{
+  pointer-events:none!important;
+}
+.shubh-reference-hero .hero-visual-svg{
+  overflow:visible!important;
+}
+@media (min-width:701px) and (max-width:1050px){
+  .promo-showcase .promo-electronics{display:flex!important}
+}
+@media (max-width:700px){
+  .promo-showcase .promo-tile{width:100%!important}
+  .reference-products-panel .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .reference-products-panel .card{min-width:0!important}
+  .reference-products-panel .card img{height:160px!important}
+}
