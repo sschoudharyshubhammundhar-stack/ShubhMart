@@ -218,133 +218,93 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
   </div>
   <div class="hero-3d-scene" aria-label="ShubhMart premium 3D shopping experience">
     <div class="hero-visual-art" aria-hidden="true">
-      <svg class="hero-visual-svg" viewBox="0 0 720 360" role="img" aria-label="3D ShubhMart shopping scene">
-        <defs>
-          <linearGradient id="sceneWall" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#183f7f"/><stop offset=".55" stop-color="#0b2858"/><stop offset="1" stop-color="#24144d"/>
-          </linearGradient>
-          <linearGradient id="sceneFloor" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#173a6f"/><stop offset=".6" stop-color="#0d2550"/><stop offset="1" stop-color="#2a174d"/>
-          </linearGradient>
-          <linearGradient id="dress" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#ff68b4"/><stop offset=".45" stop-color="#ef1a82"/><stop offset="1" stop-color="#6d1d74"/>
-          </linearGradient>
-          <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#ffe1cf"/><stop offset=".6" stop-color="#f2ae8b"/><stop offset="1" stop-color="#d67e69"/>
-          </linearGradient>
-          <linearGradient id="cartMetal" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#f5f8fd"/><stop offset=".45" stop-color="#b8c4d5"/><stop offset="1" stop-color="#78869c"/>
-          </linearGradient>
-          <filter id="softShadow" x="-30%" y="-30%" width="160%" height="180%">
-            <feDropShadow dx="14" dy="18" stdDeviation="12" flood-color="#000" flood-opacity=".34"/>
-          </filter>
-          <filter id="tinyShadow" x="-30%" y="-30%" width="160%" height="180%">
-            <feDropShadow dx="5" dy="7" stdDeviation="5" flood-color="#000" flood-opacity=".28"/>
-          </filter>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="12"/>
-          </filter>
-        </defs>
-
-        <ellipse cx="395" cy="297" rx="290" ry="34" fill="#000" opacity=".18" filter="url(#glow)"/>
-        <g filter="url(#tinyShadow)">
-          <rect x="70" y="40" width="560" height="205" rx="26" fill="url(#sceneWall)" stroke="#ffffff" stroke-opacity=".13"/>
-          <g opacity=".35">
-            <rect x="106" y="94" width="92" height="112" rx="9" fill="#8eb0e8"/>
-            <rect x="214" y="94" width="92" height="112" rx="9" fill="#9cc1f0"/>
-            <rect x="322" y="94" width="92" height="112" rx="9" fill="#93b0e4"/>
-            <rect x="430" y="94" width="92" height="112" rx="9" fill="#7fa8dc"/>
-            <rect x="538" y="94" width="58" height="112" rx="9" fill="#89a9db"/>
-          </g>
-          <rect x="77" y="44" width="546" height="10" rx="5" fill="#fff" opacity=".12"/>
-          <path d="M88 63 H617" stroke="#fff" stroke-opacity=".18"/>
-          <g transform="translate(103 68)">
-            <rect width="205" height="27" rx="10" fill="#fff" opacity=".96"/>
-            <text x="102" y="18" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="900" fill="#d51c85">SHUBHMART • SHOPPING</text>
-          </g>
-          <g transform="translate(92 31)">
-            <path d="M0 32 Q18 20 36 32 T72 32 T108 32 T144 32 T180 32 T216 32" fill="none" stroke="#ff3e95" stroke-width="16"/>
-            <path d="M0 32 Q18 44 36 32 T72 32 T108 32 T144 32 T180 32 T216 32" fill="none" stroke="#fff" stroke-width="16" stroke-dasharray="18 18"/>
-          </g>
-        </g>
-
-        <path d="M54 247 Q355 218 666 248 L625 324 Q365 345 90 321 Z" fill="url(#sceneFloor)" stroke="#fff" stroke-opacity=".12"/>
-        <path d="M75 276 Q350 252 642 274" stroke="#fff" stroke-opacity=".09" stroke-width="2"/>
-        <path d="M92 296 Q350 273 626 292" stroke="#fff" stroke-opacity=".08" stroke-width="2"/>
-
-        <g transform="translate(184 67)" filter="url(#softShadow)">
-          <path d="M32 56 C20 27 35 5 61 0 C95 -7 116 14 115 43 C114 70 97 87 68 88 C49 90 37 78 32 56 Z" fill="#4b211c"/>
-          <path d="M36 31 C39 11 55 2 77 3 C99 3 113 17 113 38 C105 25 92 20 79 18 C65 16 51 20 36 31Z" fill="#2a1517"/>
-          <ellipse cx="75" cy="49" rx="34" ry="39" fill="url(#skin)"/>
-          <path d="M61 48 Q66 42 71 48" stroke="#36211f" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M83 48 Q88 42 93 48" stroke="#36211f" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M74 66 Q80 71 87 65" stroke="#a52e58" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M67 86 L67 106 L85 106 L85 86" fill="url(#skin)"/>
-          <path d="M37 105 Q74 90 111 105 L130 220 Q76 246 19 220 Z" fill="url(#dress)"/>
-          <path d="M36 112 Q18 120 11 159" stroke="#ef338f" stroke-width="19" fill="none" stroke-linecap="round"/>
-          <path d="M111 112 Q135 120 146 153" stroke="#ff4da4" stroke-width="19" fill="none" stroke-linecap="round"/>
-          <path d="M16 220 L49 220 L45 294 L12 294 Z" fill="#23304c"/>
-          <path d="M79 220 L112 220 L124 294 L91 294 Z" fill="#23304c"/>
-          <path d="M11 294 Q29 284 48 294 L56 303 L7 303 Q0 300 11 294Z" fill="#101827"/>
-          <path d="M91 294 Q108 284 126 294 L135 303 L87 303 Q82 299 91 294Z" fill="#101827"/>
-          <g transform="translate(-10 135)">
-            <rect width="45" height="51" rx="8" fill="#fff"/>
-            <path d="M10 16 Q22 5 35 16" stroke="#7e2cc7" stroke-width="5" fill="none"/>
-            <path d="M8 18 Q22 4 37 18" stroke="#ef2b83" stroke-width="4" fill="none"/>
-          </g>
-          <g transform="translate(112 134)">
-            <rect width="48" height="53" rx="8" fill="#ffcf24"/>
-            <path d="M10 17 Q24 3 38 17" stroke="#7e2cc7" stroke-width="5" fill="none"/>
-            <path d="M8 19 Q24 3 40 19" stroke="#fff" stroke-width="4" fill="none"/>
-          </g>
-        </g>
-
-        <g transform="translate(388 65)" filter="url(#softShadow)">
-          <path d="M18 23 Q73 1 116 20 L118 178 Q72 202 16 179 Z" fill="#131a2a" stroke="#eef2f8" stroke-opacity=".9" stroke-width="5"/>
-          <rect x="27" y="37" width="82" height="128" rx="15" fill="#f6f9fd"/>
-          <circle cx="68" cy="45" r="3.5" fill="#111827"/>
-          <g transform="translate(37 63)">
-            <rect width="62" height="47" rx="9" fill="#e9eff8"/>
-            <text x="31" y="20" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="7" font-weight="900" fill="#10275a">SHUBHMART</text>
-            <text x="31" y="32" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="7" font-weight="800" fill="#e51c7e">BIG DEAL</text>
-            <circle cx="31" cy="42" r="3" fill="#ffd21a"/>
-          </g>
-          <rect x="42" y="120" width="52" height="13" rx="7" fill="#ffd21a"/>
-          <text x="68" y="129" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="6" font-weight="900" fill="#151515">SHOP NOW</text>
-        </g>
-
-        <g transform="translate(502 182)" filter="url(#softShadow)">
-          <path d="M0 0 H34 L52 18" stroke="#202938" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M35 17 L182 17 L157 93 L53 93 Z" fill="url(#cartMetal)" stroke="#293447" stroke-width="7"/>
-          <path d="M48 35 H169 M43 54 H163 M38 73 H157" stroke="#7e8b9f" stroke-width="3" opacity=".75"/>
-          <rect x="68" y="-6" width="43" height="49" rx="8" fill="#ffce2c" transform="rotate(-7 68 -6)"/>
-          <rect x="121" y="-1" width="40" height="43" rx="7" fill="#f51b83" transform="rotate(6 121 -1)"/>
-          <rect x="150" y="7" width="35" height="37" rx="6" fill="#7e3bdc" transform="rotate(10 150 7)"/>
-          <circle cx="70" cy="101" r="12" fill="#171c28"/><circle cx="150" cy="101" r="12" fill="#171c28"/>
-          <circle cx="70" cy="101" r="5" fill="#68778d"/><circle cx="150" cy="101" r="5" fill="#68778d"/>
-        </g>
-
-        <g transform="translate(87 221)" filter="url(#tinyShadow)">
-          <path d="M0 52 L55 17 L86 54 L28 89 Z" fill="#ff4b9d"/>
-          <path d="M14 44 L51 20" stroke="#fff" stroke-opacity=".8" stroke-width="6"/>
-          <path d="M55 17 L70 7" stroke="#202938" stroke-width="7" stroke-linecap="round"/>
-        </g>
-        <g transform="translate(575 74)" filter="url(#tinyShadow)">
-          <circle cx="29" cy="29" r="27" fill="#fff7da" stroke="#ffd21a" stroke-width="5"/>
-          <circle cx="29" cy="29" r="21" fill="#111827"/>
-          <path d="M29 13 V29 L40 38" stroke="#ffd21a" stroke-width="4" stroke-linecap="round" fill="none"/>
-        </g>
-        <g font-family="Inter,Arial,sans-serif" font-weight="900">
-          <g transform="translate(501 122) rotate(-7)">
-            <rect width="120" height="27" rx="12" fill="#fff" opacity=".94"/>
-            <text x="60" y="18" text-anchor="middle" font-size="10" fill="#d61c82">Badiya Products</text>
-          </g>
-          <g transform="translate(525 153) rotate(-7)">
-            <rect width="105" height="27" rx="12" fill="#fff4a8" opacity=".97"/>
-            <text x="52" y="18" text-anchor="middle" font-size="10" fill="#6e4d00">Behtar Prices</text>
-          </g>
-        </g>
-      </svg>
+      <svg class="hero-visual-svg cinematic-hero-svg" viewBox="0 0 900 460" role="img" aria-label="ShubhMart cinematic 3D shopping scene">
+<defs>
+ <linearGradient id="cw" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102e67"/><stop offset=".48" stop-color="#071a40"/><stop offset="1" stop-color="#32104e"/></linearGradient>
+ <linearGradient id="cf" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#0b234e"/><stop offset=".5" stop-color="#173d73"/><stop offset="1" stop-color="#281247"/></linearGradient>
+ <linearGradient id="skin2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe7d5"/><stop offset=".5" stop-color="#efb18e"/><stop offset="1" stop-color="#b96b61"/></linearGradient>
+ <linearGradient id="dress2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff72bb"/><stop offset=".42" stop-color="#f51b83"/><stop offset="1" stop-color="#691c78"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3a1"/><stop offset=".45" stop-color="#ffd21a"/><stop offset="1" stop-color="#f39a00"/></linearGradient>
+ <linearGradient id="metal2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7fbff"/><stop offset=".45" stop-color="#a9b9cf"/><stop offset="1" stop-color="#53637c"/></linearGradient>
+ <filter id="deep"><feDropShadow dx="0" dy="20" stdDeviation="14" flood-color="#000" flood-opacity=".48"/></filter>
+ <filter id="soft"><feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000" flood-opacity=".34"/></filter>
+ <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+ <filter id="glow2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <pattern id="grid3d" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="#fff" stroke-opacity=".08"/></pattern>
+</defs>
+<ellipse cx="505" cy="414" rx="360" ry="28" fill="#000" opacity=".42" filter="url(#blur)"/>
+<g filter="url(#soft)">
+ <rect x="42" y="38" width="810" height="335" rx="34" fill="url(#cw)" stroke="#fff" stroke-opacity=".16" stroke-width="2"/>
+ <rect x="58" y="54" width="778" height="303" rx="27" fill="url(#grid3d)" opacity=".7"/>
+ <path d="M58 290 Q300 245 836 285 V357 Q500 392 58 350Z" fill="url(#cf)"/>
+ <path d="M80 326 Q430 280 815 319" fill="none" stroke="#7bc7ff" stroke-opacity=".16" stroke-width="3"/>
+ <path d="M90 350 Q450 308 800 343" fill="none" stroke="#ff4ca6" stroke-opacity=".13" stroke-width="3"/>
+ <g filter="url(#glow2)" opacity=".9">
+  <circle cx="690" cy="110" r="78" fill="#ff1d8b" opacity=".11"/>
+  <circle cx="740" cy="235" r="105" fill="#ffd21a" opacity=".08"/>
+ </g>
+</g>
+<g transform="translate(88 76)" filter="url(#soft)">
+ <path d="M0 62 Q92 20 210 62" fill="none" stroke="#ff3f9d" stroke-width="22" stroke-linecap="round"/>
+ <path d="M0 62 Q92 105 210 62" fill="none" stroke="#fff" stroke-width="7" stroke-dasharray="18 17" opacity=".9"/>
+ <rect x="15" y="76" width="210" height="62" rx="16" fill="#fff" opacity=".96"/>
+ <text x="120" y="103" text-anchor="middle" font-family="Arial" font-size="13" font-weight="900" fill="#102b62">SHUBHMART</text>
+ <text x="120" y="122" text-anchor="middle" font-family="Arial" font-size="9" font-weight="800" fill="#ec1b83">HAR ZAROORAT • EK JAGAH</text>
+</g>
+<!-- cinematic model -->
+<g transform="translate(270 80)" filter="url(#deep)">
+ <ellipse cx="86" cy="55" rx="54" ry="60" fill="#2a1517"/>
+ <path d="M38 48 Q45 3 89 4 Q127 5 139 45 Q112 24 82 27 Q56 30 38 48Z" fill="#141019"/>
+ <ellipse cx="88" cy="58" rx="43" ry="49" fill="url(#skin2)"/>
+ <path d="M67 57q8-8 16 0M96 57q8-8 16 0" stroke="#38201f" stroke-width="4" fill="none" stroke-linecap="round"/>
+ <path d="M83 78q9 8 20-1" stroke="#a83259" stroke-width="4" fill="none" stroke-linecap="round"/>
+ <path d="M80 103h22v27H80z" fill="url(#skin2)"/>
+ <path d="M38 127 Q88 102 138 127 L166 310 Q89 344 10 310Z" fill="url(#dress2)"/>
+ <path d="M44 142Q12 157 3 211" stroke="#ff58ab" stroke-width="24" fill="none" stroke-linecap="round"/>
+ <path d="M136 140Q171 158 188 207" stroke="#e9157e" stroke-width="24" fill="none" stroke-linecap="round"/>
+ <path d="M20 310h49l-5 88H18zM99 310h49l18 88h-49z" fill="#1e2b47"/>
+ <path d="M15 396q30-13 55 2v11H7q-2-7 8-13zM116 398q30-13 52 3v9h-61q-2-7 9-12z" fill="#0a1222"/>
+ <path d="M0 214q-15 17-17 44" stroke="#ffd21a" stroke-width="8" fill="none" stroke-linecap="round"/>
+</g>
+<!-- floating phone -->
+<g transform="translate(450 73) rotate(-7)" filter="url(#deep)">
+ <rect x="0" y="0" width="155" height="282" rx="30" fill="#101827" stroke="#f7fbff" stroke-opacity=".9" stroke-width="5"/>
+ <rect x="12" y="17" width="131" height="245" rx="22" fill="#f7faff"/>
+ <rect x="31" y="49" width="93" height="72" rx="14" fill="#102e67"/>
+ <text x="77" y="76" text-anchor="middle" font-family="Arial" font-size="11" font-weight="900" fill="#fff">SHUBHMART</text>
+ <text x="77" y="98" text-anchor="middle" font-family="Arial" font-size="13" font-weight="900" fill="#ffd21a">MEGA DEAL</text>
+ <circle cx="77" cy="111" r="4" fill="#f51b83"/>
+ <rect x="31" y="137" width="93" height="44" rx="10" fill="#ffe8f3"/>
+ <text x="77" y="156" text-anchor="middle" font-family="Arial" font-size="9" font-weight="800" fill="#c81570">UP TO 70% OFF</text>
+ <rect x="42" y="193" width="71" height="22" rx="11" fill="#f51b83"/>
+ <text x="77" y="208" text-anchor="middle" font-family="Arial" font-size="8" font-weight="900" fill="#fff">SHOP NOW</text>
+ <circle cx="77" cy="270" r="4" fill="#ffd21a"/>
+</g>
+<!-- 3d cart foreground -->
+<g transform="translate(600 260)" filter="url(#deep)">
+ <path d="M0 0h42l20 22" stroke="#172234" stroke-width="11" fill="none" stroke-linecap="round"/>
+ <path d="M43 20h190l-35 116H67z" fill="url(#metal2)" stroke="#26344a" stroke-width="8"/>
+ <path d="M65 49h145M59 76h138M53 103h130" stroke="#718198" stroke-width="4" opacity=".8"/>
+ <path d="M83 23l42-5 10 54-43 5z" fill="url(#gold)"/>
+ <path d="M133 18l47 8-7 51-46-5z" fill="#f51b83"/>
+ <path d="M181 26l39 12-12 47-38-9z" fill="#7c3aed"/>
+ <circle cx="83" cy="154" r="18" fill="#111827"/><circle cx="202" cy="154" r="18" fill="#111827"/>
+ <circle cx="83" cy="154" r="7" fill="#718198"/><circle cx="202" cy="154" r="7" fill="#718198"/>
+</g>
+<!-- product cubes -->
+<g filter="url(#soft)">
+ <g transform="translate(95 285) rotate(-8)"><path d="M0 18l42-23 45 25-43 25z" fill="#ff4d9f"/><path d="M42-5v50l45-25V20z" fill="#d61b7a"/><path d="M0 18v48l42 24V43z" fill="#f76ab1"/></g>
+ <g transform="translate(720 95) rotate(8)"><rect width="72" height="72" rx="14" fill="url(#gold)"/><path d="M14 22h44M14 36h44M14 50h30" stroke="#805900" stroke-width="5" opacity=".55"/></g>
+</g>
+<!-- cinematic badges -->
+<g font-family="Arial" font-weight="900">
+ <g transform="translate(642 160) rotate(-5)"><rect width="150" height="38" rx="19" fill="#fff"/><circle cx="22" cy="19" r="8" fill="#f51b83"/><text x="42" y="24" font-size="12" fill="#14213d">PREMIUM PICKS</text></g>
+ <g transform="translate(658 205) rotate(4)"><rect width="132" height="36" rx="18" fill="#fff3b0"/><text x="66" y="23" text-anchor="middle" font-size="11" fill="#704e00">SMART PRICES</text></g>
+</g>
+<g fill="#fff" opacity=".9">
+ <circle cx="235" cy="55" r="3"/><circle cx="625" cy="62" r="4"/><circle cx="815" cy="278" r="3"/><circle cx="170" cy="180" r="2"/>
+</g>
+</svg>
     </div>
     <div class="hero-girl" aria-hidden="true"></div>
     <div class="hero-phone"><div class="hero-phone-screen"><img src="assets/shubhmart-logo.png?v=20260926-3" alt="ShubhMart 3D logo"><b>Big Shopping<br>Bigger Smiles</b><button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shop Now →</button></div></div>
@@ -660,7 +620,7 @@ function printMarketplaceInvoice(orderId){
  clone.querySelectorAll('button').forEach(b=>b.remove());
  const w=window.open('','_blank','width=900,height=750');
  if(!w){note('Browser ne print window block kar di. Pop-up allow kijiye.',true);return}
- w.document.write('<!doctype html><html><head><title>ShubhMart Invoice</title><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;padding:28px;color:#14213d}h1{margin:0 0 6px}.brand{color:#6d28d9;font-size:22px;font-weight:900}.invoice{border:1px solid #e5e7ef;border-radius:14px;padding:20px;margin-top:18px}.row{display:flex;gap:12px;align-items:center;justify-content:space-between}.small{font-size:12px;color:#667085}.panel{margin:12px 0}.order-items{border-top:1px solid #eee;border-bottom:1px solid #eee;padding:10px 0}.order-items img{max-width:58px}button{display:none}</style></head><body><div class="brand">ShubhMart</div><div>Har Zaroorat, Ek Jagah</div><div class="invoice">'+clone.innerHTML+'</div><p class="small">Generated from ShubhMart customer order area.</p></body></html>');
+ w.document.write('<!doctype html><html><head><title>ShubhMart Invoice</title><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;padding:28px;color:#14213d}h1{margin:0 0 6px}.brand{color:#6d28d9;font-size:22px;font-weight:900}.invoice{border:1px solid #e5e7ef;border-radius:14px;padding:20px;margin-top:18px}.row{display:flex;gap:12px;align-items:center;justify-content:space-between}.small{font-size:12px;color:#667085}.panel{margin:12px 0}.order-items{border-top:1px solid #eee;border-bottom:1px solid #eee;padding:10px 0}.order-items img{max-width:58px}button{display:none}</style>\n<style id="shubhmart-cinematic-5d">\n/* SHUBHMART_CINEMATIC_5D_HERO_20260927 */\n.shubh-reference-hero{position:relative!important;overflow:hidden!important;background:radial-gradient(circle at 78% 35%,rgba(255,210,26,.28),transparent 24%),radial-gradient(circle at 92% 75%,rgba(245,27,131,.28),transparent 30%),linear-gradient(115deg,#04112d,#09285d 44%,#32105a 78%,#e8177f)!important}\n.shubh-reference-hero:before{content:'';position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.07),transparent 35%,rgba(255,210,26,.08));pointer-events:none}\n.hero-3d-scene{position:relative!important;z-index:2!important;perspective:1800px!important;transform-style:preserve-3d!important}\n.hero-visual-art{transform-style:preserve-3d!important;filter:drop-shadow(0 28px 28px rgba(0,0,0,.34))!important}\n.cinematic-hero-svg{overflow:visible!important;transform:rotateY(-4deg) rotateX(1deg) translateZ(30px) scale(1.06)!important;filter:saturate(1.12) contrast(1.06)!important}\n.hero-copy{position:relative!important;z-index:4!important;text-shadow:0 2px 12px rgba(0,0,0,.18)}\n.hero-btn{box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.3)!important}\n@media(max-width:1050px){.cinematic-hero-svg{transform:rotateY(-2deg) scale(1.02)!important}}\n@media(max-width:700px){.shubh-reference-hero{min-height:520px!important}.hero-3d-scene{height:290px!important}.cinematic-hero-svg{transform:scale(1.12) translateY(8px)!important}.hero-copy{text-shadow:none!important}}\n</style></head><body><div class="brand">ShubhMart</div><div>Har Zaroorat, Ek Jagah</div><div class="invoice">'+clone.innerHTML+'</div><p class="small">Generated from ShubhMart customer order area.</p></body></html>');
  w.document.close();w.focus();setTimeout(()=>w.print(),250);
 }
 async function buyAgainOrder(orderId){
