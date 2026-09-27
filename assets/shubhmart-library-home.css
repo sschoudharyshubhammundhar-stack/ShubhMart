@@ -605,3 +605,13 @@ body{background:
  .brand-full-logo{max-width:178px!important}
 }
 @media(max-width:390px){.brandbar:before{width:168px;height:45px}.brand-full-logo{width:164px!important}}
+
+
+/* SHUBHMART_ORDER_QA_POLISH_20260927 */
+.order-card{background:linear-gradient(180deg,#fff,#fbfcff)!important;border:1px solid #e2e8f2!important;border-radius:16px!important}
+.order-card .order-items{background:#f8faff!important;border:1px solid #edf1f7!important;border-radius:12px!important;padding:8px 10px!important}
+.order-card .row>.btn.alt{min-height:36px!important}
+@media(max-width:600px){
+ .order-card .row{gap:6px!important}
+ .order-card .row>.btn.alt{font-size:10px!important;padding:8px 9px!important;flex:1 1 calc(50% - 6px)!important}
+}
