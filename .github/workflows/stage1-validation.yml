@@ -1,0 +1,88 @@
+name: ShubhMart Stage 1 Validation (no deployment)
+
+on:
+  push:
+    branches:
+      - "stage1/build-validation"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    name: JavaScript and inline-script syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check standalone JavaScript files
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            echo "Checking $file"
+            node --check "$file"
+          done < <(find . -type f \( -name "*.js" -o -name "*.mjs" \) \
+            -not -path "./node_modules/*" -not -path "./.git/*" \
+            -not -path "./.wrangler/*" -print0)
+
+      - name: Extract and check inline scripts in index.html
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import subprocess
+          import tempfile
+
+          class ScriptExtractor(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=False)
+                  self.current = None
+                  self.scripts = []
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() != "script":
+                      return
+                  attrs = dict(attrs)
+                  if attrs.get("src"):
+                      return
+                  typ = (attrs.get("type") or "").lower().strip()
+                  if typ and typ not in ("text/javascript", "application/javascript", "module"):
+                      return
+                  self.current = []
+              def handle_data(self, data):
+                  if self.current is not None:
+                      self.current.append(data)
+              def handle_endtag(self, tag):
+                  if tag.lower() == "script" and self.current is not None:
+                      code = "".join(self.current)
+                      if code.strip():
+                          self.scripts.append(code)
+                      self.current = None
+
+          html = Path("index.html").read_text(encoding="utf-8")
+          parser = ScriptExtractor()
+          parser.feed(html)
+          if not parser.scripts:
+              raise SystemExit("No inline JavaScript found in index.html; check extractor assumptions.")
+          for i, code in enumerate(parser.scripts, 1):
+              with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as f:
+                  f.write(code)
+                  name = f.name
+              print(f"Checking inline script {i}/{len(parser.scripts)}")
+              result = subprocess.run(["node", "--check", name], text=True)
+              if result.returncode:
+                  raise SystemExit(f"Syntax check failed for inline script {i}")
+          print(f"Passed syntax check for {len(parser.scripts)} inline script(s).")
+          PY
+
+      - name: Confirm this workflow cannot deploy
+        run: echo "Validation-only workflow. No Wrangler deploy command is present."
