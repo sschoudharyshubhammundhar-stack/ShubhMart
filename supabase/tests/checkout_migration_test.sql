@@ -301,6 +301,10 @@ BEGIN
   SELECT * INTO v_result FROM public.create_customer_order_secure(v_customer,v_address,'cod','standard','',10,v_request);
   v_again := v_result.order_id;
   IF v_again <> v_order THEN RAISE EXCEPTION 'idempotency did not return the original order'; END IF;
+  IF v_result.total_amount <> 230 OR v_result.coins_redeemed <> 10 OR v_result.coin_discount <> 10
+     OR v_result.payment_method <> 'cod' OR v_result.address_id <> v_address THEN
+    RAISE EXCEPTION 'idempotent retry did not return canonical checkout terms: %', row_to_json(v_result);
+  END IF;
   IF (SELECT stock FROM public.products WHERE id=v_product) <> 8 THEN RAISE EXCEPTION 'idempotent retry reserved stock twice'; END IF;
   IF (SELECT balance FROM public.shubhcoins_wallets WHERE customer_id=v_customer) <> 90 THEN RAISE EXCEPTION 'idempotent retry redeemed coins twice'; END IF;
 
