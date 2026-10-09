@@ -686,6 +686,12 @@ async function performCheckout(){
  if(!orderResponse.ok||!created?.success||!created?.order_id)return note(created?.error||'Order create nahi hua. Cart aur address check karke dobara try kijiye.',true);
  const ord={id:created.order_id,total_amount:Number(created.amount||0)};
  if(!Number.isFinite(ord.total_amount)||ord.total_amount<=0)return note('Server se order amount sahi nahi mila. Order dobara place na karein; support se sampark karein.',true);
+ const orderTermsMatch=String(created.payment_method||'').toLowerCase()===method
+   && String(created.delivery_method||'').toLowerCase()===delivery
+   && String(created.address_id||'')===String(selectedAddress.id)
+   && String(created.coupon_code||'')===couponCode
+   && Number(created.coins_redeemed||0)===coins;
+ if(!orderTermsMatch){note('Pichhli checkout request se order pehle hi ban chuka hai, lekin ab checkout details badal gayi hain. Naya order nahi banaya; My Orders check kijiye.',true);show('orders');loadOrders();return}
  if(sessionStorage.getItem('sm_payment_review_order_v1')===String(ord.id))return note('Is order ka payment confirmation pending hai. Dobara payment na karein; My Orders/Support mein status check kijiye.',true);
  if(method==='cod'){
    const {error:cartError}=await sb.from('cart').delete().eq('customer_id',currentUser.id);
