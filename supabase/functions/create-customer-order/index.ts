@@ -117,6 +117,10 @@ Deno.serve(async (req: Request) => {
       currency: "INR",
       coins_redeemed: Number(row.coins_redeemed ?? 0),
       coin_discount: Number(row.coin_discount ?? 0),
+      payment_method: String(row.payment_method ?? ""),
+      delivery_method: String(row.delivery_method ?? ""),
+      address_id: String(row.address_id ?? ""),
+      coupon_code: row.coupon_code ? String(row.coupon_code) : "",
     });
   } catch (error) {
     console.error("create-customer-order request failed", error instanceof Error ? error.message : "unknown error");
