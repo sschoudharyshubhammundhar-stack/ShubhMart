@@ -12,11 +12,37 @@ permissions:
 
 jobs:
   syntax:
-    name: JavaScript and inline-script syntax
+    name: JavaScript, SQL and checkout integration tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Run checkout migration integration tests in disposable PostgreSQL
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+          psql -h localhost -p 5432 -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/tests/checkout_migration_test.sql
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
