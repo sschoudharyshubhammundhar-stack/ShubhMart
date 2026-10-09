@@ -30,7 +30,7 @@
 - ShubhCoins redemption input is sent to the server; the database remains authoritative for balance and the 20% item-subtotal cap.
 - Payment failures that cannot be verified are left pending for support reconciliation rather than automatically deleting an order that might have a captured payment.
 - Added source for `create-customer-order`, `razorpay-payment`, and `razorpay-webhook` Edge Functions. The existing-order path checks Razorpay order/payment state and blocks a second attempt while an authorization/capture is unresolved.
-- Added `20261009_secure_checkout_order_payment_flow.sql` for review, covering idempotent order creation, stock/variant reservation, coupon/coin validation, unique gateway identifiers, server-only Razorpay attachment/paid mutation, and coin release on cancellation.
+- Added `supabase/drafts/secure_checkout_order_payment_flow.sql` for review (not a versioned migration yet), covering idempotent order creation, stock/variant reservation, coupon/coin validation, unique gateway identifiers, server-only Razorpay attachment/paid mutation, and coin release on cancellation.
 - Schema cross-check found the live `products` table has no `updated_at` column while its update trigger referenced that field; the migration corrects that trigger so stock reservation/restoration can update products.
 - No live Edge Function was deployed and no production database schema/data was changed.
 
