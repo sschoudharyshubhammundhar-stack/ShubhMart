@@ -36,7 +36,7 @@
 - The live Supabase migration history and repository migration files are not fully mirrored. Do not run `supabase db push` until migration-history reconciliation and a live-schema diff are reviewed.
 
 ## Validation evidence
-- Latest branch CI run: https://github.com/sschoudharyshubhammundhar-stack/ShubhMart/actions/runs/37915129213
+- Latest branch CI run: https://github.com/sschoudharyshubhammundhar-stack/ShubhMart/actions/runs/37917418557
 - Passed: draft SQL applied and checkout invariants exercised in a disposable PostgreSQL 17 CI database (including stock/variant reservation, idempotency, coin release, hidden-product rejection, over-limit coins, server-side Razorpay attachment/paid mutation, and rejection of cancellation while a gateway payment is unresolved); Deno type-check for all three Edge Functions; standalone JS syntax; inline JS syntax; SQL top-level parsing; Wrangler dry-run packaging; validation-only workflow.
 - Not yet passed/available: application to an actual Supabase development database (the disposable CI schema is a focused harness, not the live Supabase schema); end-to-end COD/Razorpay browser tests; real Razorpay test-mode transaction and reconciliation tests; webhook secret/event configuration in Razorpay/Supabase; confirmation that deployed Supabase functions match this branch.
 
