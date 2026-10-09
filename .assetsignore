@@ -1,5 +1,6 @@
 .git/
 .github/
+supabase/
 node_modules/
 .wrangler/
 docs/
