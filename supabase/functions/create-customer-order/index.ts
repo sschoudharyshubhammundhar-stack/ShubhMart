@@ -47,6 +47,7 @@ function safeOrderError(message: string) {
     "Coupon invalid or expired",
     "ShubhCoins wallet not found",
     "ShubhCoins balance changed; please retry",
+    "Maximum ",
   ];
   return known.find((item) => message.includes(item)) ?? null;
 }
