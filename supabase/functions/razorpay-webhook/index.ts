@@ -5,6 +5,8 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const secretKeys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}");
 const serviceRoleKey = secretKeys["default"] as string | undefined;
 const webhookSecret = Deno.env.get("RAZORPAY_WEBHOOK_SECRET");
+const razorpayKeyId = Deno.env.get("RAZORPAY_KEY_ID");
+const razorpayKeySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -30,6 +32,17 @@ async function hmacHex(secret: string, message: string) {
   );
   const signed = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message));
   return Array.from(new Uint8Array(signed)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function razorpayRequest(path: string, init: RequestInit = {}) {
+  if (!razorpayKeyId || !razorpayKeySecret) throw new Error("Razorpay API credentials are not configured");
+  const headers = new Headers(init.headers);
+  headers.set("Authorization", "Basic " + btoa(razorpayKeyId + ":" + razorpayKeySecret));
+  headers.set("Content-Type", "application/json");
+  const response = await fetch("https://api.razorpay.com/v1" + path, { ...init, headers });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error("Razorpay API request failed");
+  return data;
 }
 
 Deno.serve(async (req: Request) => {
@@ -60,19 +73,27 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Invalid JSON payload" }, 400);
     }
 
-    // Acknowledge unrelated events; this endpoint only reconciles captured payments.
-    if (event?.event !== "payment.captured") return json({ received: true, ignored: true });
+    // payment.authorized lets the server capture safely even if the browser callback was lost.
+    const eventType = String(event?.event ?? "");
+    if (!["payment.captured", "payment.authorized"].includes(eventType)) return json({ received: true, ignored: true });
 
-    const gatewayPayment = event?.payload?.payment?.entity;
+    let gatewayPayment = event?.payload?.payment?.entity;
     const paymentId = String(gatewayPayment?.id ?? "");
     const gatewayOrderId = String(gatewayPayment?.order_id ?? "");
     const amountPaise = Number(gatewayPayment?.amount);
     const currency = String(gatewayPayment?.currency ?? "").toUpperCase();
     const status = String(gatewayPayment?.status ?? "").toLowerCase();
 
-    if (!paymentId || !gatewayOrderId || !Number.isSafeInteger(amountPaise) || amountPaise <= 0
-        || currency !== "INR" || status !== "captured" || gatewayPayment?.captured !== true) {
-      console.error("Captured-payment webhook payload failed validation");
+    if (!paymentId || !gatewayOrderId || !Number.isSafeInteger(amountPaise) || amountPaise <= 0 || currency !== "INR") {
+      console.error("Payment webhook payload failed validation");
+      return json({ received: true, ignored: true, needs_review: true });
+    }
+    if (eventType === "payment.captured" && (status !== "captured" || gatewayPayment?.captured !== true)) {
+      console.error("Captured-payment webhook status mismatch");
+      return json({ received: true, ignored: true, needs_review: true });
+    }
+    if (eventType === "payment.authorized" && status !== "authorized") {
+      console.error("Authorized-payment webhook status mismatch");
       return json({ received: true, ignored: true, needs_review: true });
     }
 
@@ -114,6 +135,28 @@ Deno.serve(async (req: Request) => {
         || String(payment.currency ?? "INR").toUpperCase() !== "INR") {
       console.error("Captured-payment webhook amount/currency mismatch", { orderId: order.id, paymentId });
       return json({ received: true, ignored: true, needs_review: true });
+    }
+
+    if (eventType === "payment.authorized") {
+      if (!razorpayKeyId || !razorpayKeySecret) {
+        console.error("Cannot capture authorized webhook payment: Razorpay API credentials are not configured");
+        return json({ error: "Payment capture is not configured" }, 503);
+      }
+      let latestPayment = await razorpayRequest("/payments/" + encodeURIComponent(paymentId));
+      if (String(latestPayment.status ?? "").toLowerCase() === "authorized") {
+        latestPayment = await razorpayRequest("/payments/" + encodeURIComponent(paymentId) + "/capture", {
+          method: "POST",
+          body: JSON.stringify({ amount: amountPaise, currency: "INR" }),
+        });
+      }
+      if (String(latestPayment.order_id ?? "") !== gatewayOrderId
+          || Number(latestPayment.amount) !== amountPaise
+          || String(latestPayment.currency ?? "").toUpperCase() !== "INR"
+          || (String(latestPayment.status ?? "").toLowerCase() !== "captured" && latestPayment.captured !== true)) {
+        console.error("Authorized payment could not be confirmed captured", { orderId: order.id, paymentId });
+        return json({ error: "Payment capture needs retry" }, 500);
+      }
+      gatewayPayment = latestPayment;
     }
 
     if (String(order.payment_status ?? "").toLowerCase() === "paid") {
