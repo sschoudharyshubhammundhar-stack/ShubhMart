@@ -544,26 +544,37 @@ async function loadProducts(){loadWholesaleProducts();
  <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button></div>`}).join(''):'No active products found.';
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function clearCheckoutAttempt(){try{sessionStorage.removeItem('sm_checkout_request_id_v1');sessionStorage.removeItem('sm_checkout_order_id_v1');sessionStorage.removeItem('sm_payment_window_open_v1')}catch(e){}}
+function clearCheckoutAttempt(){try{localStorage.removeItem('sm_checkout_request_id_v1');localStorage.removeItem('sm_checkout_order_id_v1');localStorage.removeItem('sm_payment_window_open_v1');localStorage.removeItem('sm_payment_window_open_at_v1')}catch(e){}}
 async function prepareCartMutation(){
- if(sessionStorage.getItem('sm_paid_cart_sync_pending_v1')){note('Payment successful hai, lekin cart sync pending hai. Pehle cart refresh/sync complete hone dijiye.',true);return false}
- const requestId=sessionStorage.getItem('sm_checkout_request_id_v1');
+ if(localStorage.getItem('sm_paid_cart_sync_pending_v1')){note('Payment successful hai, lekin cart sync pending hai. Pehle cart refresh/sync complete hone dijiye.',true);return false}
+ const requestId=localStorage.getItem('sm_checkout_request_id_v1');
  if(!requestId)return true;
- const orderId=sessionStorage.getItem('sm_checkout_order_id_v1');
- if(sessionStorage.getItem('sm_payment_window_open_v1')==='1'){note('Payment window open hai. Pehle payment ko finish ya close kijiye.',true);return false}
- if(orderId&&sessionStorage.getItem('sm_payment_review_order_v1')===orderId){note('Payment confirmation review mein hai. Pehle My Orders/Support se status clear kijiye.',true);return false}
+ const orderId=localStorage.getItem('sm_checkout_order_id_v1');
+ if(localStorage.getItem('sm_payment_window_open_v1')==='1'){note('Payment window open hai. Pehle payment ko finish ya close kijiye.',true);return false}
+ if(orderId&&localStorage.getItem('sm_payment_review_order_v1')===orderId){note('Payment confirmation review mein hai. Pehle My Orders/Support se status clear kijiye.',true);return false}
  if(!orderId){note('Pichhle checkout ka status confirm nahi hua. Pehle Place Order dobara karke wahi request recover kijiye; abhi cart change nahi kiya.',true);return false}
  const cancelled=await cancelUnpaidOrder(orderId);
  if(!cancelled){note('Pichhla order safely cancel nahi hua. My Orders/Support check karke hi cart badaliye.',true);return false}
  clearCheckoutAttempt();return true;
 }
 function getCheckoutRequestId(){
- let id=sessionStorage.getItem('sm_checkout_request_id_v1');
+ let id=localStorage.getItem('sm_checkout_request_id_v1');
  if(id)return id;
  if(crypto.randomUUID)id=crypto.randomUUID();
  else{const b=new Uint8Array(16);crypto.getRandomValues(b);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;id=[...b].map((x,i)=>([4,6,8,10].includes(i)?'-':'')+x.toString(16).padStart(2,'0')).join('')}
- sessionStorage.setItem('sm_checkout_request_id_v1',id);return id;
+ localStorage.setItem('sm_checkout_request_id_v1',id);return id;
 }
+function recoverCheckoutFlags(){
+ try{
+   const openedAt=Number(localStorage.getItem('sm_payment_window_open_at_v1')||0);
+   if(localStorage.getItem('sm_payment_window_open_v1')==='1'&&openedAt>0&&Date.now()-openedAt>15*60*1000){
+     localStorage.removeItem('sm_payment_window_open_v1');localStorage.removeItem('sm_payment_window_open_at_v1');localStorage.removeItem('sm_payment_window_open_at_v1');
+     const orderId=localStorage.getItem('sm_checkout_order_id_v1');
+     if(orderId)localStorage.setItem('sm_payment_review_order_v1',orderId);
+   }
+ }catch(e){}
+}
+recoverCheckoutFlags();
 async function loadShubhCoinsBalance(){
  const hint=document.getElementById('shubhcoinsBalanceHint');if(!hint)return;
  if(!currentUser){hint.textContent='ShubhCoins balance dekhne ke liye login kijiye.';return}
@@ -604,10 +615,10 @@ async function addCart(id,variantId=null){
 async function buy(id){const ok=await addCart(id);if(ok)show('cart')}
 async function loadCart(){
  if(!currentUser){document.getElementById('cartbox').innerHTML='Login kijiye.';document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden');const cb=document.getElementById('cartBadge');if(cb)cb.textContent='0';return}
- if(sessionStorage.getItem('sm_paid_cart_sync_pending_v1')){
+ if(localStorage.getItem('sm_paid_cart_sync_pending_v1')){
    const {error:syncError}=await sb.from('cart').delete().eq('customer_id',currentUser.id);
    if(syncError){note('Payment successful hai, lekin cart sync pending hai. Dobara order na banayein; My Orders check kijiye.',true)}
-   else{sessionStorage.removeItem('sm_paid_cart_sync_pending_v1');clearCheckoutAttempt();localStorage.removeItem('sm_coupon_v1')}
+   else{localStorage.removeItem('sm_paid_cart_sync_pending_v1');clearCheckoutAttempt();localStorage.removeItem('sm_coupon_v1')}
  }
  const {data,error}=await sb.from('cart').select('id,quantity,product_id,variant_id,products(id,name,price,mrp,image_url,stock,status,is_live),variant:product_variants(id,variant_name,option_value,price,mrp,stock,status,image_url)').eq('customer_id',currentUser.id);
  if(error){document.getElementById('cartbox').textContent='Cart error: '+error.message;const cb=document.getElementById('cartBadge');if(cb)cb.textContent='0';note(error.message,true);return}
@@ -676,7 +687,7 @@ async function loadWishlist(){
 async function cancelUnpaidOrder(orderId){try{const {error}=await sb.rpc('cancel_unpaid_order',{p_order_id:orderId});if(error){console.warn('cancelUnpaidOrder',error.message);return false}return true}catch(e){console.warn('cancelUnpaidOrder',e);return false}}
 let checkoutInProgress=false;
 async function checkout(){
- if(sessionStorage.getItem('sm_payment_window_open_v1')==='1')return note('Payment window pehle se open hai. Use complete ya close kijiye.',true);
+ if(localStorage.getItem('sm_payment_window_open_v1')==='1')return note('Payment window pehle se open hai. Use complete ya close kijiye.',true);
  if(checkoutInProgress)return;
  checkoutInProgress=true;
  const button=document.querySelector('#checkoutbox button[onclick="checkout()"]');
@@ -685,7 +696,7 @@ async function checkout(){
  finally{checkoutInProgress=false;if(button)button.disabled=false}
 }
 async function performCheckout(){
- if(sessionStorage.getItem('sm_paid_cart_sync_pending_v1'))return note('Pichhla payment successful hai, lekin cart sync pending hai. Cart ko refresh kijiye; dobara order na banayein.',true);
+ if(localStorage.getItem('sm_paid_cart_sync_pending_v1'))return note('Pichhla payment successful hai, lekin cart sync pending hai. Cart ko refresh kijiye; dobara order na banayein.',true);
  if(!currentUser)return note('Pehle login kijiye',true);
  if(!selectedAddress){document.getElementById('checkoutbox').classList.add('hidden');document.getElementById('addressCheckout').classList.remove('hidden');return note('Pehle delivery address select kijiye',true)}
  const method=document.getElementById('paymentMethod')?.value||'cod';
@@ -705,8 +716,8 @@ async function performCheckout(){
  const created=await orderResponse.json().catch(()=>({error:'Invalid order server response'}));
  if(!orderResponse.ok||!created?.success||!created?.order_id){if(orderResponse.status<500)clearCheckoutAttempt();return note(created?.error||'Order create nahi hua. Cart aur address check karke dobara try kijiye.',true)}
  const ord={id:created.order_id,total_amount:Number(created.amount||0)};
- sessionStorage.setItem('sm_checkout_order_id_v1',String(ord.id));
- if(!Number.isFinite(ord.total_amount)||ord.total_amount<=0){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Server se order amount sahi nahi mila. Order dobara place na karein; support se sampark karein.',true)}
+ localStorage.setItem('sm_checkout_order_id_v1',String(ord.id));
+ if(!Number.isFinite(ord.total_amount)||ord.total_amount<=0){localStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Server se order amount sahi nahi mila. Order dobara place na karein; support se sampark karein.',true)}
  const orderTermsMatch=String(created.payment_method||'').toLowerCase()===method
    && String(created.delivery_method||'').toLowerCase()===delivery
    && String(created.address_id||'')===String(selectedAddress.id)
@@ -725,7 +736,7 @@ async function performCheckout(){
    }
    note('Pichhla checkout order mila. Uski original details restore kar di hain; My Orders mein status review kijiye.',true);show('orders');loadOrders();return;
  }
- if(sessionStorage.getItem('sm_payment_review_order_v1')===String(ord.id))return note('Is order ka payment confirmation pending hai. Dobara payment na karein; My Orders/Support mein status check kijiye.',true);
+ if(localStorage.getItem('sm_payment_review_order_v1')===String(ord.id))return note('Is order ka payment confirmation pending hai. Dobara payment na karein; My Orders/Support mein status check kijiye.',true);
  if(method==='cod'){
    const {error:cartError}=await sb.from('cart').delete().eq('customer_id',currentUser.id);
    if(cartError){note('Order server par ban gaya hai, lekin cart sync nahi hua. Dobara order na banayein; My Orders check kijiye.',true);show('orders');loadOrders();return}
@@ -740,27 +751,27 @@ async function performCheckout(){
  const rd=await r.json().catch(()=>({error:'Invalid payment server response'}));
  if(!r.ok||rd.error){if(await cancelUnpaidOrder(ord.id))clearCheckoutAttempt();return note(rd.error||'Payment setup failed. Agar order bana hai to Orders check kijiye.',true)}
  const options={key:rd.key_id,amount:rd.amount,currency:rd.currency,name:'ShubhMart',description:'ShubhMart Order '+String(ord.id).slice(0,8),order_id:rd.razorpay_order_id,prefill:{name:selectedAddress.name,contact:selectedAddress.mobile,email:currentUser.email||''},theme:{color:'#071638'},handler:async function(resp){
-   sessionStorage.removeItem('sm_payment_window_open_v1');sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));
+   localStorage.removeItem('sm_payment_window_open_v1');localStorage.removeItem('sm_payment_window_open_at_v1');localStorage.setItem('sm_payment_review_order_v1',String(ord.id));
    try{
      const {data:{session:verifySession}}=await sb.auth.getSession();
-     if(!verifySession){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Payment status confirm nahi ho saka. Dobara payment na karein; login karke support se sampark karein.',true)}
+     if(!verifySession){localStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Payment status confirm nahi ho saka. Dobara payment na karein; login karke support se sampark karein.',true)}
      const vr=await fetch(fn,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+verifySession.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'verify_payment',order_id:ord.id,razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature})});
      const vd=await vr.json().catch(()=>({error:'Invalid verification response'}));
-     if(!vr.ok||!vd.success){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Payment confirmation verify nahi ho saka. Payment dobara na karein; order pending rakha gaya hai. Support se sampark karein.',true)}
-     sessionStorage.removeItem('sm_payment_review_order_v1');localStorage.removeItem('sm_coupon_v1');
+     if(!vr.ok||!vd.success){localStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Payment confirmation verify nahi ho saka. Payment dobara na karein; order pending rakha gaya hai. Support se sampark karein.',true)}
+     localStorage.removeItem('sm_payment_review_order_v1');localStorage.removeItem('sm_coupon_v1');
      const {error:clearError}=await sb.from('cart').delete().eq('customer_id',currentUser.id);
-     if(clearError){sessionStorage.setItem('sm_paid_cart_sync_pending_v1',String(ord.id));note('Payment successful aur order confirmed, lekin cart sync pending hai. Dobara order na banayein; My Orders check kijiye.',true);show('orders');loadOrders();return}
-     sessionStorage.removeItem('sm_paid_cart_sync_pending_v1');clearCheckoutAttempt();
+     if(clearError){localStorage.setItem('sm_paid_cart_sync_pending_v1',String(ord.id));note('Payment successful aur order confirmed, lekin cart sync pending hai. Dobara order na banayein; My Orders check kijiye.',true);show('orders');loadOrders();return}
+     localStorage.removeItem('sm_paid_cart_sync_pending_v1');clearCheckoutAttempt();
      note('Payment successful ✅ Order confirmed');
      show('orders');loadOrders();
-   }catch(e){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));note('Payment status confirm nahi ho saka. Dobara payment na karein; support se sampark karein.',true)}
- },modal:{ondismiss:async function(){sessionStorage.removeItem('sm_payment_window_open_v1');if(sessionStorage.getItem('sm_payment_review_order_v1')===String(ord.id)){note('Payment verification chal rahi hai. Order cancel nahi kiya; status confirm hone dijiye.',true);return}const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled){clearCheckoutAttempt();note('Payment cancel ho gaya. Aap dobara try kar sakte hain.',true)}else{note('Order status verify nahi hua. My Orders check kijiye aur dobara payment se pehle support se sampark karein.',true)}show('cart');loadCart()} }};
+   }catch(e){localStorage.setItem('sm_payment_review_order_v1',String(ord.id));note('Payment status confirm nahi ho saka. Dobara payment na karein; support se sampark karein.',true)}
+ },modal:{ondismiss:async function(){localStorage.removeItem('sm_payment_window_open_v1');localStorage.removeItem('sm_payment_window_open_at_v1');if(localStorage.getItem('sm_payment_review_order_v1')===String(ord.id)){note('Payment verification chal rahi hai. Order cancel nahi kiya; status confirm hone dijiye.',true);return}const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled){clearCheckoutAttempt();note('Payment cancel ho gaya. Aap dobara try kar sakte hain.',true)}else{note('Order status verify nahi hua. My Orders check kijiye aur dobara payment se pehle support se sampark karein.',true)}show('cart');loadCart()} }};
  try{
    const rz=new Razorpay(options);
-   sessionStorage.setItem('sm_payment_window_open_v1','1');
-   rz.on('payment.failed',async function(){sessionStorage.removeItem('sm_payment_window_open_v1');const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note(cancelled?'Payment fail hua. Aap dobara try kar sakte hain.':'Payment status verify nahi hua. My Orders/Support check kijiye.',true);show('cart');loadCart()});
+   localStorage.setItem('sm_payment_window_open_v1','1');localStorage.setItem('sm_payment_window_open_at_v1',String(Date.now()));
+   rz.on('payment.failed',async function(){localStorage.removeItem('sm_payment_window_open_v1');localStorage.removeItem('sm_payment_window_open_at_v1');const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note(cancelled?'Payment fail hua. Aap dobara try kar sakte hain.':'Payment status verify nahi hua. My Orders/Support check kijiye.',true);show('cart');loadCart()});
    rz.open();
- }catch(e){sessionStorage.removeItem('sm_payment_window_open_v1');const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note('Payment window open nahi hui. '+(cancelled?'Aap dobara try kar sakte hain.':'My Orders check kijiye.'),true)}
+ }catch(e){localStorage.removeItem('sm_payment_window_open_v1');localStorage.removeItem('sm_payment_window_open_at_v1');const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note('Payment window open nahi hui. '+(cancelled?'Aap dobara try kar sakte hain.':'My Orders check kijiye.'),true)}
 }
 async function loadNotifications(){const e=document.getElementById('notificationsbox');if(!currentUser){e.innerHTML='Login kijiye.';return}const {data,error}=await sb.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);if(error){e.innerHTML='Notification error: '+esc(error.message);return}e.innerHTML=data?.length?data.map(n=>`<div class="panel ${n.is_read?'':'msg'}" onclick="markNotificationRead('${n.id}')"><b>${esc(n.title)}</b><br>${esc(n.body)}<br><span class="small">${new Date(n.created_at).toLocaleString('en-IN')}</span>${n.is_read?'':'<br><span class="small">Tap to mark read</span>'}</div>`).join(''):'No notifications yet.';const unread=(data||[]).filter(n=>!n.is_read).length;const nb=document.getElementById('notifBadge');if(nb)nb.textContent=String(unread);document.title=unread?`(${unread}) ShubhMart — Live Marketplace`:'ShubhMart — Live Marketplace';}
 async function markNotificationRead(id){const {error}=await sb.from('notifications').update({is_read:true}).eq('id',id).eq('user_id',currentUser.id);if(error)return note(error.message,true);loadNotifications()}
