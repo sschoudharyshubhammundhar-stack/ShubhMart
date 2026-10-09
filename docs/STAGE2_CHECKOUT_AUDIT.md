@@ -36,8 +36,8 @@
 
 ## Validation evidence
 - Latest branch CI run: https://github.com/sschoudharyshubhammundhar-stack/ShubhMart/actions/runs/37915129213
-- Passed: Deno type-check for both Edge Functions, standalone JS syntax, inline JS syntax, Wrangler dry-run packaging, validation-only workflow. A top-level PostgreSQL SQL parser check is also being added to CI.
-- Not yet passed/available: execution of the SQL migration against a disposable database; PL/pgSQL body/integration validation against a database; end-to-end COD/Razorpay browser tests; real Razorpay test-mode transaction and reconciliation tests; confirmation that live Supabase functions match this branch.
+- Passed: migration applied and checkout invariants exercised in a disposable PostgreSQL 17 CI database; Deno type-check for both Edge Functions; standalone JS syntax; inline JS syntax; SQL top-level parsing; Wrangler dry-run packaging; validation-only workflow.
+- Not yet passed/available: application to an actual Supabase development database (the disposable CI schema is a focused harness, not the live Supabase schema); end-to-end COD/Razorpay browser tests; real Razorpay test-mode transaction and reconciliation tests; confirmation that deployed Supabase functions match this branch.
 
-## Free-tier constraint / blocker
-A Supabase development branch was not created because the available estimate was **US$0.01344 per hour**. This project is being kept free-tier-first. Do not apply the migration to production as a substitute for a test database. Stage 2 remains open until SQL/integration tests can be performed safely and all fixes are reviewed.
+## Free-tier constraint / remaining gate
+A Supabase development branch was not created because the available estimate was **US$0.01344 per hour**. This project is being kept free-tier-first. The new PostgreSQL 17 CI harness tests the migration and critical invariants without paid Supabase infrastructure, but it cannot prove that every live Supabase setting/function matches. Do not apply the migration to production as a substitute for a test database. Stage 2 remains open until browser flows and Razorpay test-mode reconciliation are validated, the live-schema diff is reviewed, and all changes are approved for the Stage 7 release.
