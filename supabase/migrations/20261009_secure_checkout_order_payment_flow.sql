@@ -67,7 +67,7 @@ create or replace function public.create_customer_order_secure(
   p_shubhcoins bigint,
   p_request_id uuid
 )
-returns table(order_id uuid, total_amount numeric, coins_redeemed bigint, coin_discount numeric)
+returns table(order_id uuid, total_amount numeric, coins_redeemed bigint, coin_discount numeric, payment_method text, delivery_method text, address_id uuid, coupon_code text)
 language plpgsql
 security definer
 set search_path = ''
@@ -114,7 +114,7 @@ begin
 
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_customer_id::text || ':' || p_request_id::text, 0));
 
-  select id, total_amount into v_existing
+  select id, total_amount, payment_method, delivery_method, address_id, coupon_code into v_existing
   from public."Orders"
   where customer_id = p_customer_id and checkout_request_id = p_request_id
   limit 1;
@@ -122,7 +122,8 @@ begin
     select coalesce(sum(abs(amount)), 0)::bigint into v_coin_balance
     from public.shubhcoins_ledger
     where customer_id = p_customer_id and type = 'redeem' and reference_id = v_existing.id::text;
-    return query select v_existing.id, v_existing.total_amount, v_coin_balance, v_coin_balance::numeric;
+    return query select v_existing.id, v_existing.total_amount, v_coin_balance, v_coin_balance::numeric,
+      v_existing.payment_method, v_existing.delivery_method, v_existing.address_id, v_existing.coupon_code;
     return;
   end if;
 
@@ -282,7 +283,8 @@ begin
     values(p_customer_id, -p_shubhcoins, v_balance_after, 'redeem', v_order_id::text, 'Redeemed at checkout (₹1 per coin)');
   end if;
 
-  return query select v_order_id, v_total, p_shubhcoins, v_coin_discount;
+  return query select v_order_id, v_total, p_shubhcoins, v_coin_discount,
+    v_method, v_delivery_method, v_address.id, nullif(v_coupon_code, '');
 end;
 $function$;
 
