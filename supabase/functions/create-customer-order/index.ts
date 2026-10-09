@@ -13,6 +13,27 @@ const secret = keys["default"];
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: cors });
 
+// Preserve actionable checkout validation messages, but do not return arbitrary
+// Postgres/PostgREST errors (which can reveal schema and implementation details).
+const safeCheckoutError = (message: string) => {
+  const knownPrefixes = [
+    "Unauthorized",
+    "Invalid payment method",
+    "Invalid delivery method",
+    "Address not found",
+    "Cart empty",
+    "Invalid product price",
+    "Insufficient stock",
+    "Product is no longer active",
+    "Invalid order amount",
+    "ShubhCoins wallet not found",
+    "Maximum ",
+  ];
+  return knownPrefixes.some((prefix) => message.startsWith(prefix))
+    ? message
+    : "Unable to create order. Please review your cart and try again.";
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -59,7 +80,7 @@ Deno.serve(async (req) => {
       p_shubhcoins: coins,
     });
 
-    if (error) return json({ error: error.message }, 400);
+    if (error) return json({ error: safeCheckoutError(error.message) }, 400);
     const row = Array.isArray(data) ? data[0] : data;
     if (!row?.order_id) return json({ error: "Order creation failed" }, 500);
 
@@ -72,6 +93,6 @@ Deno.serve(async (req) => {
       coin_discount: Number(row.coin_discount || 0),
     });
   } catch (error) {
-    return json({ error: error instanceof Error ? error.message : "Server error" }, 500);
+    return json({ error: "Server error. Please try again later." }, 500);
   }
 });
