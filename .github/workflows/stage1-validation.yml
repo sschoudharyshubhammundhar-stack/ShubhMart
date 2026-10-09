@@ -91,4 +91,4 @@ jobs:
           npx --yes wrangler@4 deploy --dry-run --outdir /tmp/shubhmart-wrangler-dry-run
 
       - name: Confirm this workflow cannot deploy
-        run: echo "Validation-only workflow. No Wrangler deploy command is present."
+        run: echo "Validation-only workflow. Wrangler is used only with --dry-run; no production deployment occurs."
