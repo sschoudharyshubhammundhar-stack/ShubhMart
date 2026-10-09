@@ -4,6 +4,11 @@ compatibility_date = "2026-09-26"
 [assets]
 directory = "."
 
+# Cloudflare Workers Builds may invoke "wrangler preview" for pull-request branches.
+# An explicit previews table is required by Wrangler for that command.
+# This enables branch previews only; it does not change the production branch.
+[previews]
+
 # Automatic deployment trigger
 # Deployment connection verified after secret update
 # CI trigger check
