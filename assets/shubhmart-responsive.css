@@ -12,3 +12,27 @@
 @media(max-width:380px){.grid{grid-template-columns:1fr!important}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 /* visual-lock: reference-inspired premium blue 3D marketplace layer */
+
+/* Roadmap fix: restore persistent mobile shopping shortcuts without changing desktop layout. */
+@media(max-width:700px){
+  body{padding-bottom:82px!important}
+  .top #head-actions.head-actions{
+    display:flex!important;position:fixed!important;left:8px!important;right:8px!important;bottom:8px!important;
+    z-index:9999!important;justify-content:space-around!important;align-items:stretch!important;gap:3px!important;
+    padding:5px!important;margin:0!important;width:auto!important;max-width:none!important;
+    background:linear-gradient(135deg,#061633 0%,#10285c 58%,#43237d 100%)!important;
+    border:1px solid rgba(255,255,255,.18)!important;border-radius:16px!important;
+    box-shadow:0 8px 28px rgba(3,13,35,.34)!important;backdrop-filter:blur(12px)!important
+  }
+  .top #head-actions .head-action{
+    display:flex!important;position:relative!important;flex:1 1 0!important;flex-direction:column!important;
+    align-items:center!important;justify-content:center!important;gap:2px!important;min-width:0!important;
+    min-height:48px!important;padding:4px 2px!important;border:0!important;border-radius:10px!important;
+    background:transparent!important;color:#fff!important;font-size:10px!important;line-height:1.15!important;
+    white-space:nowrap!important;box-shadow:none!important
+  }
+  .top #head-actions .head-action .ico{font-size:18px!important;line-height:1.1!important}
+  .top #head-actions .head-action .badge{position:absolute!important;top:0!important;right:calc(50% - 20px)!important;
+    min-width:15px!important;height:15px!important;padding:1px 4px!important;font-size:9px!important;line-height:13px!important}
+  .top #head-actions .head-action:active{background:rgba(255,255,255,.14)!important}
+}
