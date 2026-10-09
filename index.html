@@ -546,6 +546,7 @@ async function loadProducts(){loadWholesaleProducts();
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function clearCheckoutAttempt(){try{sessionStorage.removeItem('sm_checkout_request_id_v1');sessionStorage.removeItem('sm_checkout_order_id_v1');sessionStorage.removeItem('sm_payment_window_open_v1')}catch(e){}}
 async function prepareCartMutation(){
+ if(sessionStorage.getItem('sm_paid_cart_sync_pending_v1')){note('Payment successful hai, lekin cart sync pending hai. Pehle cart refresh/sync complete hone dijiye.',true);return false}
  const requestId=sessionStorage.getItem('sm_checkout_request_id_v1');
  if(!requestId)return true;
  const orderId=sessionStorage.getItem('sm_checkout_order_id_v1');
@@ -603,6 +604,11 @@ async function addCart(id,variantId=null){
 async function buy(id){const ok=await addCart(id);if(ok)show('cart')}
 async function loadCart(){
  if(!currentUser){document.getElementById('cartbox').innerHTML='Login kijiye.';document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden');const cb=document.getElementById('cartBadge');if(cb)cb.textContent='0';return}
+ if(sessionStorage.getItem('sm_paid_cart_sync_pending_v1')){
+   const {error:syncError}=await sb.from('cart').delete().eq('customer_id',currentUser.id);
+   if(syncError){note('Payment successful hai, lekin cart sync pending hai. Dobara order na banayein; My Orders check kijiye.',true)}
+   else{sessionStorage.removeItem('sm_paid_cart_sync_pending_v1');clearCheckoutAttempt();localStorage.removeItem('sm_coupon_v1')}
+ }
  const {data,error}=await sb.from('cart').select('id,quantity,product_id,variant_id,products(id,name,price,mrp,image_url,stock,status,is_live),variant:product_variants(id,variant_name,option_value,price,mrp,stock,status,image_url)').eq('customer_id',currentUser.id);
  if(error){document.getElementById('cartbox').textContent='Cart error: '+error.message;const cb=document.getElementById('cartBadge');if(cb)cb.textContent='0';note(error.message,true);return}
  let total=0;let unavailable=0;const box=document.getElementById('cartbox');const cartCount=(data||[]).reduce((sum,x)=>sum+(Number(x.quantity)||0),0);const cb=document.getElementById('cartBadge');if(cb)cb.textContent=String(cartCount);
@@ -679,6 +685,7 @@ async function checkout(){
  finally{checkoutInProgress=false;if(button)button.disabled=false}
 }
 async function performCheckout(){
+ if(sessionStorage.getItem('sm_paid_cart_sync_pending_v1'))return note('Pichhla payment successful hai, lekin cart sync pending hai. Cart ko refresh kijiye; dobara order na banayein.',true);
  if(!currentUser)return note('Pehle login kijiye',true);
  if(!selectedAddress){document.getElementById('checkoutbox').classList.add('hidden');document.getElementById('addressCheckout').classList.remove('hidden');return note('Pehle delivery address select kijiye',true)}
  const method=document.getElementById('paymentMethod')?.value||'cod';
