@@ -129,6 +129,17 @@ CREATE TABLE public.payments (
   gateway_signature text,
   updated_at timestamptz DEFAULT now()
 );
+CREATE TABLE public.refunds (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id uuid NOT NULL,
+  customer_id uuid NOT NULL,
+  amount numeric,
+  method text,
+  status text,
+  notes text,
+  return_id uuid
+);
+CREATE UNIQUE INDEX refunds_order_without_return_uidx ON public.refunds(order_id) WHERE return_id IS NULL;
 CREATE TABLE public.coupons (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   code text,
@@ -310,6 +321,18 @@ BEGIN
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub',v_customer::text,'role','service_role')::text, false);
   PERFORM public.attach_razorpay_order_secure(v_order,v_customer,'rp_order_test_1','upi');
+  PERFORM set_config('request.jwt.claims', json_build_object('sub',v_customer::text,'role','authenticated')::text, false);
+  v_failed := false;
+  BEGIN
+    PERFORM public.cancel_customer_order(v_order,'test cancellation while gateway payment unresolved');
+  EXCEPTION WHEN OTHERS THEN
+    v_message := SQLERRM;
+    v_failed := true;
+  END;
+  IF NOT v_failed OR v_message <> 'Online payment attempt must be reconciled before cancellation' THEN
+    RAISE EXCEPTION 'customer cancellation must reject unresolved gateway payment, got: %', v_message;
+  END IF;
+  PERFORM set_config('request.jwt.claims', json_build_object('sub',v_customer::text,'role','service_role')::text, false);
   v_failed := false;
   BEGIN
     PERFORM public.cancel_unpaid_order(v_order);
