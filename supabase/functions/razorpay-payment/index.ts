@@ -126,6 +126,15 @@ Deno.serve(async (req: Request) => {
         if (Number(existing.amount) !== amountPaise || String(existing.currency).toUpperCase() !== "INR") {
           return json(req, { error: "Existing payment order does not match this order" }, 409);
         }
+        if (String(existing.status ?? "").toLowerCase() === "paid") {
+          return json(req, { error: "Gateway shows this order as paid. Confirmation is being reconciled; do not retry payment." }, 409);
+        }
+        const attempts = await razorpay("/orders/" + encodeURIComponent(payment.gateway_order_id) + "/payments");
+        const attemptItems = Array.isArray(attempts.items) ? attempts.items : [];
+        const attemptStates = attemptItems.map((item: any) => String(item.status ?? "").toLowerCase());
+        if (attemptStates.some((state: string) => state !== "failed")) {
+          return json(req, { error: "A gateway payment attempt is still pending, authorized, or captured. Do not retry payment; check My Orders/Support." }, 409);
+        }
         return json(req, {
           key_id: razorpayKeyId,
           razorpay_order_id: existing.id,
