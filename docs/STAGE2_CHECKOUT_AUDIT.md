@@ -33,6 +33,7 @@
 - Added `supabase/drafts/secure_checkout_order_payment_flow.sql` for review (not a versioned migration yet), covering idempotent order creation, stock/variant reservation, coupon/coin validation, unique gateway identifiers, server-only Razorpay attachment/paid mutation, and coin release on cancellation.
 - Schema cross-check found the live `products` table has no `updated_at` column while its update trigger referenced that field; the migration corrects that trigger so stock reservation/restoration can update products.
 - No live Edge Function was deployed and no production database schema/data was changed.
+- The live Supabase migration history and repository migration files are not fully mirrored. Do not run `supabase db push` until migration-history reconciliation and a live-schema diff are reviewed.
 
 ## Validation evidence
 - Latest branch CI run: https://github.com/sschoudharyshubhammundhar-stack/ShubhMart/actions/runs/37915129213
