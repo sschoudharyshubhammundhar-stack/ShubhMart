@@ -720,8 +720,8 @@ async function performCheckout(){
  if(sessionStorage.getItem('sm_payment_review_order_v1')===String(ord.id))return note('Is order ka payment confirmation pending hai. Dobara payment na karein; My Orders/Support mein status check kijiye.',true);
  if(method==='cod'){
    const {error:cartError}=await sb.from('cart').delete().eq('customer_id',currentUser.id);
-   localStorage.removeItem('sm_coupon_v1');
    if(cartError){note('Order server par ban gaya hai, lekin cart sync nahi hua. Dobara order na banayein; My Orders check kijiye.',true);show('orders');loadOrders();return}
+   localStorage.removeItem('sm_coupon_v1');
    clearCheckoutAttempt();note('COD order placed successfully 🎉');show('orders');loadOrders();return;
  }
  note('Secure payment window opening…');
