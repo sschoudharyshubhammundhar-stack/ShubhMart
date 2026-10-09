@@ -548,7 +548,7 @@ async function loadProducts(){
  else if(sort==='name')query=query.order('name',{ascending:true});
  else query=query.order('created_at',{ascending:false});
  const {data,error}=await query; clearTimeout(productsLoadingTimer);
- if(error){el.innerHTML='<div>Products load error: '+error.message+'</div>';return}
+ if(error){if(isShubhMartPreview()){renderPreviewDemoProducts(el);}else{el.innerHTML='<div class="errorbox">Products load error: '+esc(error.message)+'</div>';}return}
  let wishIds=new Set();
  if(currentUser){const {data:wishes}=await sb.from('wishlist').select('product_id').eq('customer_id',currentUser.id);(wishes||[]).forEach(w=>wishIds.add(String(w.product_id)))}
  if(data?.length){el.innerHTML=data.map(p=>{const wished=wishIds.has(String(p.id));return `<div class="card">
