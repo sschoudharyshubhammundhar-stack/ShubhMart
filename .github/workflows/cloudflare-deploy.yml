@@ -10,6 +10,8 @@ permissions:
 
 jobs:
   deploy:
+    # Manual dispatch from a feature branch must never publish to production.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,6 +33,56 @@ jobs:
             fi
           done < <(find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -print0)
           exit $failed
+
+      - name: Validate inline JavaScript in index.html
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import subprocess
+          import tempfile
+
+          class ScriptExtractor(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=False)
+                  self.current = None
+                  self.scripts = []
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() != "script":
+                      return
+                  attrs = dict(attrs)
+                  if attrs.get("src"):
+                      return
+                  typ = (attrs.get("type") or "").lower().strip()
+                  if typ and typ not in ("text/javascript", "application/javascript", "module"):
+                      return
+                  self.current = []
+              def handle_data(self, data):
+                  if self.current is not None:
+                      self.current.append(data)
+              def handle_endtag(self, tag):
+                  if tag.lower() == "script" and self.current is not None:
+                      code = "".join(self.current)
+                      if code.strip():
+                          self.scripts.append(code)
+                      self.current = None
+
+          parser = ScriptExtractor()
+          parser.feed(Path("index.html").read_text(encoding="utf-8"))
+          if not parser.scripts:
+              raise SystemExit("No inline JavaScript found in index.html.")
+          for i, code in enumerate(parser.scripts, 1):
+              with tempfile.NamedTemporaryFile("w", suffix=".js", encoding="utf-8", delete=False) as f:
+                  f.write(code)
+                  name = f.name
+              print(f"Checking inline script {i}/{len(parser.scripts)}")
+              result = subprocess.run(["node", "--check", name], text=True)
+              if result.returncode:
+                  raise SystemExit(f"Syntax check failed for inline script {i}")
+          print(f"Passed syntax check for {len(parser.scripts)} inline script(s).")
+          PY
 
       - name: Upload syntax report
         if: always()
