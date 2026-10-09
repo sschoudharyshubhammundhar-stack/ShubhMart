@@ -247,7 +247,7 @@ BEGIN
   RETURN true;
 END $$;
 
-\ir ../migrations/20261009_secure_checkout_order_payment_flow.sql
+\ir ../drafts/secure_checkout_order_payment_flow.sql
 
 DO $$
 DECLARE
