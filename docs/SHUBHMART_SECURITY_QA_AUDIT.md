@@ -52,10 +52,11 @@ This audit is a working checklist, not a security certification. Production and 
 
 The follow-up SQL inspection checked the live function definition, table columns, constraints, and triggers. It did not insert, update, or delete any data.
 
-- The live `Orders` table already has a non-null `stock_reserved` boolean column, but the inspected checkout RPC's INSERT does not supply it. The live default/trigger semantics must be checked before designing a migration; the presence of the column alone does not prove stock is reserved.
+- The live `Orders` table already has a non-null `stock_reserved` boolean column, but the inspected checkout RPC's INSERT does not supply it. The existing customer cancellation routines restore stock only when `stock_reserved` is true. Since this checkout RPC neither decrements stock nor marks it reserved, the reservation/cancellation lifecycle is not connected in this code path. Check column default and every reservation-related function before drafting a migration.
 - `Orders.seller_id` exists, but the checkout RPC does not populate it. `Order_items` has `product_id`, `quantity`, `unit_price`, and `total_price`, but no seller ID field.
 - The RPC locks cart rows with `FOR UPDATE OF c`; it does not explicitly lock product rows in that loop. A product stock check without a matching atomic decrement/row lock is not safe against concurrent checkouts.
-- This is a confirmed code-path finding, not a claim that every other database trigger or RPC lacks stock logic. Before writing the migration, inspect all stock/reservation triggers, cancellation/refund RPCs, and the seller order-status functions as one transaction lifecycle.
+- The read-only function inventory also found customer cancellation routines that lock an order and conditionally add quantities back to `products.stock` or `product_variants.stock` when `stock_reserved` is true. This makes setting the reservation flag without a matching stock decrement equally unsafe (it could inflate inventory on cancellation). Implement reservation as one atomic transaction and test both reserve and release together.
+- This is a confirmed checkout code-path finding, not a claim that every other database trigger or RPC lacks stock logic. Before writing the migration, inspect all stock/reservation triggers, cancellation/refund RPCs, and seller order-status functions as one transaction lifecycle.
 
 ### Next implementation slice
 
