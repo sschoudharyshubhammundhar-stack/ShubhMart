@@ -85,7 +85,7 @@ jobs:
           from pathlib import Path
           from pglast import parse_sql
 
-          path = Path("supabase/migrations/20261009_secure_checkout_order_payment_flow.sql")
+          path = Path("supabase/drafts/secure_checkout_order_payment_flow.sql")
           statements = parse_sql(path.read_text(encoding="utf-8"))
           if not statements:
               raise SystemExit("No SQL statements found in checkout migration.")
