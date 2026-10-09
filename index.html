@@ -471,10 +471,12 @@ function openWholesaleLogin(){openWholesaleMarket();note('Wholesale Market dekhn
 
 async function loadWholesaleProducts(){
  const e=document.getElementById('wholesaleProducts'); if(!e)return;
+ try{
  e.innerHTML='<div class="loaderr">Wholesale products load ho rahe hain…</div>';
  const {data,error}=await sb.from('products').select('id,name,category,price,mrp,stock,image_url,wholesale_moq,wholesale_price,seller_id').eq('status','Active').eq('is_live',true).eq('wholesale_enabled',true).gt('stock',0).not('wholesale_price','is',null).order('created_at',{ascending:false}).limit(24);
  if(error){e.innerHTML='<div class="errorbox">Wholesale products load error: '+esc(error.message)+'</div>';return}
  e.innerHTML=(data||[]).length?(data||[]).map(p=>'<div class="card"><img src="'+(p.image_url||'https://placehold.co/500x400?text=Wholesale')+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">WHOLESALE</span><h3>'+esc(p.name)+'</h3><div class="small">'+esc(p.category||'')+'</div><div><span class="wholesale-price">₹'+Number(p.wholesale_price||0).toFixed(0)</span> <span class="small">per piece</span></div><div class="small">Retail ₹'+Number(p.price||0).toFixed(0)+' · Stock '+Number(p.stock||0)+'</div><span class="wholesale-moq">MOQ: '+Number(p.wholesale_moq||1)+'</span><div class="contact-shield">🔒 Seller contact hidden · Inquiry only through ShubhMart</div><button class="btn" onclick="sendWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'Abhi koi approved wholesale product available nahi hai.';
+ }catch(err){e.innerHTML='<div class="errorbox">Wholesale section abhi load nahi ho paaya. Refresh karke dobara koshish kijiye.</div>';}
 }
 async function sendWholesaleInquiry(productId){
  if(!currentUser){show('account');setTimeout(()=>document.getElementById('email')?.focus(),50);note('Wholesale Market open hai. Inquiry bhejne ke liye pehle normal ShubhMart customer login/signup kijiye.',true);return}
@@ -513,7 +515,22 @@ function openProduct(p){
  if(selectedId){document.getElementById('smSelectedVariantNotice')?.remove();setTimeout(function(){if(window.smVariantCache?.some(v=>String(v.id)===String(selectedId)))window.smSelectVariant(selectedId,p.id)},0)}
 }
 function closeProductModal(){document.getElementById('productModal').classList.add('hidden')}
-async function loadProducts(){loadWholesaleProducts();
+
+function isShubhMartPreview(){return /fix-secure-checkout-edge-function|0d00b30a/i.test(location.hostname);}
+function renderPreviewDemoProducts(target){
+ if(!target)return;
+ const demo=[
+  {name:'Bluetooth Mini Speaker',category:'Electronics',price:499,mrp:999,image:'https://placehold.co/500x400?text=Demo+Speaker'},
+  {name:'Kitchen Vegetable Chopper',category:'Home & Kitchen',price:299,mrp:599,image:'https://placehold.co/500x400?text=Demo+Chopper'},
+  {name:'Foldable Clothes Organizer',category:'Home & Kitchen',price:229,mrp:449,image:'https://placehold.co/500x400?text=Demo+Organizer'},
+  {name:'Beauty Essentials Kit',category:'Beauty & Personal Care',price:349,mrp:699,image:'https://placehold.co/500x400?text=Demo+Beauty'}
+ ];
+ target.innerHTML='<div class="msg" style="grid-column:1/-1">Preview demo only — ye sample products hain, real listings nahi. Inse order place nahi hoga.</div>'+demo.map(p=>'<div class="card"><img src="'+p.image+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">DEMO ONLY</span><h3>'+esc(p.name)+'</h3><div class="price">₹'+p.price+' <span class="old">₹'+p.mrp+'</span></div><div class="small">'+esc(p.category)+'</div><button class="btn alt" disabled>Demo product</button></div>').join('');
+}
+
+async function loadProducts(){
+ try{
+ loadWholesaleProducts();
  const el=document.getElementById('products');
  if(el){el.innerHTML='<div class="loaderr">Products load ho rahe hain…</div>';}
  clearTimeout(productsLoadingTimer);
@@ -534,14 +551,15 @@ async function loadProducts(){loadWholesaleProducts();
  if(error){el.innerHTML='<div>Products load error: '+error.message+'</div>';return}
  let wishIds=new Set();
  if(currentUser){const {data:wishes}=await sb.from('wishlist').select('product_id').eq('customer_id',currentUser.id);(wishes||[]).forEach(w=>wishIds.add(String(w.product_id)))}
- el.innerHTML=data?.length?data.map(p=>{const wished=wishIds.has(String(p.id));return `<div class="card">
+ if(data?.length){el.innerHTML=data.map(p=>{const wished=wishIds.has(String(p.id));return `<div class="card">
  <img src="${esc(p.image_url||'https://placehold.co/500x400?text=ShubhMart')}" alt="${esc(p.name)}" onclick="openProductById('${p.id}')" style="cursor:pointer"><h3 onclick="openProductById('${p.id}')" style="cursor:pointer">${esc(p.name)}</h3>
  <div class="price">₹${Number(p.price||0).toFixed(0)} <span class="old">₹${Number(p.mrp||0).toFixed(0)}</span></div>
  <div class="small">${esc(p.category||'')} ${Number(p.mrp)>Number(p.price)?' • '+Math.round((1-Number(p.price)/Number(p.mrp))*100)+'% OFF':''}</div>
  <div class="small">${Number(p.stock||0)>0?'In Stock':'Out of Stock'}</div>
  <button class="btn" ${Number(p.stock||0)<=0?'disabled':''} onclick="addCart('${p.id}')">Add to Cart</button>
  <button class="btn alt" ${Number(p.stock||0)<=0?'disabled':''} onclick="buy('${p.id}')">Buy Now</button>
- <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button></div>`}).join(''):'No active products found.';
+ <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button></div>`}).join('');}else if(isShubhMartPreview()){renderPreviewDemoProducts(el);}else{el.innerHTML='No active products found.';}
+ }catch(err){clearTimeout(productsLoadingTimer);if(isShubhMartPreview()){renderPreviewDemoProducts(document.getElementById('products'));}else{const target=document.getElementById('products');if(target)target.innerHTML='<div class="errorbox">Products abhi load nahi ho paaye. Internet check karke Refresh kijiye.</div>';}}
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function addCart(id,variantId=null){
