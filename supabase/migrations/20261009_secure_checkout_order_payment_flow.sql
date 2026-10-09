@@ -109,7 +109,7 @@ begin
     from public.products
     where id = v_cart.product_id
     for update;
-    if not found or v_product.status <> 'Active' or not coalesce(v_product.is_live, false) then
+    if not found or v_product.status is distinct from 'Active' or not coalesce(v_product.is_live, false) then
       raise exception 'Product is no longer available';
     end if;
 
@@ -119,7 +119,7 @@ begin
       from public.product_variants
       where id = v_cart.variant_id and product_id = v_cart.product_id
       for update;
-      if not found or v_variant.status <> 'Active' then
+      if not found or v_variant.status is distinct from 'Active' then
         raise exception 'Product variant is no longer available';
       end if;
       v_unit_price := v_variant.price;
@@ -247,6 +247,7 @@ grant execute on function public.create_customer_order_secure(uuid,uuid,text,tex
 
 create or replace function public.attach_razorpay_order_secure(
   p_order_id uuid,
+  p_customer_id uuid,
   p_gateway_order_id text,
   p_method text
 )
@@ -260,11 +261,11 @@ declare
   v_payment record;
   v_method text := lower(trim(coalesce(p_method, '')));
 begin
-  if auth.uid() is null then raise exception 'Unauthorized'; end if;
+  if p_customer_id is null then raise exception 'Customer is required'; end if;
   select id, customer_id, payment_method, payment_status, order_status, total_amount
   into v_order
   from public."Orders"
-  where id = p_order_id and customer_id = auth.uid()
+  where id = p_order_id and customer_id = p_customer_id
   for update;
   if not found then raise exception 'Order not found'; end if;
   if lower(coalesce(v_order.payment_status, 'pending')) <> 'pending'
@@ -282,7 +283,7 @@ begin
   select id, customer_id, amount, status, gateway_order_id, method
   into v_payment
   from public.payments
-  where order_id = p_order_id and customer_id = auth.uid()
+  where order_id = p_order_id and customer_id = p_customer_id
   for update;
   if not found then raise exception 'Payment record not found'; end if;
   if round(v_payment.amount, 2) <> round(v_order.total_amount, 2) then
@@ -302,8 +303,8 @@ begin
 end;
 $function$;
 
-revoke all on function public.attach_razorpay_order_secure(uuid,text,text) from public, anon;
-grant execute on function public.attach_razorpay_order_secure(uuid,text,text) to authenticated;
+revoke all on function public.attach_razorpay_order_secure(uuid,uuid,text,text) from public, anon, authenticated;
+grant execute on function public.attach_razorpay_order_secure(uuid,uuid,text,text) to service_role;
 
 create or replace function public.mark_razorpay_paid_secure(
   p_order_id uuid,
