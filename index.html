@@ -754,7 +754,7 @@ async function performCheckout(){
      note('Payment successful ✅ Order confirmed');
      show('orders');loadOrders();
    }catch(e){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));note('Payment status confirm nahi ho saka. Dobara payment na karein; support se sampark karein.',true)}
- },modal:{ondismiss:async function(){sessionStorage.removeItem('sm_payment_window_open_v1');const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled){clearCheckoutAttempt();note('Payment cancel ho gaya. Aap dobara try kar sakte hain.',true)}else{note('Order status verify nahi hua. My Orders check kijiye aur dobara payment se pehle support se sampark karein.',true)}show('cart');loadCart()} }};
+ },modal:{ondismiss:async function(){sessionStorage.removeItem('sm_payment_window_open_v1');if(sessionStorage.getItem('sm_payment_review_order_v1')===String(ord.id)){note('Payment verification chal rahi hai. Order cancel nahi kiya; status confirm hone dijiye.',true);return}const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled){clearCheckoutAttempt();note('Payment cancel ho gaya. Aap dobara try kar sakte hain.',true)}else{note('Order status verify nahi hua. My Orders check kijiye aur dobara payment se pehle support se sampark karein.',true)}show('cart');loadCart()} }};
  try{
    const rz=new Razorpay(options);
    sessionStorage.setItem('sm_payment_window_open_v1','1');
