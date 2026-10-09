@@ -732,6 +732,7 @@ async function performCheckout(){
  const rd=await r.json().catch(()=>({error:'Invalid payment server response'}));
  if(!r.ok||rd.error){if(await cancelUnpaidOrder(ord.id))clearCheckoutAttempt();return note(rd.error||'Payment setup failed. Agar order bana hai to Orders check kijiye.',true)}
  const options={key:rd.key_id,amount:rd.amount,currency:rd.currency,name:'ShubhMart',description:'ShubhMart Order '+String(ord.id).slice(0,8),order_id:rd.razorpay_order_id,prefill:{name:selectedAddress.name,contact:selectedAddress.mobile,email:currentUser.email||''},theme:{color:'#071638'},handler:async function(resp){
+   sessionStorage.removeItem('sm_payment_window_open_v1');
    try{
      const {data:{session:verifySession}}=await sb.auth.getSession();
      if(!verifySession){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Payment status confirm nahi ho saka. Dobara payment na karein; login karke support se sampark karein.',true)}
@@ -743,12 +744,13 @@ async function performCheckout(){
      note(clearError?'Payment successful aur order confirmed. Cart sync nahi hua; dobara order na banayein.':'Payment successful ✅ Order confirmed');
      show('orders');loadOrders();
    }catch(e){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));note('Payment status confirm nahi ho saka. Dobara payment na karein; support se sampark karein.',true)}
- },modal:{ondismiss:async function(){const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled){clearCheckoutAttempt();note('Payment cancel ho gaya. Aap dobara try kar sakte hain.',true)}else{note('Order status verify nahi hua. My Orders check kijiye aur dobara payment se pehle support se sampark karein.',true)}show('cart');loadCart()} }};
+ },modal:{ondismiss:async function(){sessionStorage.removeItem('sm_payment_window_open_v1');const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled){clearCheckoutAttempt();note('Payment cancel ho gaya. Aap dobara try kar sakte hain.',true)}else{note('Order status verify nahi hua. My Orders check kijiye aur dobara payment se pehle support se sampark karein.',true)}show('cart');loadCart()} }};
  try{
    const rz=new Razorpay(options);
-   rz.on('payment.failed',async function(){const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note(cancelled?'Payment fail hua. Aap dobara try kar sakte hain.':'Payment status verify nahi hua. My Orders/Support check kijiye.',true);show('cart');loadCart()});
+   sessionStorage.setItem('sm_payment_window_open_v1','1');
+   rz.on('payment.failed',async function(){sessionStorage.removeItem('sm_payment_window_open_v1');const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note(cancelled?'Payment fail hua. Aap dobara try kar sakte hain.':'Payment status verify nahi hua. My Orders/Support check kijiye.',true);show('cart');loadCart()});
    rz.open();
- }catch(e){const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note('Payment window open nahi hui. '+(cancelled?'Aap dobara try kar sakte hain.':'My Orders check kijiye.'),true)}
+ }catch(e){sessionStorage.removeItem('sm_payment_window_open_v1');const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note('Payment window open nahi hui. '+(cancelled?'Aap dobara try kar sakte hain.':'My Orders check kijiye.'),true)}
 }
 async function loadNotifications(){const e=document.getElementById('notificationsbox');if(!currentUser){e.innerHTML='Login kijiye.';return}const {data,error}=await sb.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);if(error){e.innerHTML='Notification error: '+esc(error.message);return}e.innerHTML=data?.length?data.map(n=>`<div class="panel ${n.is_read?'':'msg'}" onclick="markNotificationRead('${n.id}')"><b>${esc(n.title)}</b><br>${esc(n.body)}<br><span class="small">${new Date(n.created_at).toLocaleString('en-IN')}</span>${n.is_read?'':'<br><span class="small">Tap to mark read</span>'}</div>`).join(''):'No notifications yet.';const unread=(data||[]).filter(n=>!n.is_read).length;const nb=document.getElementById('notifBadge');if(nb)nb.textContent=String(unread);document.title=unread?`(${unread}) ShubhMart — Live Marketplace`:'ShubhMart — Live Marketplace';}
 async function markNotificationRead(id){const {error}=await sb.from('notifications').update({is_read:true}).eq('id',id).eq('user_id',currentUser.id);if(error)return note(error.message,true);loadNotifications()}
