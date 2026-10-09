@@ -648,9 +648,12 @@ async function checkout(){
  const delivery=document.getElementById('deliveryMethod')?.value||'standard';
  let couponCode='';
  try{const cp=JSON.parse(localStorage.getItem('sm_coupon_v1')||'null');couponCode=String(cp?.code||'').trim().toUpperCase()}catch(e){}
- const {data:created,error}=await sb.rpc('create_order_from_cart',{p_customer_id:currentUser.id,p_address_id:selectedAddress.id,p_payment_method:method,p_delivery_method:delivery,p_coupon_code:couponCode});
- if(error||!created?.length)return note('Secure order create error: '+(error?.message||'Order create nahi hua'),true);
- const ord={id:created[0].order_id,total_amount:created[0].total_amount};
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session){return note('Session expire ho gaya. Dobara login kijiye.',true)}
+ const orderResponse=await fetch(SUPABASE_URL+'/functions/v1/create-customer-order',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({address_id:selectedAddress.id,payment_method:method,delivery_method:delivery,coupon_code:couponCode})});
+ const created=await orderResponse.json().catch(()=>({error:'Invalid order server response'}));
+ if(!orderResponse.ok||!created?.success||!created?.order_id)return note('Secure order create error: '+(created?.error||'Order create nahi hua'),true);
+ const ord={id:created.order_id,total_amount:Number(created.amount||0)};
  if(method==='cod'){
    await sb.from('cart').delete().eq('customer_id',currentUser.id);
    localStorage.removeItem('sm_coupon_v1');
