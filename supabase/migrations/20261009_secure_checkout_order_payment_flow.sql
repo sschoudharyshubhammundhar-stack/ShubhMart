@@ -114,9 +114,9 @@ begin
 
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_customer_id::text || ':' || p_request_id::text, 0));
 
-  select id, total_amount, payment_method, delivery_method, address_id, coupon_code into v_existing
-  from public."Orders"
-  where customer_id = p_customer_id and checkout_request_id = p_request_id
+  select o.id, o.total_amount, o.payment_method, o.delivery_method, o.address_id, o.coupon_code into v_existing
+  from public."Orders" o
+  where o.customer_id = p_customer_id and o.checkout_request_id = p_request_id
   limit 1;
   if found then
     select coalesce(sum(abs(amount)), 0)::bigint into v_coin_balance
