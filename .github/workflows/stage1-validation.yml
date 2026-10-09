@@ -34,6 +34,22 @@ jobs:
           set -euo pipefail
           deno check supabase/functions/create-customer-order/index.ts supabase/functions/razorpay-payment/index.ts
 
+      - name: Parse checkout SQL migration syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check pglast
+          python3 - <<'PY'
+          from pathlib import Path
+          from pglast import parse_sql
+
+          path = Path("supabase/migrations/20261009_secure_checkout_order_payment_flow.sql")
+          statements = parse_sql(path.read_text(encoding="utf-8"))
+          if not statements:
+              raise SystemExit("No SQL statements found in checkout migration.")
+          print(f"Parsed {len(statements)} top-level SQL statements.")
+          PY
+
       - name: Check standalone JavaScript files
         shell: bash
         run: |
