@@ -453,16 +453,13 @@ declare
   v_customer_id uuid;
   v_payment_status text;
   v_reserved boolean;
-  v_gateway_order_id text;
-  v_payment_row_status text;
   i record;
 begin
-  select o.customer_id, o.payment_status, o.stock_reserved, p.gateway_order_id, p.status
-  into v_customer_id, v_payment_status, v_reserved, v_gateway_order_id, v_payment_row_status
-  from public."Orders" o
-  left join public.payments p on p.order_id = o.id and p.customer_id = o.customer_id
-  where o.id = p_order_id
-  for update of o;
+  select customer_id, payment_status, stock_reserved
+  into v_customer_id, v_payment_status, v_reserved
+  from public."Orders"
+  where id = p_order_id
+  for update;
 
   if v_customer_id is null or v_customer_id <> (select auth.uid()) then
     raise exception 'Order not found or not owned by customer';
@@ -470,8 +467,14 @@ begin
   if lower(coalesce(v_payment_status, 'pending')) not in ('pending', 'failed', 'cancelled') then
     raise exception 'Paid order cannot be cancelled by this action';
   end if;
-  if v_gateway_order_id is not null
-     and lower(coalesce(v_payment_row_status, 'pending')) not in ('failed', 'cancelled') then
+  if exists (
+    select 1
+    from public.payments p
+    where p.order_id = p_order_id
+      and p.customer_id = v_customer_id
+      and p.gateway_order_id is not null
+      and lower(coalesce(p.status, 'pending')) not in ('failed', 'cancelled')
+  ) then
     raise exception 'Gateway payment attempt must be reconciled before cancellation';
   end if;
 
