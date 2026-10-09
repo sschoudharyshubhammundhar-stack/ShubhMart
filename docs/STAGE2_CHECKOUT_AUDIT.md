@@ -2,7 +2,7 @@
 
 **Roadmap:** Frozen Power Roadmap v1.0  
 **Branch:** `stage2/secure-checkout-audit`  
-**Status:** IN PROGRESS — source changes and CI checks pass; database migration is not applied or integration-tested.  
+**Status:** IN PROGRESS — source changes and disposable-PostgreSQL CI tests pass; no schema/function changes have been applied to live Supabase.  
 **Release policy:** No production merge/deploy before Stage 7. Cloudflare Workers only. No Netlify deployment or preview workflow is used by this work.
 
 ## Stage 1 evidence carried forward
@@ -36,8 +36,8 @@
 
 ## Validation evidence
 - Latest branch CI run: https://github.com/sschoudharyshubhammundhar-stack/ShubhMart/actions/runs/37915129213
-- Passed: migration applied and checkout invariants exercised in a disposable PostgreSQL 17 CI database (including stock/variant reservation, idempotency, coin release, hidden-product rejection, over-limit coins, server-side Razorpay attachment/paid mutation, and rejection of cancellation while a gateway payment is unresolved); Deno type-check for all three Edge Functions; standalone JS syntax; inline JS syntax; SQL top-level parsing; Wrangler dry-run packaging; validation-only workflow.
+- Passed: draft SQL applied and checkout invariants exercised in a disposable PostgreSQL 17 CI database (including stock/variant reservation, idempotency, coin release, hidden-product rejection, over-limit coins, server-side Razorpay attachment/paid mutation, and rejection of cancellation while a gateway payment is unresolved); Deno type-check for all three Edge Functions; standalone JS syntax; inline JS syntax; SQL top-level parsing; Wrangler dry-run packaging; validation-only workflow.
 - Not yet passed/available: application to an actual Supabase development database (the disposable CI schema is a focused harness, not the live Supabase schema); end-to-end COD/Razorpay browser tests; real Razorpay test-mode transaction and reconciliation tests; webhook secret/event configuration in Razorpay/Supabase; confirmation that deployed Supabase functions match this branch.
 
 ## Free-tier constraint / remaining gate
-A Supabase development branch was not created because the available estimate was **US$0.01344 per hour**. This project is being kept free-tier-first. The new PostgreSQL 17 CI harness tests the migration and critical invariants without paid Supabase infrastructure, but it cannot prove that every live Supabase setting/function matches. Do not apply the migration to production as a substitute for a test database. At Stage 7, configure the Supabase secret `RAZORPAY_WEBHOOK_SECRET`, ensure `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` are present, and subscribe the Razorpay webhook to `payment.authorized` and `payment.captured`. Stage 2 remains open until browser flows and Razorpay test-mode reconciliation are validated, the live-schema diff is reviewed, and all changes are approved for the Stage 7 release.
+A Supabase development branch was not created because the available estimate was **US$0.01344 per hour**. This project is being kept free-tier-first. The new PostgreSQL 17 CI harness tests the SQL draft and critical invariants without paid Supabase infrastructure, but it cannot prove that every live Supabase setting/function matches. Before any release, use the Supabase CLI `supabase migration new secure_checkout_order_payment_flow` to generate the actual versioned migration filename and move the reviewed draft into it; do not deploy the draft path directly. Do not apply the migration to production as a substitute for a test database. At Stage 7, configure the Supabase secret `RAZORPAY_WEBHOOK_SECRET`, ensure `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` are present, and subscribe the Razorpay webhook to `payment.authorized` and `payment.captured`. Stage 2 remains open until browser flows and Razorpay test-mode reconciliation are validated, the live-schema diff is reviewed, and all changes are approved for the Stage 7 release.
