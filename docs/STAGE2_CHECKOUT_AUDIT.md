@@ -31,12 +31,13 @@
 - Payment failures that cannot be verified are left pending for support reconciliation rather than automatically deleting an order that might have a captured payment.
 - Added source for `create-customer-order` and `razorpay-payment` Edge Functions.
 - Added `20261009_secure_checkout_order_payment_flow.sql` for review, covering idempotent order creation, stock/variant reservation, coupon/coin validation, unique gateway identifiers, server-only Razorpay attachment/paid mutation, and coin release on cancellation.
+- Schema cross-check found the live `products` table has no `updated_at` column while its update trigger referenced that field; the migration corrects that trigger so stock reservation/restoration can update products.
 - No live Edge Function was deployed and no production database schema/data was changed.
 
 ## Validation evidence
 - Latest branch CI run: https://github.com/sschoudharyshubhammundhar-stack/ShubhMart/actions/runs/37915129213
-- Passed: Deno type-check for both Edge Functions, standalone JS syntax, inline JS syntax, Wrangler dry-run packaging, validation-only workflow.
-- Not yet passed/available: execution of the SQL migration against a disposable database; end-to-end COD/Razorpay browser tests; real Razorpay test-mode transaction and reconciliation tests; confirmation that live Supabase functions match this branch.
+- Passed: Deno type-check for both Edge Functions, standalone JS syntax, inline JS syntax, Wrangler dry-run packaging, validation-only workflow. A top-level PostgreSQL SQL parser check is also being added to CI.
+- Not yet passed/available: execution of the SQL migration against a disposable database; PL/pgSQL body/integration validation against a database; end-to-end COD/Razorpay browser tests; real Razorpay test-mode transaction and reconciliation tests; confirmation that live Supabase functions match this branch.
 
 ## Free-tier constraint / blocker
 A Supabase development branch was not created because the available estimate was **US$0.01344 per hour**. This project is being kept free-tier-first. Do not apply the migration to production as a substitute for a test database. Stage 2 remains open until SQL/integration tests can be performed safely and all fixes are reviewed.
