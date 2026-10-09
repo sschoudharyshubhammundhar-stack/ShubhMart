@@ -504,3 +504,91 @@ $function$;
 
 revoke all on function public.cancel_unpaid_order(uuid) from public, anon;
 grant execute on function public.cancel_unpaid_order(uuid) to authenticated;
+
+-- The customer cancellation RPC must also refuse unresolved online-payment attempts.
+create or replace function public.cancel_customer_order(p_order_id uuid, p_reason text default null)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  o public."Orders"%rowtype;
+  i record;
+begin
+  if (select auth.uid()) is null then raise exception 'Authentication required'; end if;
+
+  select * into o
+  from public."Orders"
+  where id = p_order_id and customer_id = (select auth.uid())
+  for update;
+
+  if not found then raise exception 'Order not found'; end if;
+  if lower(coalesce(o.order_status, '')) not in ('pending', 'confirmed') then
+    raise exception 'Order cannot be cancelled at this stage';
+  end if;
+
+  if lower(coalesce(o.payment_status, 'pending')) <> 'paid'
+     and exists (
+       select 1
+       from public.payments p
+       where p.order_id = p_order_id
+         and p.customer_id = o.customer_id
+         and p.gateway_order_id is not null
+         and lower(coalesce(p.status, 'pending')) not in ('failed', 'cancelled')
+     ) then
+    raise exception 'Online payment attempt must be reconciled before cancellation';
+  end if;
+
+  if coalesce(o.stock_reserved, false) then
+    for i in
+      select product_id, variant_id, quantity
+      from public."Order_items"
+      where order_id = p_order_id
+    loop
+      if i.variant_id is not null then
+        update public.product_variants
+        set stock = stock + i.quantity
+        where id = i.variant_id and product_id = i.product_id;
+      else
+        update public.products
+        set stock = stock + i.quantity
+        where id = i.product_id;
+      end if;
+    end loop;
+
+    update public."Orders"
+    set stock_reserved = false
+    where id = p_order_id;
+  end if;
+
+  if lower(coalesce(o.payment_status, 'pending')) = 'paid' then
+    update public."Orders"
+    set order_status = 'Cancelled'
+    where id = p_order_id;
+
+    insert into public.refunds(order_id, customer_id, amount, method, status, notes)
+    values(
+      p_order_id, o.customer_id, greatest(0, o.total_amount),
+      'Original Payment', 'Pending',
+      left(coalesce(p_reason, 'Customer cancellation'), 500)
+    )
+    on conflict (order_id) where return_id is null do nothing;
+  else
+    update public."Orders"
+    set order_status = 'Cancelled',
+        payment_status = case
+          when lower(coalesce(o.payment_status, 'pending')) = 'failed' then 'failed'
+          else 'cancelled'
+        end
+    where id = p_order_id;
+
+    perform public.release_shubhcoins_for_order(p_order_id);
+  end if;
+
+  return true;
+end;
+$function$;
+
+revoke all on function public.cancel_customer_order(uuid,text) from public, anon;
+grant execute on function public.cancel_customer_order(uuid,text) to authenticated;
