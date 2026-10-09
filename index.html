@@ -441,7 +441,7 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
       </div>
     </div>
   </section>
-  <section id="cart" class="hidden"><div class="panel"><h2>🛒 My Cart</h2><div class="checkout-step"><div class="step active">1. Cart</div><div class="step">2. Address</div><div class="step">3. Payment</div></div><div id="cartbox"></div><div id="checkoutStart" class="hidden"><button class="btn" onclick="beginCheckout()">Checkout → Address</button></div><div id="addressCheckout" class="panel hidden"><h3>📍 Delivery Address</h3><div class="small">Payment se pehle delivery address select ya add kijiye.</div><input id="caname" placeholder="Full Name"><input id="camobile" placeholder="Mobile Number" inputmode="numeric"><input id="cahouse" placeholder="House / Shop"><input id="caarea" placeholder="Area / Locality"><input id="cacity" placeholder="City"><input id="castate" placeholder="State"><input id="capin" placeholder="PIN Code" inputmode="numeric"><button class="btn" onclick="saveCheckoutAddress()">Save New Address</button><div id="checkoutAddresses"></div><div id="selectedAddressPreview" class="msg">No address selected.</div><button id="continuePaymentBtn" class="btn" onclick="continueToPayment()" disabled>Continue to Payment →</button></div><div id="checkoutbox" class="panel hidden"><h3>💳 Payment Method</h3><div id="paymentAddressPreview" class="msg"></div><select id="paymentMethod"><option value="cod">Cash on Delivery (COD)</option><option value="upi">UPI</option><option value="card">Debit/Credit Card</option><option value="netbanking">Net Banking</option></select><div class="small">UPI / Card / Net Banking ke liye Razorpay checkout use hoga.</div><select id="deliveryMethod" aria-label="Delivery method"><option value="standard">Standard Delivery</option><option value="fast">Fast Delivery ₹49</option><option value="express">Express Delivery ₹99</option><option value="scheduled">Scheduled Delivery ₹79</option></select><button class="btn" onclick="checkout()">Place Order / Pay Now</button><button class="btn alt" onclick="backToAddress()">← Change Address</button></div></div></section>
+  <section id="cart" class="hidden"><div class="panel"><h2>🛒 My Cart</h2><div class="checkout-step"><div class="step active">1. Cart</div><div class="step">2. Address</div><div class="step">3. Payment</div></div><div id="cartbox"></div><div id="checkoutStart" class="hidden"><button class="btn" onclick="beginCheckout()">Checkout → Address</button></div><div id="addressCheckout" class="panel hidden"><h3>📍 Delivery Address</h3><div class="small">Payment se pehle delivery address select ya add kijiye.</div><input id="caname" placeholder="Full Name"><input id="camobile" placeholder="Mobile Number" inputmode="numeric"><input id="cahouse" placeholder="House / Shop"><input id="caarea" placeholder="Area / Locality"><input id="cacity" placeholder="City"><input id="castate" placeholder="State"><input id="capin" placeholder="PIN Code" inputmode="numeric"><button class="btn" onclick="saveCheckoutAddress()">Save New Address</button><div id="checkoutAddresses"></div><div id="selectedAddressPreview" class="msg">No address selected.</div><button id="continuePaymentBtn" class="btn" onclick="continueToPayment()" disabled>Continue to Payment →</button></div><div id="checkoutbox" class="panel hidden"><h3>💳 Payment Method</h3><div id="paymentAddressPreview" class="msg"></div><select id="paymentMethod"><option value="cod">Cash on Delivery (COD)</option><option value="upi">UPI</option><option value="card">Debit/Credit Card</option><option value="netbanking">Net Banking</option></select><div class="small">UPI / Card / Net Banking ke liye Razorpay checkout use hoga.</div><select id="deliveryMethod" aria-label="Delivery method"><option value="standard">Standard Delivery</option><option value="fast">Fast Delivery ₹49</option><option value="express">Express Delivery ₹99</option><option value="scheduled">Scheduled Delivery ₹79</option></select><div class="panel" style="margin-top:10px"><label for="shubhcoinsRedeem"><b>Use ShubhCoins</b></label><div id="shubhcoinsBalanceHint" class="small">1 ShubhCoin = ₹1. Server checkout verifies your balance and the 20% item-subtotal limit.</div><input id="shubhcoinsRedeem" type="number" min="0" step="1" value="0" inputmode="numeric" aria-label="ShubhCoins to redeem"></div><button class="btn" onclick="checkout()">Place Order / Pay Now</button><button class="btn alt" onclick="backToAddress()">← Change Address</button></div></div></section>
   <section id="orders" class="hidden"><div class="panel"><h2>📦 My Orders</h2><div id="ordersbox">Login karke orders dekhein.</div></div></section><section id="support" class="hidden"><div class="panel"><h2>🆘 Help & Complaints</h2><div class="msg">Order, product, payment, delivery ya seller se judi problem ke liye ticket submit kijiye. Ticket ID ke saath status yahin dikhega.</div><div class="panel"><h3>New Support Ticket</h3><div style="display:grid;gap:10px"><select id="ticketCategory"><option value="Order">Order</option><option value="Product">Product</option><option value="Payment">Payment</option><option value="Delivery">Delivery</option><option value="Return/Refund">Return / Refund</option><option value="Seller">Seller / Seller behaviour</option><option value="Account">Account</option><option value="Other">Other</option></select><input id="ticketSubject" placeholder="Problem ka short subject"><input id="ticketOrderId" placeholder="Order ID (optional)"><textarea id="ticketDescription" rows="5" placeholder="Problem ki poori details likhiye"></textarea><button class="btn" onclick="submitSupportTicket()">Submit Complaint / Ticket</button><div id="ticketMsg"></div></div></div><div><h3>My Tickets</h3><div id="ticketsbox">Login karke tickets dekhein.</div></div></div></section><section id="notifications" class="hidden"><div class="panel"><h2>🔔 Notifications</h2><button class="btn alt" onclick="markAllNotificationsRead()">Mark all as read</button><div id="notificationsbox">Login kijiye.</div></div></section><section id="wishlist" class="hidden"><div class="panel"><h2>❤️ My Wishlist</h2><div id="wishlistbox">Login kijiye.</div></div></section>
   <section id="account" class="hidden"><div class="panel"><h2>👤 Account</h2><div id="userbox"></div><div id="sellerDash" class="panel hidden"><h3>🏪 ShubhMart Seller Panel</h3><div id="sellerInfo"></div><div class="row" style="margin:10px 0">
 <a class="btn" href="seller.html">🚀 Seller Panel / Login</a>
@@ -544,6 +544,21 @@ async function loadProducts(){loadWholesaleProducts();
  <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button></div>`}).join(''):'No active products found.';
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function clearCheckoutAttempt(){try{sessionStorage.removeItem('sm_checkout_request_id_v1')}catch(e){}}
+function getCheckoutRequestId(){
+ let id=sessionStorage.getItem('sm_checkout_request_id_v1');
+ if(id)return id;
+ if(crypto.randomUUID)id=crypto.randomUUID();
+ else{const b=new Uint8Array(16);crypto.getRandomValues(b);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;id=[...b].map((x,i)=>([4,6,8,10].includes(i)?'-':'')+x.toString(16).padStart(2,'0')).join('')}
+ sessionStorage.setItem('sm_checkout_request_id_v1',id);return id;
+}
+async function loadShubhCoinsBalance(){
+ const hint=document.getElementById('shubhcoinsBalanceHint');if(!hint)return;
+ if(!currentUser){hint.textContent='ShubhCoins balance dekhne ke liye login kijiye.';return}
+ const {data,error}=await sb.from('shubhcoins_wallets').select('balance').eq('customer_id',currentUser.id).maybeSingle();
+ if(error){hint.textContent='Balance server par verify hoga. 1 coin = ₹1; maximum 20% item subtotal.';return}
+ hint.textContent='Available balance: '+Number(data?.balance||0)+' ShubhCoins. 1 coin = ₹1; maximum 20% item subtotal. Server final limit verify karega.';
+}
 async function addCart(id,variantId=null){
  if(!currentUser){note('Pehle login/signup kijiye',true);show('account');return false}
  const {data:p,error:pe}=await sb.from('products').select('id,stock,status,is_live').eq('id',id).maybeSingle();
@@ -562,7 +577,7 @@ async function addCart(id,variantId=null){
  }
  const availableStock=variant?Number(variant.stock||0):Number(p.stock||0);
  if(availableStock<1)return note('Product abhi out of stock hai.',true),false;
- const {data:existing,error:ee}=await sb.from('cart').select('id,quantity,variant_id').eq('customer_id',currentUser.id).eq('product_id',id).maybeSingle();
+ let existingQuery=sb.from('cart').select('id,quantity,variant_id').eq('customer_id',currentUser.id).eq('product_id',id);existingQuery=variant?.id?existingQuery.eq('variant_id',variant.id):existingQuery.is('variant_id',null);const {data:existing,error:ee}=await existingQuery.maybeSingle();
  if(ee)return note(ee.message,true),false;
  const next=Math.min(Number(existing?.quantity||0)+1,availableStock);
  if(existing&&Number(existing.quantity)>=availableStock&&String(existing.variant_id||'')===String(variant?.id||''))return note('Available stock limit reached.',true),false;
@@ -571,7 +586,7 @@ async function addCart(id,variantId=null){
    ? await sb.from('cart').update({variant_id:payload.variant_id,quantity:next}).eq('id',existing.id).eq('customer_id',currentUser.id)
    : await sb.from('cart').insert(payload);
  if(error)return note(error.message,true),false;
- note(variant?'Selected variant cart mein add ho gaya ✅':'Cart mein add ho gaya ✅');return true;
+ clearCheckoutAttempt();note(variant?'Selected variant cart mein add ho gaya ✅':'Cart mein add ho gaya ✅');return true;
 }
 async function buy(id){const ok=await addCart(id);if(ok)show('cart')}
 async function loadCart(){
@@ -596,8 +611,8 @@ async function loadCart(){
 }
 function beginCheckout(){if(!currentUser){note('Pehle login kijiye',true);show('account');return}document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.remove('hidden');document.getElementById('checkoutbox').classList.add('hidden');loadCheckoutAddresses();}
 function backToAddress(){document.getElementById('checkoutbox').classList.add('hidden');document.getElementById('addressCheckout').classList.remove('hidden');loadCheckoutAddresses()}
-async function changeQty(id,q){if(q<=0)return removeCart(id);if(!currentUser)return;const {data:row,error:re}=await sb.from('cart').select('product_id,variant_id,products(stock,status,is_live),variant:product_variants(id,stock,status)').eq('id',id).eq('customer_id',currentUser.id).maybeSingle();if(re||!row)return loadCart();if(row.products?.status!=='Active'||row.products?.is_live!==true)return removeCart(id);const max=row.variant_id?Number(row.variant?.stock||0):Math.max(0,Number(row.products?.stock||0));if(row.variant_id&&row.variant?.status!=='Active')return removeCart(id);if(max<1)return removeCart(id);q=Math.min(Math.max(1,Number(q)),max);const {error}=await sb.from('cart').update({quantity:q}).eq('id',id).eq('customer_id',currentUser.id);if(error)note(error.message,true);loadCart()}
-async function removeCart(id){await sb.from('cart').delete().eq('id',id).eq('customer_id',currentUser.id);loadCart()}
+async function changeQty(id,q){if(q<=0)return removeCart(id);if(!currentUser)return;const {data:row,error:re}=await sb.from('cart').select('product_id,variant_id,products(stock,status,is_live),variant:product_variants(id,stock,status)').eq('id',id).eq('customer_id',currentUser.id).maybeSingle();if(re||!row)return loadCart();if(row.products?.status!=='Active'||row.products?.is_live!==true)return removeCart(id);const max=row.variant_id?Number(row.variant?.stock||0):Math.max(0,Number(row.products?.stock||0));if(row.variant_id&&row.variant?.status!=='Active')return removeCart(id);if(max<1)return removeCart(id);q=Math.min(Math.max(1,Number(q)),max);const {error}=await sb.from('cart').update({quantity:q}).eq('id',id).eq('customer_id',currentUser.id);if(error)note(error.message,true);else clearCheckoutAttempt();loadCart()}
+async function removeCart(id){const {error}=await sb.from('cart').delete().eq('id',id).eq('customer_id',currentUser.id);if(error)note(error.message,true);else clearCheckoutAttempt();loadCart()}
 async function forgotPassword(){const email=String(document.getElementById('email')?.value||'').trim();if(!email)return note('Pehle email enter kijiye.',true);const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)return note(error.message,true);note('Password reset link email par bhej diya gaya.');}
 async function signup(){const email=document.getElementById('email').value,password=document.getElementById('password').value;if(!email||!password)return note('Email/password bhariye',true);const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name:prompt('Aapka naam?')||'',phone:prompt('Mobile number?')||''}}});if(error)note(error.message,true);else note(data.session?'Signup successful':'Signup successful. Email verification required.')}
 async function login(){const {data,error}=await sb.auth.signInWithPassword({email:document.getElementById('email').value,password:document.getElementById('password').value});if(error)note(error.message,true);else{currentUser=data.user;note('Login successful ✅');loadAccount()}}
@@ -618,7 +633,7 @@ async function selectAddressById(id){if(!currentUser||!id)return;const {data,err
 async function restoreSelectedAddress(){if(!currentUser)return;try{const saved=JSON.parse(localStorage.getItem('shubhmart_selected_address')||'null');if(saved?.id){const {data}=await sb.from('addresses').select('*').eq('id',saved.id).eq('customer_id',currentUser.id).maybeSingle();if(data){selectedAddress=data;return}}}catch(e){}const {data}=await sb.from('addresses').select('*').eq('customer_id',currentUser.id).order('is_default',{ascending:false}).order('created_at',{ascending:false}).limit(1).maybeSingle();if(data){selectedAddress=data;localStorage.setItem('shubhmart_selected_address',JSON.stringify({id:data.id}))}}
 function updateAddressPreview(){const p=document.getElementById('selectedAddressPreview');const pp=document.getElementById('paymentAddressPreview');const btn=document.getElementById('continuePaymentBtn');const html=selectedAddress?'<b>📦 Selected Delivery Address</b><br>'+esc(selectedAddress.name)+', '+esc(selectedAddress.mobile)+'<br>'+esc(selectedAddress.house_shop||'')+' '+esc(selectedAddress.area||'')+', '+esc(selectedAddress.city)+', '+esc(selectedAddress.state)+' - '+esc(selectedAddress.pincode):'<b>📦 Delivery Address</b><br>No address selected. Address select/save kijiye.';if(p)p.innerHTML=html;if(pp)pp.innerHTML=html;if(btn)btn.disabled=!selectedAddress}
 async function saveCheckoutAddress(){if(!currentUser)return;const a={customer_id:currentUser.id,name:document.getElementById('caname').value.trim(),mobile:document.getElementById('camobile').value.trim(),house_shop:document.getElementById('cahouse').value.trim(),area:document.getElementById('caarea').value.trim(),city:document.getElementById('cacity').value.trim(),state:document.getElementById('castate').value.trim(),pincode:document.getElementById('capin').value.trim(),is_default:false};if(!a.name||!a.mobile||!a.house_shop||!a.area||!a.city||!a.state||!a.pincode)return note('Pura delivery address bhariye',true);const {data,error}=await sb.from('addresses').insert(a).select().single();if(error){note(error.message,true);return}selectAddress(data);document.getElementById('caname').value='';document.getElementById('camobile').value='';document.getElementById('cahouse').value='';document.getElementById('caarea').value='';document.getElementById('cacity').value='';document.getElementById('castate').value='';document.getElementById('capin').value='';note('New delivery address saved ✅');}
-function continueToPayment(){if(!selectedAddress)return note('Pehle delivery address select/save kijiye',true);document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.remove('hidden');updateAddressPreview();}
+function continueToPayment(){if(!selectedAddress)return note('Pehle delivery address select/save kijiye',true);document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.remove('hidden');updateAddressPreview();loadShubhCoinsBalance();}
 async function setDefaultAddress(id){if(!currentUser)return;const {error}=await sb.rpc('set_customer_default_address',{p_address_id:id});if(error)return note(error.message,true);const {data}=await sb.from('addresses').select('*').eq('id',id).eq('customer_id',currentUser.id).maybeSingle();if(!data)return note('Address nahi mila.',true);selectAddress(data);note('Default address set ho gaya ⭐');loadAddresses();loadCheckoutAddresses()}
 async function editAddress(id){if(!currentUser)return;const {data:a,error}=await sb.from('addresses').select('*').eq('id',id).eq('customer_id',currentUser.id).maybeSingle();if(error||!a)return note(error?.message||'Address nahi mila',true);const name=prompt('Name:',a.name)||a.name;const mobile=prompt('Mobile:',a.mobile)||a.mobile;const house=prompt('House/Shop:',a.house_shop||'')??a.house_shop;const area=prompt('Area:',a.area||'')??a.area;const city=prompt('City:',a.city||'')||a.city;const state=prompt('State:',a.state||'')||a.state;const pin=prompt('PIN code:',a.pincode||'')||a.pincode;if(!name||!mobile||!house||!area||!city||!state||!pin)return note('Address ke required fields complete kijiye.',true);const {data,error:e}=await sb.from('addresses').update({name,mobile,house_shop:house,area,city,state,pincode:pin}).eq('id',id).eq('customer_id',currentUser.id).select().single();if(e)return note(e.message,true);if(selectedAddress?.id===id)selectAddress(data);else{loadAddresses();loadCheckoutAddresses()}note('Address update ho gaya ✅')}
 async function deleteAddress(id){if(!currentUser)return;const {error}=await sb.from('addresses').delete().eq('id',id).eq('customer_id',currentUser.id);if(error){note(error.message,true);return}if(selectedAddress?.id===id){selectedAddress=null;localStorage.removeItem('shubhmart_selected_address')}note('Address deleted 🗑️');loadAddresses();loadCheckoutAddresses()}
@@ -640,38 +655,69 @@ async function loadWishlist(){
  <div style="flex:1"><b>${esc(w.products?.name||'Product')}</b><br>₹${w.products?.price||0}</div>
  <button class="btn" onclick="addCart('${w.product_id}')">Add to Cart</button><button class="btn alt" onclick="toggleWishlist('${w.product_id}')">Remove</button></div>`).join(''):'Wishlist empty.';
 }
-async function cancelUnpaidOrder(orderId){try{const {error}=await sb.rpc('cancel_unpaid_order',{p_order_id:orderId});if(error)console.warn('cancelUnpaidOrder',error.message)}catch(e){console.warn('cancelUnpaidOrder',e)}}
+async function cancelUnpaidOrder(orderId){try{const {error}=await sb.rpc('cancel_unpaid_order',{p_order_id:orderId});if(error){console.warn('cancelUnpaidOrder',error.message);return false}return true}catch(e){console.warn('cancelUnpaidOrder',e);return false}}
+let checkoutInProgress=false;
 async function checkout(){
+ if(checkoutInProgress)return;
+ checkoutInProgress=true;
+ const button=document.querySelector('#checkoutbox button[onclick="checkout()"]');
+ if(button)button.disabled=true;
+ try{await performCheckout()}catch(e){note(e?.message||'Checkout mein dikkat aayi. Dobara try kijiye.',true)}
+ finally{checkoutInProgress=false;if(button)button.disabled=false}
+}
+async function performCheckout(){
  if(!currentUser)return note('Pehle login kijiye',true);
  if(!selectedAddress){document.getElementById('checkoutbox').classList.add('hidden');document.getElementById('addressCheckout').classList.remove('hidden');return note('Pehle delivery address select kijiye',true)}
  const method=document.getElementById('paymentMethod')?.value||'cod';
  const delivery=document.getElementById('deliveryMethod')?.value||'standard';
+ const coins=Number(document.getElementById('shubhcoinsRedeem')?.value||0);
+ if(!Number.isSafeInteger(coins)||coins<0)return note('ShubhCoins amount 0 ya positive whole number hona chahiye.',true);
  let couponCode='';
  try{const cp=JSON.parse(localStorage.getItem('sm_coupon_v1')||'null');couponCode=String(cp?.code||'').trim().toUpperCase()}catch(e){}
- const {data:created,error}=await sb.rpc('create_order_from_cart',{p_customer_id:currentUser.id,p_address_id:selectedAddress.id,p_payment_method:method,p_delivery_method:delivery,p_coupon_code:couponCode});
- if(error||!created?.length)return note('Secure order create error: '+(error?.message||'Order create nahi hua'),true);
- const ord={id:created[0].order_id,total_amount:created[0].total_amount};
+ const requestId=getCheckoutRequestId();
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session)return note('Session expire ho gaya. Dobara login kijiye.',true);
+ const orderResponse=await fetch(SUPABASE_URL+'/functions/v1/create-customer-order',{
+   method:'POST',
+   headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_KEY},
+   body:JSON.stringify({address_id:selectedAddress.id,payment_method:method,delivery_method:delivery,coupon_code:couponCode,shubhcoins:coins,request_id:requestId})
+ });
+ const created=await orderResponse.json().catch(()=>({error:'Invalid order server response'}));
+ if(!orderResponse.ok||!created?.success||!created?.order_id)return note(created?.error||'Order create nahi hua. Cart aur address check karke dobara try kijiye.',true);
+ const ord={id:created.order_id,total_amount:Number(created.amount||0)};
+ if(!Number.isFinite(ord.total_amount)||ord.total_amount<=0)return note('Server se order amount sahi nahi mila. Order dobara place na karein; support se sampark karein.',true);
+ if(sessionStorage.getItem('sm_payment_review_order_v1')===String(ord.id))return note('Is order ka payment confirmation pending hai. Dobara payment na karein; My Orders/Support mein status check kijiye.',true);
  if(method==='cod'){
-   await sb.from('cart').delete().eq('customer_id',currentUser.id);
+   const {error:cartError}=await sb.from('cart').delete().eq('customer_id',currentUser.id);
    localStorage.removeItem('sm_coupon_v1');
-   note('COD order placed successfully 🎉');
-   show('orders');loadOrders();return;
+   if(cartError){note('Order server par ban gaya hai, lekin cart sync nahi hua. Dobara order na banayein; My Orders check kijiye.',true);show('orders');loadOrders();return}
+   clearCheckoutAttempt();note('COD order placed successfully 🎉');show('orders');loadOrders();return;
  }
  note('Secure payment window opening…');
  const fn=SUPABASE_URL+'/functions/v1/razorpay-payment';
- const {data:{session}}=await sb.auth.getSession();
- if(!session){await sb.rpc('cancel_customer_order',{p_order_id:ord.id,p_reason:'Session expired before payment'});return note('Session expired. Please login again.',true)}
- const r=await fetch(fn,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'create_order',order_id:ord.id,amount:ord.total_amount})});
+ const {data:{session:paymentSession}}=await sb.auth.getSession();
+ if(!paymentSession){if(await cancelUnpaidOrder(ord.id))clearCheckoutAttempt();return note('Session expire ho gaya. Order cancel karne ki koshish ki gayi; login karke Orders check kijiye.',true)}
+ const r=await fetch(fn,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+paymentSession.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'create_order',order_id:ord.id})});
  const rd=await r.json().catch(()=>({error:'Invalid payment server response'}));
- if(!r.ok||rd.error){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});return note(rd.error||'Payment setup failed',true)}
+ if(!r.ok||rd.error){if(await cancelUnpaidOrder(ord.id))clearCheckoutAttempt();return note(rd.error||'Payment setup failed. Agar order bana hai to Orders check kijiye.',true)}
  const options={key:rd.key_id,amount:rd.amount,currency:rd.currency,name:'ShubhMart',description:'ShubhMart Order '+String(ord.id).slice(0,8),order_id:rd.razorpay_order_id,prefill:{name:selectedAddress.name,contact:selectedAddress.mobile,email:currentUser.email||''},theme:{color:'#071638'},handler:async function(resp){
-   const vr=await fetch(fn,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'verify_payment',order_id:ord.id,razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature})});
-   const vd=await vr.json().catch(()=>({error:'Invalid verification response'}));
-   if(!vr.ok||vd.error){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});return note(vd.error||'Payment verification failed',true)}
-   await sb.from('cart').delete().eq('customer_id',currentUser.id);localStorage.removeItem('sm_coupon_v1');
-   note('Payment successful ✅ Order confirmed');show('orders');loadOrders();
- },modal:{ondismiss:async function(){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});note('Payment cancel ho gaya. Order create nahi hua ✅',true);show('cart');loadCart()} }};
- const rz=new Razorpay(options);rz.on('payment.failed',async function(){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});note('Payment failed/cancelled. Dobara try karein.',true);show('cart');loadCart()});rz.open();
+   try{
+     const {data:{session:verifySession}}=await sb.auth.getSession();
+     if(!verifySession){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Payment status confirm nahi ho saka. Dobara payment na karein; login karke support se sampark karein.',true)}
+     const vr=await fetch(fn,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+verifySession.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'verify_payment',order_id:ord.id,razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature})});
+     const vd=await vr.json().catch(()=>({error:'Invalid verification response'}));
+     if(!vr.ok||!vd.success){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Payment confirmation verify nahi ho saka. Payment dobara na karein; order pending rakha gaya hai. Support se sampark karein.',true)}
+     sessionStorage.removeItem('sm_payment_review_order_v1');clearCheckoutAttempt();localStorage.removeItem('sm_coupon_v1');
+     const {error:clearError}=await sb.from('cart').delete().eq('customer_id',currentUser.id);
+     note(clearError?'Payment successful aur order confirmed. Cart sync nahi hua; dobara order na banayein.':'Payment successful ✅ Order confirmed');
+     show('orders');loadOrders();
+   }catch(e){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));note('Payment status confirm nahi ho saka. Dobara payment na karein; support se sampark karein.',true)}
+ },modal:{ondismiss:async function(){const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled){clearCheckoutAttempt();note('Payment cancel ho gaya. Aap dobara try kar sakte hain.',true)}else{note('Order status verify nahi hua. My Orders check kijiye aur dobara payment se pehle support se sampark karein.',true)}show('cart');loadCart()} }};
+ try{
+   const rz=new Razorpay(options);
+   rz.on('payment.failed',async function(){const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note(cancelled?'Payment fail hua. Aap dobara try kar sakte hain.':'Payment status verify nahi hua. My Orders/Support check kijiye.',true);show('cart');loadCart()});
+   rz.open();
+ }catch(e){const cancelled=await cancelUnpaidOrder(ord.id);if(cancelled)clearCheckoutAttempt();note('Payment window open nahi hui. '+(cancelled?'Aap dobara try kar sakte hain.':'My Orders check kijiye.'),true)}
 }
 async function loadNotifications(){const e=document.getElementById('notificationsbox');if(!currentUser){e.innerHTML='Login kijiye.';return}const {data,error}=await sb.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);if(error){e.innerHTML='Notification error: '+esc(error.message);return}e.innerHTML=data?.length?data.map(n=>`<div class="panel ${n.is_read?'':'msg'}" onclick="markNotificationRead('${n.id}')"><b>${esc(n.title)}</b><br>${esc(n.body)}<br><span class="small">${new Date(n.created_at).toLocaleString('en-IN')}</span>${n.is_read?'':'<br><span class="small">Tap to mark read</span>'}</div>`).join(''):'No notifications yet.';const unread=(data||[]).filter(n=>!n.is_read).length;const nb=document.getElementById('notifBadge');if(nb)nb.textContent=String(unread);document.title=unread?`(${unread}) ShubhMart — Live Marketplace`:'ShubhMart — Live Marketplace';}
 async function markNotificationRead(id){const {error}=await sb.from('notifications').update({is_read:true}).eq('id',id).eq('user_id',currentUser.id);if(error)return note(error.message,true);loadNotifications()}
