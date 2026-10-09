@@ -60,6 +60,22 @@ jobs:
           set -euo pipefail
           deno check supabase/functions/create-customer-order/index.ts supabase/functions/razorpay-payment/index.ts supabase/functions/razorpay-webhook/index.ts
 
+      - name: Validate Supabase webhook configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import tomllib
+          from pathlib import Path
+
+          config = tomllib.loads(Path("supabase/config.toml").read_text(encoding="utf-8"))
+          assert config.get("project_id") == "yauveaexbpokhytqijae", "Unexpected Supabase project reference"
+          functions = config.get("functions", {})
+          assert functions.get("razorpay-webhook", {}).get("verify_jwt") is False, "Razorpay webhook must verify its HMAC signature without Supabase JWT"
+          assert all(name == "razorpay-webhook" or settings.get("verify_jwt", True) is not False for name, settings in functions.items()), "JWT verification may only be disabled for the signed webhook"
+          print("Supabase webhook config parsed; JWT bypass is limited to the signed Razorpay webhook.")
+          PY
+
       - name: Parse checkout SQL migration syntax
         shell: bash
         run: |
