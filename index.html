@@ -688,22 +688,35 @@ async function performCheckout(){
  try{const cp=JSON.parse(localStorage.getItem('sm_coupon_v1')||'null');couponCode=String(cp?.code||'').trim().toUpperCase()}catch(e){}
  const requestId=getCheckoutRequestId();
  const {data:{session}}=await sb.auth.getSession();
- if(!session)return note('Session expire ho gaya. Dobara login kijiye.',true);
+ if(!session){clearCheckoutAttempt();return note('Session expire ho gaya. Dobara login kijiye.',true)}
  const orderResponse=await fetch(SUPABASE_URL+'/functions/v1/create-customer-order',{
    method:'POST',
    headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_KEY},
    body:JSON.stringify({address_id:selectedAddress.id,payment_method:method,delivery_method:delivery,coupon_code:couponCode,shubhcoins:coins,request_id:requestId})
  });
  const created=await orderResponse.json().catch(()=>({error:'Invalid order server response'}));
- if(!orderResponse.ok||!created?.success||!created?.order_id)return note(created?.error||'Order create nahi hua. Cart aur address check karke dobara try kijiye.',true);
+ if(!orderResponse.ok||!created?.success||!created?.order_id){if(orderResponse.status<500)clearCheckoutAttempt();return note(created?.error||'Order create nahi hua. Cart aur address check karke dobara try kijiye.',true)}
  const ord={id:created.order_id,total_amount:Number(created.amount||0)};
- if(!Number.isFinite(ord.total_amount)||ord.total_amount<=0)return note('Server se order amount sahi nahi mila. Order dobara place na karein; support se sampark karein.',true);
+ sessionStorage.setItem('sm_checkout_order_id_v1',String(ord.id));
+ if(!Number.isFinite(ord.total_amount)||ord.total_amount<=0){sessionStorage.setItem('sm_payment_review_order_v1',String(ord.id));return note('Server se order amount sahi nahi mila. Order dobara place na karein; support se sampark karein.',true)}
  const orderTermsMatch=String(created.payment_method||'').toLowerCase()===method
    && String(created.delivery_method||'').toLowerCase()===delivery
    && String(created.address_id||'')===String(selectedAddress.id)
    && String(created.coupon_code||'')===couponCode
    && Number(created.coins_redeemed||0)===coins;
- if(!orderTermsMatch){note('Pichhli checkout request se order pehle hi ban chuka hai, lekin ab checkout details badal gayi hain. Naya order nahi banaya; My Orders check kijiye.',true);show('orders');loadOrders();return}
+ if(!orderTermsMatch){
+   const canonicalMethod=String(created.payment_method||'cod').toLowerCase();
+   const canonicalDelivery=String(created.delivery_method||'standard').toLowerCase();
+   if(document.getElementById('paymentMethod'))document.getElementById('paymentMethod').value=canonicalMethod;
+   if(document.getElementById('deliveryMethod'))document.getElementById('deliveryMethod').value=canonicalDelivery;
+   if(document.getElementById('shubhcoinsRedeem'))document.getElementById('shubhcoinsRedeem').value=String(Number(created.coins_redeemed||0));
+   if(created.coupon_code)localStorage.setItem('sm_coupon_v1',JSON.stringify({code:String(created.coupon_code)}));else localStorage.removeItem('sm_coupon_v1');
+   if(String(created.address_id||'')!==String(selectedAddress.id)){
+     const {data:canonicalAddress}=await sb.from('addresses').select('*').eq('id',created.address_id).eq('customer_id',currentUser.id).maybeSingle();
+     if(canonicalAddress)selectAddress(canonicalAddress);
+   }
+   note('Pichhla checkout order mila. Uski original details restore kar di hain; My Orders mein status review kijiye.',true);show('orders');loadOrders();return;
+ }
  if(sessionStorage.getItem('sm_payment_review_order_v1')===String(ord.id))return note('Is order ka payment confirmation pending hai. Dobara payment na karein; My Orders/Support mein status check kijiye.',true);
  if(method==='cod'){
    const {error:cartError}=await sb.from('cart').delete().eq('customer_id',currentUser.id);
