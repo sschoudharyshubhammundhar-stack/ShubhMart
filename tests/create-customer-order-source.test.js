@@ -17,3 +17,17 @@ test("order RPC preserves the verified customer's JWT context", () => {
   assert.match(source, /customer\.rpc\(["']create_order_from_cart_with_coins["']/);
   assert.doesNotMatch(source, /admin\.rpc\(["']create_order_from_cart_with_coins["']/);
 });
+
+test("checkout exposes only allowlisted business errors from the database", () => {
+  assert.match(source, /const safeCheckoutError = \(message: string\)/);
+  assert.match(source, /safeCheckoutError\(error\.message\)/);
+  assert.match(source, /Unable to create order\. Please review your cart and try again\./);
+  assert.doesNotMatch(source, /json\(\{\s*error:\s*error\.message\s*\},\s*400\)/);
+  assert.doesNotMatch(source, /error instanceof Error \? error\.message/);
+});
+
+test("checkout rejects unsupported methods and unauthenticated requests", () => {
+  assert.match(source, /req\.method !== "POST"[^\n]*405/);
+  assert.match(source, /!authorization\?\.startsWith\("Bearer "\) \|\| !apiKey/);
+  assert.match(source, /if\s*\(userError\s*\|\|\s*!user\) return json\(\{ error: "Unauthorized" \}, 401\)/);
+});
