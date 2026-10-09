@@ -28,7 +28,7 @@ create or replace function public.create_customer_order_secure(
 returns table(order_id uuid, total_amount numeric, coins_redeemed bigint, coin_discount numeric)
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $function$
 declare
   v_cart record;
@@ -70,7 +70,7 @@ begin
     raise exception 'Invalid delivery method';
   end if;
 
-  perform pg_advisory_xact_lock(hashtextextended(p_customer_id::text || ':' || p_request_id::text, 0));
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_customer_id::text || ':' || p_request_id::text, 0));
 
   select id, total_amount into v_existing
   from public."Orders"
@@ -109,7 +109,8 @@ begin
     from public.products
     where id = v_cart.product_id
     for update;
-    if not found or v_product.status is distinct from 'Active' or not coalesce(v_product.is_live, false) then
+    if not found then raise exception 'Product is no longer available'; end if;
+    if v_product.status is distinct from 'Active' or not coalesce(v_product.is_live, false) then
       raise exception 'Product is no longer available';
     end if;
 
@@ -119,7 +120,8 @@ begin
       from public.product_variants
       where id = v_cart.variant_id and product_id = v_cart.product_id
       for update;
-      if not found or v_variant.status is distinct from 'Active' then
+      if not found then raise exception 'Product variant is no longer available'; end if;
+      if v_variant.status is distinct from 'Active' then
         raise exception 'Product variant is no longer available';
       end if;
       v_unit_price := v_variant.price;
@@ -254,7 +256,7 @@ create or replace function public.attach_razorpay_order_secure(
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $function$
 declare
   v_order record;
@@ -316,7 +318,7 @@ create or replace function public.mark_razorpay_paid_secure(
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $function$
 declare
   v_order record;
@@ -375,7 +377,7 @@ create or replace function public.guard_customer_payment_update()
 returns trigger
 language plpgsql
 security definer
-set search_path = public, private
+set search_path = ''
 as $function$
 begin
   -- Service-role mutations are permitted only for trusted server-side Edge Functions.
