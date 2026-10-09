@@ -33,3 +33,5 @@ jobs:
             count=$((count + 1))
           done < <(find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -print0)
           echo "Syntax check passed for $count JavaScript files."
+      - name: Run checkout security regression tests
+        run: node --test tests/*.test.js
