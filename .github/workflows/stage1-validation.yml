@@ -84,5 +84,11 @@ jobs:
           print(f"Passed syntax check for {len(parser.scripts)} inline script(s).")
           PY
 
+      - name: Validate Cloudflare assets without deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4 deploy --dry-run --outdir /tmp/shubhmart-wrangler-dry-run
+
       - name: Confirm this workflow cannot deploy
         run: echo "Validation-only workflow. No Wrangler deploy command is present."
