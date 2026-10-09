@@ -310,6 +310,19 @@ BEGIN
 
   PERFORM set_config('request.jwt.claims', json_build_object('sub',v_customer::text,'role','service_role')::text, false);
   PERFORM public.attach_razorpay_order_secure(v_order,v_customer,'rp_order_test_1','upi');
+  v_failed := false;
+  BEGIN
+    PERFORM public.cancel_unpaid_order(v_order);
+  EXCEPTION WHEN OTHERS THEN
+    v_message := SQLERRM;
+    v_failed := true;
+  END;
+  IF NOT v_failed OR v_message <> 'Gateway payment attempt must be reconciled before cancellation' THEN
+    RAISE EXCEPTION 'unresolved gateway payment must not be deleted, got: %', v_message;
+  END IF;
+  IF NOT EXISTS(SELECT 1 FROM public."Orders" WHERE id=v_order) OR (SELECT stock FROM public.product_variants WHERE id=v_variant) <> 2 THEN
+    RAISE EXCEPTION 'gateway-linked order/stock was changed by refused cancellation';
+  END IF;
   PERFORM public.mark_razorpay_paid_secure(v_order,v_customer,'rp_order_test_1','pay_test_1','test-signature');
   IF (SELECT payment_status FROM public."Orders" WHERE id=v_order) <> 'Paid' THEN RAISE EXCEPTION 'secure paid RPC did not mark order paid'; END IF;
   IF (SELECT status FROM public.payments WHERE order_id=v_order) <> 'Paid' THEN RAISE EXCEPTION 'payment row was not marked paid'; END IF;
