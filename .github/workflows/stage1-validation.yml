@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "stage1/build-validation"
+      - "stage2/secure-checkout-audit"
   workflow_dispatch:
 
 permissions:
@@ -21,6 +22,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check Supabase Edge Functions
+        shell: bash
+        run: |
+          set -euo pipefail
+          deno check supabase/functions/create-customer-order/index.ts supabase/functions/razorpay-payment/index.ts
 
       - name: Check standalone JavaScript files
         shell: bash
