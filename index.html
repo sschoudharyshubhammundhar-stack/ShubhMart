@@ -663,7 +663,7 @@ async function loadWishlist(){
  <button class="btn" onclick="addCart('${w.product_id}')">Add to Cart</button><button class="btn alt" onclick="toggleWishlist('${w.product_id}')">Remove</button></div>`).join(''):'Wishlist empty.';
 }
 async function cancelUnpaidOrder(orderId){try{const {error}=await sb.rpc('cancel_unpaid_order',{p_order_id:orderId});if(error)console.warn('cancelUnpaidOrder',error.message)}catch(e){console.warn('cancelUnpaidOrder',e)}}
-async async function checkout(){
+async function checkout(){
  if(!currentUser)return note('Pehle login kijiye',true);
  if(!selectedAddress){document.getElementById('checkoutbox').classList.add('hidden');document.getElementById('addressCheckout').classList.remove('hidden');return note('Pehle delivery address select kijiye',true)}
  const method=document.getElementById('paymentMethod')?.value||'cod';
