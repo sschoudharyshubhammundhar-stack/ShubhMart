@@ -14,8 +14,8 @@ Scope: read-only inspection of the connected Supabase project's current policies
 ## Findings requiring follow-up
 
 ### High priority: checkout inventory and duplicate-order behavior
-- The live `create_order_from_cart_with_coins` function checks current stock but the inspected function body does not decrement/reserve inventory and does not accept an idempotency key. Concurrent checkouts or repeated submissions need runtime/concurrency tests and a reviewed database-side fix.
-- The inspected order creation body creates one `Orders` row and inserts cart rows into `Order_items`; seller-specific order splitting/assignment was not evident in that function. Verify this against the intended multi-seller contract before enabling real marketplace orders.
+- Read-only inspection of the live function definition confirmed it checks `products.stock` but does not decrement stock or set `Orders.stock_reserved`. Its cart loop uses `FOR UPDATE OF c` (locking cart rows, not the matching product rows), so concurrent buyers can both pass the stock check. No idempotency key is accepted, so retries/double taps can create duplicate orders and redeem ShubhCoins more than once.
+- The same function inserts a single `Orders` row for the whole cart without setting `Orders.seller_id`; `Order_items` has no seller identifier column. Multi-seller cart attribution/seller isolation is therefore not implemented in this RPC's current body. This must be designed against the actual seller-order panel and existing constraints before changing the schema.
 - Do not use real payments or enable live checkout until the above is resolved and end-to-end tests pass.
 
 ### High priority: seller onboarding authorization
@@ -34,8 +34,9 @@ Scope: read-only inspection of the connected Supabase project's current policies
 
 ## Phase 2 exit gates
 
-- [ ] Resolve inventory reservation and idempotency design with safe migration + regression tests.
-- [ ] Verify multi-seller order representation and seller order isolation.
+- [ ] Implement inventory safety with product-row locks/atomic stock decrement or reservation, clear release rules on cancellation/failure, and concurrency regression tests.
+- [ ] Add server-validated idempotency keys with a database uniqueness/transaction strategy; repeated checkout requests must return the original order and must not redeem coins twice.
+- [ ] Decide and implement parent-order vs per-seller child-order representation; align seller panel queries, order items, payment/refund accounting, and RLS before enabling multi-seller checkout.
 - [ ] Verify seller onboarding, pending listing submission, admin approval, and rejection paths against actual RLS.
 - [ ] Review SECURITY DEFINER grants and authorization checks, prioritizing admin, finance, refund, payout, and payment RPCs.
 - [ ] Test COD, payment failure, modal dismissal, payment success, order history, and duplicate submission in a non-production test environment.
@@ -45,3 +46,20 @@ Scope: read-only inspection of the connected Supabase project's current policies
 ## Safety boundary
 
 This audit is a working checklist, not a security certification. Production and database were not modified by this audit.
+
+
+## Additional read-only schema verification (2026-10-09)
+
+The follow-up SQL inspection checked the live function definition, table columns, constraints, and triggers. It did not insert, update, or delete any data.
+
+- The live `Orders` table already has a non-null `stock_reserved` boolean column, but the inspected checkout RPC's INSERT does not supply it. The live default/trigger semantics must be checked before designing a migration; the presence of the column alone does not prove stock is reserved.
+- `Orders.seller_id` exists, but the checkout RPC does not populate it. `Order_items` has `product_id`, `quantity`, `unit_price`, and `total_price`, but no seller ID field.
+- The RPC locks cart rows with `FOR UPDATE OF c`; it does not explicitly lock product rows in that loop. A product stock check without a matching atomic decrement/row lock is not safe against concurrent checkouts.
+- This is a confirmed code-path finding, not a claim that every other database trigger or RPC lacks stock logic. Before writing the migration, inspect all stock/reservation triggers, cancellation/refund RPCs, and the seller order-status functions as one transaction lifecycle.
+
+### Next implementation slice
+
+1. Map existing stock/reservation/cancel/refund functions and defaults, including `Orders.stock_reserved`, before touching production schema.
+2. Draft a branch-only migration and rollback plan that fits the actual schema and preserves COD/payment-failure/cancellation behavior.
+3. Add database-level tests for simultaneous checkout, retry/idempotency, insufficient stock, and coin balance conservation.
+4. Keep live migration/function deployment and real payment tests blocked pending explicit approval.
