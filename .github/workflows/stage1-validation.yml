@@ -58,7 +58,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          deno check supabase/functions/create-customer-order/index.ts supabase/functions/razorpay-payment/index.ts
+          deno check supabase/functions/create-customer-order/index.ts supabase/functions/razorpay-payment/index.ts supabase/functions/razorpay-webhook/index.ts
 
       - name: Parse checkout SQL migration syntax
         shell: bash
