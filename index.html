@@ -28,7 +28,8 @@
 .sm-hub-fab{position:fixed;right:18px;bottom:18px;z-index:998;border:0;border-radius:999px;padding:13px 17px;background:linear-gradient(135deg,#071638,#ec1b83);color:#fff;font-weight:900;box-shadow:0 12px 30px #06142f55;cursor:pointer}
 .sm-completion-hub{display:none;max-width:1180px;margin:18px auto;padding:0 14px}.sm-completion-hub.open{display:block}.sm-hub-inner{position:relative;background:#fff;border-radius:20px;padding:22px;box-shadow:0 12px 35px #14213d18;border:1px solid #e7eaf2}.sm-hub-close{position:absolute;right:15px;top:12px;border:0;border-radius:50%;width:36px;height:36px;font-size:24px;cursor:pointer}.sm-hub-title{font-size:25px;font-weight:900;color:#071638}.sm-hub-sub{color:#667085;margin:5px 0 18px}.sm-hub-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.sm-hub-card{border:1px solid #e6eaf2;border-radius:16px;padding:15px;background:linear-gradient(180deg,#fff,#f8faff)}.sm-hub-card h3{margin:0 0 12px;color:#14213d}.sm-hub-card h3 span{float:right;font-size:12px}.sm-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.sm-mini-grid>div{border:1px solid #edf0f5;border-radius:12px;padding:8px;background:#fff;cursor:pointer}.sm-mini-grid img{width:100%;height:80px;object-fit:cover;border-radius:8px}.sm-mini-grid b{font-size:11px;display:block;margin-top:5px}.sm-mini-grid button,.sm-mini-list button,.sm-coupon button{margin-top:6px;border:0;border-radius:8px;padding:6px 9px;background:#123b7b;color:#fff;cursor:pointer}.sm-mini-list>div{padding:10px;border-bottom:1px solid #edf0f5}.sm-coupon{display:grid;grid-template-columns:1fr auto;gap:4px;padding:10px;border:1px dashed #d5dbea;border-radius:10px;margin:7px 0}.sm-coupon small{grid-column:1}.sm-muted{color:#7b8496;font-size:13px}.sm-extra-grid{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.sm-extra-grid>div{border:1px solid #e6eaf2;border-radius:14px;padding:13px;background:#fafbfe}.sm-review,.sm-offer{padding:9px;border-radius:10px;background:#fff;border:1px solid #edf0f5;margin:7px 0;font-size:13px}.sm-review b{color:#f2a900}.sm-offer{border-left:4px solid #f51b83}
 @media(max-width:700px){.sm-hub-fab{right:10px;bottom:10px;padding:11px 13px;font-size:12px}.sm-hub-grid,.sm-extra-grid{grid-template-columns:1fr}.sm-mini-grid{grid-template-columns:repeat(2,1fr)}.sm-hub-inner{padding:16px}.sm-hub-title{font-size:20px}}
-</style>\n<link rel="stylesheet" href="assets/shubhmart-responsive.css?v=20260927-1"><style id="shubhmart-final-qa-lock">
+</style>
+<link rel="stylesheet" href="assets/shubhmart-responsive.css?v=20260927-1"><style id="shubhmart-final-qa-lock">
 /* FINAL QA LOCK — preserve functionality while fixing overflow, tap targets and mobile composition */
 html,body{max-width:100%;overflow-x:hidden!important}
 button,a,input,select,textarea{touch-action:manipulation}
@@ -73,7 +74,7 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
 .head-action{color:#fff!important}
 .head-action .ico{color:#ffd21a!important}
 .benefit-topbar{max-width:1380px!important;padding:5px 22px 8px!important}
-.subnav{height:50px!important;background:#fff!important}
+.subnav{height:50px!important;background:linear-gradient(135deg,#06132d,#0b1f4b 58%,#132b62)!important;border-top:1px solid rgba(255,255,255,.12)!important}
 .layout{display:block!important}
 .sidebar{display:none!important}
 .shubh-reference-hero{min-height:355px!important;border-radius:14px!important;padding:24px 34px!important;background:radial-gradient(circle at 82% 50%,rgba(255,210,26,.40),transparent 27%),linear-gradient(115deg,#071638,#123d7e 43%,#702c8e 74%,#ec1b83 125%)!important;box-shadow:0 14px 36px rgba(9,24,58,.20)!important}
@@ -814,4 +815,5 @@ async function submitSellerCompliance(){
  if(error){m.innerHTML='<div class="errorbox">KYC save nahi hua: '+esc(error.message)+'</div>';return;}
  m.innerHTML='<div class="msg">Seller KYC submit ho gaya. Status: Pending verification.</div>';
 }
-</script><script src="customer/marketplace-completion.js?v=20260926-1"></script>\n<script src="customer/marketplace-pro-layer.js?v=20260926-1"></script></body></html>
+</script><script src="customer/marketplace-completion.js?v=20260926-1"></script>
+<script src="customer/marketplace-pro-layer.js?v=20260926-1"></script></body></html>
