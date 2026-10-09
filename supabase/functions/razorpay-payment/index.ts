@@ -40,14 +40,10 @@ function constantTimeEqual(a: string, b: string) {
 async function razorpay(path: string, init: RequestInit = {}) {
   if (!razorpayKeyId || !razorpayKeySecret) throw new Error("Payment gateway is not configured");
   const authorization = "Basic " + btoa(razorpayKeyId + ":" + razorpayKeySecret);
-  const response = await fetch("https://api.razorpay.com/v1" + path, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": authorization,
-      ...(init.headers ?? {}),
-    },
-  });
+  const headers = new Headers(init.headers);
+  headers.set("Content-Type", "application/json");
+  headers.set("Authorization", authorization);
+  const response = await fetch("https://api.razorpay.com/v1" + path, { ...init, headers });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error("Payment gateway request failed");
   return data;
