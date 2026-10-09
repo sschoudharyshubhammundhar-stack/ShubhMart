@@ -16,6 +16,48 @@ create unique index if not exists payments_gateway_payment_id_uidx
   on public.payments(gateway_payment_id)
   where gateway_payment_id is not null;
 
+-- The live products table has no updated_at column; the existing trigger referenced it,
+-- which would make product stock updates fail. Preserve protected fields without that invalid assignment.
+create or replace function public.protect_product_admin_fields()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_owner_approved boolean;
+begin
+  select exists(
+    select 1
+    from public."Sellers" s
+    where s.id = old.seller_id
+      and s.user_id = (select auth.uid())
+      and s.status = 'Approved'
+  ) into v_owner_approved;
+
+  if not private.is_admin() then
+    new.id := old.id;
+    new.seller_id := old.seller_id;
+    new.status := old.status;
+    new.commission_rate := old.commission_rate;
+    new.approved_at := old.approved_at;
+    new.approved_by := old.approved_by;
+    new.rejection_reason := old.rejection_reason;
+    new.is_live := old.is_live;
+    new.compliance_status := old.compliance_status;
+    new.compliance_notes := old.compliance_notes;
+    new.ai_status := old.ai_status;
+    new.ai_reviewed_by_seller := old.ai_reviewed_by_seller;
+    if not v_owner_approved then
+      new.wholesale_enabled := old.wholesale_enabled;
+      new.wholesale_moq := old.wholesale_moq;
+      new.wholesale_price := old.wholesale_price;
+    end if;
+  end if;
+  return new;
+end;
+$function$;
+
 create or replace function public.create_customer_order_secure(
   p_customer_id uuid,
   p_address_id uuid,
@@ -138,7 +180,7 @@ begin
       v_stock := coalesce(v_product.stock, 0);
       if v_stock < v_cart.quantity then raise exception 'Insufficient stock'; end if;
       update public.products
-      set stock = stock - v_cart.quantity, updated_at = now()
+      set stock = stock - v_cart.quantity
       where id = v_product.id and stock >= v_cart.quantity;
       if not found then raise exception 'Stock changed; please retry checkout'; end if;
     end if;
