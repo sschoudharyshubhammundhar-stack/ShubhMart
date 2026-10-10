@@ -40,3 +40,35 @@ No live SQL write was run. No development branch was created (none was listed du
 A further read-only scan of current `public`/`private` function definitions found `release_shubhcoins_for_order(uuid)` referenced by `cancel_customer_order`, but not by the inspected `cancel_unpaid_order` function. The release function itself looks up the order row by order ID and authenticated customer before it can find the redeem ledger entry. Therefore, calling it only after `cancel_unpaid_order` deletes the order would fail its ownership/order lookup. This confirms an integration gap in the inspected function definitions; it does not prove every application-level caller path has been audited.
 
 Before changing this behavior, trace every Edge Function/browser/cron caller and check existing ledger rows in read-only mode. The eventual fix should make order cleanup and coin release atomic and idempotent, or store a durable checkout/ledger reference that remains valid after order cleanup. Do not patch production by simply adding a call after deletion.
+
+
+## Additional application-level call-site trace — 2026-10-10
+
+A source scan of the current PR branch's frontend files adds these concrete caller findings. This is still not a complete audit of remote Supabase triggers or provider-side systems.
+
+### `index.html` checkout
+
+- Defines a `cancelUnpaidOrder(orderId)` helper that calls `cancel_unpaid_order`.
+- Calls `cancel_unpaid_order` directly when Razorpay payment setup fails and when payment verification returns an error. The broader file contains five textual occurrences, including the helper and call sites.
+- Calls `create-customer-order` through `fetch`; the request body includes address, payment method, delivery method and coupon code, but omits ShubhCoins and an idempotency key.
+- Calls `cancel_customer_order` when the payment session is missing and from the customer order-cancellation flow.
+- Uses a separate `razorpay-payment` Edge Function endpoint. Its implementation and all provider webhook/callback state transitions still require audit.
+
+### `customer/customer-app.js` checkout
+
+- Calls `create-customer-order` via `sb.functions.invoke`, sending address, payment method, delivery method, coupon code and ShubhCoins, but no idempotency key.
+- Calls `release_shubhcoins_for_order` from the browser through `releaseShubhCoinsForOrder(orderId)` when payment verification throws, Razorpay modal is dismissed, payment fails, and in non-COD checkout error handling.
+- The frontend reports that coins were released after the modal-dismiss handler resolves, but the helper catches RPC errors internally; therefore a resolved helper promise does not prove the database release succeeded. User-facing wording should not claim a successful release unless the RPC result confirms it.
+- This path does not directly call `cancel_unpaid_order` in the inspected file.
+
+### Important implication
+
+There are two different failure-cleanup patterns: `index.html` invokes unpaid-order cleanup, while `customer/customer-app.js` invokes ShubhCoins release and may leave order/inventory cleanup to another path. They must be reconciled as one documented state machine before runtime changes. Avoid blindly adding both calls: order deletion, stock restoration and coin release must be serialized and idempotent, and gateway failure does not necessarily mean the payment is definitively unpaid.
+
+### Remaining trace work
+
+- Inspect the `razorpay-payment` function implementation and any external gateway webhook configuration/callbacks.
+- Search the complete Supabase schema for triggers, scheduled jobs, and functions that call either cleanup/release routine.
+- Review current coin ledger rows read-only to determine whether duplicate release entries or unresolved redemption states exist.
+- Confirm the exact `release_shubhcoins_for_order` return value contract and make the frontend show success only when the RPC result confirms it.
+- No live writes, migrations, deployment or merge were performed for this trace.
