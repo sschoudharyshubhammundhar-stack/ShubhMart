@@ -34,3 +34,9 @@ The current live function definitions were inspected read-only for:
 ## Safety record
 
 No live SQL write was run. No development branch was created (none was listed during the check), and no paid branch, production migration, Edge Function deployment, merge, or real payment test was performed.
+
+## Additional confirmation — ShubhCoins release dependency
+
+A further read-only scan of current `public`/`private` function definitions found `release_shubhcoins_for_order(uuid)` referenced by `cancel_customer_order`, but not by the inspected `cancel_unpaid_order` function. The release function itself looks up the order row by order ID and authenticated customer before it can find the redeem ledger entry. Therefore, calling it only after `cancel_unpaid_order` deletes the order would fail its ownership/order lookup. This confirms an integration gap in the inspected function definitions; it does not prove every application-level caller path has been audited.
+
+Before changing this behavior, trace every Edge Function/browser/cron caller and check existing ledger rows in read-only mode. The eventual fix should make order cleanup and coin release atomic and idempotent, or store a durable checkout/ledger reference that remains valid after order cleanup. Do not patch production by simply adding a call after deletion.
