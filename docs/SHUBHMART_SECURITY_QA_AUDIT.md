@@ -7,7 +7,7 @@ Scope: read-only inspection of the connected Supabase project's current policies
 ## Verified improvements in this branch
 
 - `supabase/functions/create-customer-order/index.ts` now verifies the bearer token using the server auth client and forwards that same customer JWT to `create_order_from_cart_with_coins`, so the database function's `auth.uid() = p_customer_id` guard can evaluate in the customer's context.
-- `tests/create-customer-order-source.test.js` adds regression assertions for token verification and customer-JWT propagation.
+- `tests/create-customer-order-source.test.js` adds regression assertions for token verification, customer-JWT propagation, error sanitization, and request/auth guards. The latest commit's combined status reports a successful Netlify Deploy Preview, but that is not evidence that the Node regression tests or Cloudflare Worker preview passed.
 - GitHub Actions PR syntax and checkout regression checks passed for commit `158d3b017ee9bfb6bb0cb7455a761c6e5b5cc985`.
 - These source changes are not proof that the live Supabase Edge Function was updated. Live function changes require a separate approved deployment.
 
@@ -41,6 +41,7 @@ Scope: read-only inspection of the connected Supabase project's current policies
 - [ ] Review SECURITY DEFINER grants and authorization checks, prioritizing admin, finance, refund, payout, and payment RPCs.
 - [ ] Test COD, payment failure, modal dismissal, payment success, order history, and duplicate submission in a non-production test environment.
 - [ ] Verify mobile layout and existing customer/seller/admin feature regression.
+- [ ] Confirm Cloudflare preview for the latest commit and inspect GitHub Actions test results; do not treat a Netlify preview status alone as checkout/runtime verification.
 - [ ] Obtain explicit approval before deploying any Supabase function, running migrations, enabling payments, or merging to production.
 
 ## Safety boundary
@@ -64,3 +65,10 @@ The follow-up SQL inspection checked the live function definition, table columns
 2. Draft a branch-only migration and rollback plan that fits the actual schema and preserves COD/payment-failure/cancellation behavior.
 3. Add database-level tests for simultaneous checkout, retry/idempotency, insufficient stock, and coin balance conservation.
 4. Keep live migration/function deployment and real payment tests blocked pending explicit approval.
+
+
+## Latest branch status (2026-10-10)
+
+- Latest audited branch change: checkout error sanitization and source-level regression assertions.
+- The latest commit has a successful Netlify Deploy Preview status. Cloudflare preview status and GitHub Actions test results for this exact commit are not yet confirmed.
+- No database migration has been authored or applied in production. The next code change must wait until the stock/variant/cancellation lifecycle and idempotency strategy are fully mapped, because a partial reservation fix could return inventory twice or oversell.
