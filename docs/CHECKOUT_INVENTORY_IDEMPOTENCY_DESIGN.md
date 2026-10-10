@@ -74,3 +74,10 @@ No production SQL writes, migration, function deployment, payment, merge or prod
 ## Follow-up finding — variant inventory (2026-10-10)
 
 The live schema has `cart.variant_id` and `Order_items.variant_id`, but the inspected `create_order_from_cart_with_coins` RPC omits both from its cart validation/insert path. It reads only `products.stock`, then writes order items without the selected variant. This is a concrete correctness gap separate from the product-level stock reservation gap. Do not ship a product-only reservation patch as a complete checkout fix: it would leave variant carts incorrect. No database writes were performed.
+
+
+## Candidate implementation artifact — variant-aware stock (2026-10-10)
+
+A complete candidate replacement function is now staged for review at `docs/drafts/CHECKOUT_VARIANT_STOCK_RESERVATION_CANDIDATE.sql`. It preserves the existing RPC signature and adds deterministic cart locking, product/variant ownership and status validation, guarded stock decrements against the selected inventory row, variant_id persistence, and `stock_reserved=true` in the same database transaction as order/payment/coin writes. A source-level regression test is at `tests/checkout-variant-stock-candidate.test.js`.
+
+This is deliberately still a draft: static source tests are not PostgreSQL execution tests. No migration was applied. Before this candidate can be approved, test it in an isolated database and inspect the actual variant lifecycle rules, stock-restoration functions, payment failure/refund paths, function grants and security settings. It still lacks database-backed idempotency and multi-seller order splitting; those remain release blockers. No live database writes or deployment were performed.
