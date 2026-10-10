@@ -28,7 +28,8 @@
 .sm-hub-fab{position:fixed;right:18px;bottom:18px;z-index:998;border:0;border-radius:999px;padding:13px 17px;background:linear-gradient(135deg,#071638,#ec1b83);color:#fff;font-weight:900;box-shadow:0 12px 30px #06142f55;cursor:pointer}
 .sm-completion-hub{display:none;max-width:1180px;margin:18px auto;padding:0 14px}.sm-completion-hub.open{display:block}.sm-hub-inner{position:relative;background:#fff;border-radius:20px;padding:22px;box-shadow:0 12px 35px #14213d18;border:1px solid #e7eaf2}.sm-hub-close{position:absolute;right:15px;top:12px;border:0;border-radius:50%;width:36px;height:36px;font-size:24px;cursor:pointer}.sm-hub-title{font-size:25px;font-weight:900;color:#071638}.sm-hub-sub{color:#667085;margin:5px 0 18px}.sm-hub-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.sm-hub-card{border:1px solid #e6eaf2;border-radius:16px;padding:15px;background:linear-gradient(180deg,#fff,#f8faff)}.sm-hub-card h3{margin:0 0 12px;color:#14213d}.sm-hub-card h3 span{float:right;font-size:12px}.sm-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.sm-mini-grid>div{border:1px solid #edf0f5;border-radius:12px;padding:8px;background:#fff;cursor:pointer}.sm-mini-grid img{width:100%;height:80px;object-fit:cover;border-radius:8px}.sm-mini-grid b{font-size:11px;display:block;margin-top:5px}.sm-mini-grid button,.sm-mini-list button,.sm-coupon button{margin-top:6px;border:0;border-radius:8px;padding:6px 9px;background:#123b7b;color:#fff;cursor:pointer}.sm-mini-list>div{padding:10px;border-bottom:1px solid #edf0f5}.sm-coupon{display:grid;grid-template-columns:1fr auto;gap:4px;padding:10px;border:1px dashed #d5dbea;border-radius:10px;margin:7px 0}.sm-coupon small{grid-column:1}.sm-muted{color:#7b8496;font-size:13px}.sm-extra-grid{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.sm-extra-grid>div{border:1px solid #e6eaf2;border-radius:14px;padding:13px;background:#fafbfe}.sm-review,.sm-offer{padding:9px;border-radius:10px;background:#fff;border:1px solid #edf0f5;margin:7px 0;font-size:13px}.sm-review b{color:#f2a900}.sm-offer{border-left:4px solid #f51b83}
 @media(max-width:700px){.sm-hub-fab{right:10px;bottom:10px;padding:11px 13px;font-size:12px}.sm-hub-grid,.sm-extra-grid{grid-template-columns:1fr}.sm-mini-grid{grid-template-columns:repeat(2,1fr)}.sm-hub-inner{padding:16px}.sm-hub-title{font-size:20px}}
-</style>\n<link rel="stylesheet" href="assets/shubhmart-responsive.css?v=20260927-1"><style id="shubhmart-final-qa-lock">
+</style>
+<link rel="stylesheet" href="assets/shubhmart-responsive.css?v=20260927-1"><style id="shubhmart-final-qa-lock">
 /* FINAL QA LOCK — preserve functionality while fixing overflow, tap targets and mobile composition */
 html,body{max-width:100%;overflow-x:hidden!important}
 button,a,input,select,textarea{touch-action:manipulation}
@@ -58,7 +59,7 @@ img{height:auto}
   .product-modal-inner{max-height:94vh!important;width:100%!important}
 }
 </style>
-</head><style id="shubhmart-final-visual-lock">
+<style id="shubhmart-final-visual-lock">
 /* SHUBHMART FINAL VISUAL LOCK — approved premium 3D marketplace */
 :root{--sm-navy:#06142f;--sm-blue:#123b7b;--sm-yellow:#ffd21a;--sm-pink:#f51b83;--sm-ink:#14213d}
 html,body{overflow-x:hidden!important}
@@ -73,7 +74,10 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
 .head-action{color:#fff!important}
 .head-action .ico{color:#ffd21a!important}
 .benefit-topbar{max-width:1380px!important;padding:5px 22px 8px!important}
-.subnav{height:50px!important;background:#fff!important}
+.subnav{height:50px!important;background:linear-gradient(135deg,#06132d,#0b1f4b 58%,#132b62)!important;border-top:1px solid rgba(255,255,255,.12)!important}
+.navlink{color:#f1f5ff!important}
+.navlink.active{color:#fff!important;background:linear-gradient(135deg,#ec167f,#8b5cf6)!important;border:0!important}
+.navlink:hover{color:#fff!important;background:rgba(255,255,255,.12)!important}
 .layout{display:block!important}
 .sidebar{display:none!important}
 .shubh-reference-hero{min-height:355px!important;border-radius:14px!important;padding:24px 34px!important;background:radial-gradient(circle at 82% 50%,rgba(255,210,26,.40),transparent 27%),linear-gradient(115deg,#071638,#123d7e 43%,#702c8e 74%,#ec1b83 125%)!important;box-shadow:0 14px 36px rgba(9,24,58,.20)!important}
@@ -98,8 +102,7 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
  .head-actions{display:none!important}
  .shubh-reference-hero{grid-template-columns:1fr!important;min-height:530px!important}
  .chips{grid-template-columns:repeat(6,1fr)!important}
- .promo-showcase{grid-template-columns:1fr 1fr!important}
- .promo-electronics{display:none!important}
+ .promo-showcase{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 }
 @media(max-width:700px){
  .wrap{padding-left:12px!important;padding-right:12px!important}
@@ -140,6 +143,7 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
  .promo-tile strong{font-size:18px!important}
 }
 </style>
+</head>
 <body><div id="shubhDelight" class="sm-delight-backdrop hidden" onclick="if(event.target===this)closeShubhSurprise()"><div class="sm-delight" role="dialog" aria-modal="true"><div class="sm-gift">🎁✨</div><h3>Shubh Surprise!</h3><p id="shubhDelightText">Aapke liye ShubhMart ka chhota sa surprise तैयार है.</p><div class="sm-delight-grid"><button class="sm-delight-item" onclick="surprisePick('deal')"><b>🔥</b>Hot Deals</button><button class="sm-delight-item" onclick="surprisePick('new')"><b>🆕</b>New Finds</button><button class="sm-delight-item" onclick="surprisePick('magic')"><b>💫</b>Magic Tip</button></div><button class="sm-delight-close" onclick="closeShubhSurprise()">Continue Shopping</button></div></div>
 
 <div id="productModal" class="product-modal hidden" onclick="if(event.target===this)closeProductModal()"><div class="product-modal-inner"><button class="modal-close" onclick="closeProductModal()" aria-label="Close">×</button><div id="productModalContent"></div></div></div>
@@ -471,10 +475,12 @@ function openWholesaleLogin(){openWholesaleMarket();note('Wholesale Market dekhn
 
 async function loadWholesaleProducts(){
  const e=document.getElementById('wholesaleProducts'); if(!e)return;
+ try{
  e.innerHTML='<div class="loaderr">Wholesale products load ho rahe hain…</div>';
  const {data,error}=await sb.from('products').select('id,name,category,price,mrp,stock,image_url,wholesale_moq,wholesale_price,seller_id').eq('status','Active').eq('is_live',true).eq('wholesale_enabled',true).gt('stock',0).not('wholesale_price','is',null).order('created_at',{ascending:false}).limit(24);
  if(error){e.innerHTML='<div class="errorbox">Wholesale products load error: '+esc(error.message)+'</div>';return}
  e.innerHTML=(data||[]).length?(data||[]).map(p=>'<div class="card"><img src="'+(p.image_url||'https://placehold.co/500x400?text=Wholesale')+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">WHOLESALE</span><h3>'+esc(p.name)+'</h3><div class="small">'+esc(p.category||'')+'</div><div><span class="wholesale-price">₹'+Number(p.wholesale_price||0).toFixed(0)</span> <span class="small">per piece</span></div><div class="small">Retail ₹'+Number(p.price||0).toFixed(0)+' · Stock '+Number(p.stock||0)+'</div><span class="wholesale-moq">MOQ: '+Number(p.wholesale_moq||1)+'</span><div class="contact-shield">🔒 Seller contact hidden · Inquiry only through ShubhMart</div><button class="btn" onclick="sendWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'Abhi koi approved wholesale product available nahi hai.';
+ }catch(err){e.innerHTML='<div class="errorbox">Wholesale section abhi load nahi ho paaya. Refresh karke dobara koshish kijiye.</div>';}
 }
 async function sendWholesaleInquiry(productId){
  if(!currentUser){show('account');setTimeout(()=>document.getElementById('email')?.focus(),50);note('Wholesale Market open hai. Inquiry bhejne ke liye pehle normal ShubhMart customer login/signup kijiye.',true);return}
@@ -513,7 +519,22 @@ function openProduct(p){
  if(selectedId){document.getElementById('smSelectedVariantNotice')?.remove();setTimeout(function(){if(window.smVariantCache?.some(v=>String(v.id)===String(selectedId)))window.smSelectVariant(selectedId,p.id)},0)}
 }
 function closeProductModal(){document.getElementById('productModal').classList.add('hidden')}
-async function loadProducts(){loadWholesaleProducts();
+
+function isShubhMartPreview(){return /fix-secure-checkout-edge-function|0d00b30a/i.test(location.hostname);}
+function renderPreviewDemoProducts(target){
+ if(!target)return;
+ const demo=[
+  {name:'Bluetooth Mini Speaker',category:'Electronics',price:499,mrp:999,image:'https://placehold.co/500x400?text=Demo+Speaker'},
+  {name:'Kitchen Vegetable Chopper',category:'Home & Kitchen',price:299,mrp:599,image:'https://placehold.co/500x400?text=Demo+Chopper'},
+  {name:'Foldable Clothes Organizer',category:'Home & Kitchen',price:229,mrp:449,image:'https://placehold.co/500x400?text=Demo+Organizer'},
+  {name:'Beauty Essentials Kit',category:'Beauty & Personal Care',price:349,mrp:699,image:'https://placehold.co/500x400?text=Demo+Beauty'}
+ ];
+ target.innerHTML='<div class="msg" style="grid-column:1/-1">Preview demo only — ye sample products hain, real listings nahi. Inse order place nahi hoga.</div>'+demo.map(p=>'<div class="card"><img src="'+p.image+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">DEMO ONLY</span><h3>'+esc(p.name)+'</h3><div class="price">₹'+p.price+' <span class="old">₹'+p.mrp+'</span></div><div class="small">'+esc(p.category)+'</div><button class="btn alt" disabled>Demo product</button></div>').join('');
+}
+
+async function loadProducts(){
+ try{
+ loadWholesaleProducts();
  const el=document.getElementById('products');
  if(el){el.innerHTML='<div class="loaderr">Products load ho rahe hain…</div>';}
  clearTimeout(productsLoadingTimer);
@@ -531,17 +552,18 @@ async function loadProducts(){loadWholesaleProducts();
  else if(sort==='name')query=query.order('name',{ascending:true});
  else query=query.order('created_at',{ascending:false});
  const {data,error}=await query; clearTimeout(productsLoadingTimer);
- if(error){el.innerHTML='<div>Products load error: '+error.message+'</div>';return}
+ if(error){if(isShubhMartPreview()){renderPreviewDemoProducts(el);}else{el.innerHTML='<div class="errorbox">Products load error: '+esc(error.message)+'</div>';}return}
  let wishIds=new Set();
  if(currentUser){const {data:wishes}=await sb.from('wishlist').select('product_id').eq('customer_id',currentUser.id);(wishes||[]).forEach(w=>wishIds.add(String(w.product_id)))}
- el.innerHTML=data?.length?data.map(p=>{const wished=wishIds.has(String(p.id));return `<div class="card">
+ if(data?.length){el.innerHTML=data.map(p=>{const wished=wishIds.has(String(p.id));return `<div class="card">
  <img src="${esc(p.image_url||'https://placehold.co/500x400?text=ShubhMart')}" alt="${esc(p.name)}" onclick="openProductById('${p.id}')" style="cursor:pointer"><h3 onclick="openProductById('${p.id}')" style="cursor:pointer">${esc(p.name)}</h3>
  <div class="price">₹${Number(p.price||0).toFixed(0)} <span class="old">₹${Number(p.mrp||0).toFixed(0)}</span></div>
  <div class="small">${esc(p.category||'')} ${Number(p.mrp)>Number(p.price)?' • '+Math.round((1-Number(p.price)/Number(p.mrp))*100)+'% OFF':''}</div>
  <div class="small">${Number(p.stock||0)>0?'In Stock':'Out of Stock'}</div>
  <button class="btn" ${Number(p.stock||0)<=0?'disabled':''} onclick="addCart('${p.id}')">Add to Cart</button>
  <button class="btn alt" ${Number(p.stock||0)<=0?'disabled':''} onclick="buy('${p.id}')">Buy Now</button>
- <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button></div>`}).join(''):'No active products found.';
+ <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button></div>`}).join('');}else if(isShubhMartPreview()){renderPreviewDemoProducts(el);}else{el.innerHTML='No active products found.';}
+ }catch(err){clearTimeout(productsLoadingTimer);if(isShubhMartPreview()){renderPreviewDemoProducts(document.getElementById('products'));}else{const target=document.getElementById('products');if(target)target.innerHTML='<div class="errorbox">Products abhi load nahi ho paaye. Internet check karke Refresh kijiye.</div>';}}
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function addCart(id,variantId=null){
@@ -642,15 +664,19 @@ async function loadWishlist(){
 }
 async function cancelUnpaidOrder(orderId){try{const {error}=await sb.rpc('cancel_unpaid_order',{p_order_id:orderId});if(error)console.warn('cancelUnpaidOrder',error.message)}catch(e){console.warn('cancelUnpaidOrder',e)}}
 async function checkout(){
+ try{
  if(!currentUser)return note('Pehle login kijiye',true);
  if(!selectedAddress){document.getElementById('checkoutbox').classList.add('hidden');document.getElementById('addressCheckout').classList.remove('hidden');return note('Pehle delivery address select kijiye',true)}
  const method=document.getElementById('paymentMethod')?.value||'cod';
  const delivery=document.getElementById('deliveryMethod')?.value||'standard';
  let couponCode='';
  try{const cp=JSON.parse(localStorage.getItem('sm_coupon_v1')||'null');couponCode=String(cp?.code||'').trim().toUpperCase()}catch(e){}
- const {data:created,error}=await sb.rpc('create_order_from_cart',{p_customer_id:currentUser.id,p_address_id:selectedAddress.id,p_payment_method:method,p_delivery_method:delivery,p_coupon_code:couponCode});
- if(error||!created?.length)return note('Secure order create error: '+(error?.message||'Order create nahi hua'),true);
- const ord={id:created[0].order_id,total_amount:created[0].total_amount};
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session){return note('Session expire ho gaya. Dobara login kijiye.',true)}
+ const orderResponse=await fetch(SUPABASE_URL+'/functions/v1/create-customer-order',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({address_id:selectedAddress.id,payment_method:method,delivery_method:delivery,coupon_code:couponCode})});
+ const created=await orderResponse.json().catch(()=>({error:'Invalid order server response'}));
+ if(!orderResponse.ok||!created?.success||!created?.order_id)return note('Secure order create error: '+(created?.error||'Order create nahi hua'),true);
+ const ord={id:created.order_id,total_amount:Number(created.amount||0)};
  if(method==='cod'){
    await sb.from('cart').delete().eq('customer_id',currentUser.id);
    localStorage.removeItem('sm_coupon_v1');
@@ -659,19 +685,20 @@ async function checkout(){
  }
  note('Secure payment window opening…');
  const fn=SUPABASE_URL+'/functions/v1/razorpay-payment';
- const {data:{session}}=await sb.auth.getSession();
- if(!session){await sb.rpc('cancel_customer_order',{p_order_id:ord.id,p_reason:'Session expired before payment'});return note('Session expired. Please login again.',true)}
- const r=await fetch(fn,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'create_order',order_id:ord.id,amount:ord.total_amount})});
+ const {data:{session:paymentSession}}=await sb.auth.getSession();
+ if(!paymentSession){await sb.rpc('cancel_customer_order',{p_order_id:ord.id,p_reason:'Session expired before payment'});return note('Session expired. Please login again.',true)}
+ const r=await fetch(fn,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+paymentSession.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'create_order',order_id:ord.id,amount:ord.total_amount})});
  const rd=await r.json().catch(()=>({error:'Invalid payment server response'}));
  if(!r.ok||rd.error){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});return note(rd.error||'Payment setup failed',true)}
  const options={key:rd.key_id,amount:rd.amount,currency:rd.currency,name:'ShubhMart',description:'ShubhMart Order '+String(ord.id).slice(0,8),order_id:rd.razorpay_order_id,prefill:{name:selectedAddress.name,contact:selectedAddress.mobile,email:currentUser.email||''},theme:{color:'#071638'},handler:async function(resp){
-   const vr=await fetch(fn,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'verify_payment',order_id:ord.id,razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature})});
+   const vr=await fetch(fn,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+paymentSession.access_token,'apikey':SUPABASE_KEY},body:JSON.stringify({action:'verify_payment',order_id:ord.id,razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature})});
    const vd=await vr.json().catch(()=>({error:'Invalid verification response'}));
    if(!vr.ok||vd.error){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});return note(vd.error||'Payment verification failed',true)}
    await sb.from('cart').delete().eq('customer_id',currentUser.id);localStorage.removeItem('sm_coupon_v1');
    note('Payment successful ✅ Order confirmed');show('orders');loadOrders();
  },modal:{ondismiss:async function(){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});note('Payment cancel ho gaya. Order create nahi hua ✅',true);show('cart');loadCart()} }};
  const rz=new Razorpay(options);rz.on('payment.failed',async function(){await sb.rpc('cancel_unpaid_order',{p_order_id:ord.id});note('Payment failed/cancelled. Dobara try karein.',true);show('cart');loadCart()});rz.open();
+ }catch(e){console.error('ShubhMart checkout error',e);return note('Checkout se connection nahi ho paaya. Internet check karke dobara try kijiye. Agar order status confirm nahi hai, dobara payment karne se pehle Orders check kijiye.',true);}
 }
 async function loadNotifications(){const e=document.getElementById('notificationsbox');if(!currentUser){e.innerHTML='Login kijiye.';return}const {data,error}=await sb.from('notifications').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);if(error){e.innerHTML='Notification error: '+esc(error.message);return}e.innerHTML=data?.length?data.map(n=>`<div class="panel ${n.is_read?'':'msg'}" onclick="markNotificationRead('${n.id}')"><b>${esc(n.title)}</b><br>${esc(n.body)}<br><span class="small">${new Date(n.created_at).toLocaleString('en-IN')}</span>${n.is_read?'':'<br><span class="small">Tap to mark read</span>'}</div>`).join(''):'No notifications yet.';const unread=(data||[]).filter(n=>!n.is_read).length;const nb=document.getElementById('notifBadge');if(nb)nb.textContent=String(unread);document.title=unread?`(${unread}) ShubhMart — Live Marketplace`:'ShubhMart — Live Marketplace';}
 async function markNotificationRead(id){const {error}=await sb.from('notifications').update({is_read:true}).eq('id',id).eq('user_id',currentUser.id);if(error)return note(error.message,true);loadNotifications()}
@@ -793,4 +820,5 @@ async function submitSellerCompliance(){
  if(error){m.innerHTML='<div class="errorbox">KYC save nahi hua: '+esc(error.message)+'</div>';return;}
  m.innerHTML='<div class="msg">Seller KYC submit ho gaya. Status: Pending verification.</div>';
 }
-</script><script src="customer/marketplace-completion.js?v=20260926-1"></script>\n<script src="customer/marketplace-pro-layer.js?v=20260926-1"></script></body></html>
+</script><script src="customer/marketplace-completion.js?v=20260926-1"></script>
+<script src="customer/marketplace-pro-layer.js?v=20260926-1"></script></body></html>
