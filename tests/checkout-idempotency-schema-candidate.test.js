@@ -31,8 +31,8 @@ test("candidate denies browser roles access to private records", () => {
 });
 
 test("draft calls out atomic RPC integration and remaining delete semantics review", () => {
-  assert.match(sql, /same database transaction/i);
+  assert.match(sql, /atomically with order, inventory, payment and coin effects/i);
   assert.match(sql, /Update the single order-creation RPC/i);
   assert.match(sql, /Review order deletion semantics/i);
-  assert.match(sql, /cancellation, unpaid cleanup, refunds, duplicate callbacks/i);
+  assert.match(sql, /cancellation, unpaid cleanup, duplicate gateway callbacks/i);
 });
