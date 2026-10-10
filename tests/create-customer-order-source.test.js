@@ -36,3 +36,10 @@ test("checkout preserves the safe address-required validation message", () => {
   assert.match(source, /"Address is required"/);
   assert.match(source, /safeCheckoutError\(error\.message\)/);
 });
+
+test("checkout rejects invalid ShubhCoins input instead of forwarding NaN", () => {
+  assert.match(source, /const rawCoins = body\?\.shubhcoins \?\? 0/);
+  assert.match(source, /Number\.isFinite\(requestedCoins\) \|\| requestedCoins < 0/);
+  assert.match(source, /Invalid ShubhCoins amount/);
+  assert.match(source, /const coins = Math\.floor\(requestedCoins\)/);
+});
