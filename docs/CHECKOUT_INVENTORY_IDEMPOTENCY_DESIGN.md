@@ -28,6 +28,13 @@ Status: design note only. Not a migration; not approved for production execution
 - Create order items and mark the order reserved in the same transaction. Any error must roll back stock, order, payment and coin changes.
 - Review every cancellation, unpaid-order cleanup, payment failure and refund path. Do not set `stock_reserved=true` unless a matching decrement committed in that transaction.
 
+### Variant-aware inventory (must be solved before enabling variant checkout)
+
+- Include `cart.variant_id` in the locked cart snapshot and validate that the selected variant belongs to the product and is available/approved under the existing variant lifecycle.
+- When a variant is selected, validate and decrement `product_variants.stock` under a row lock; do not also decrement parent `products.stock` unless the existing catalog contract explicitly defines shared inventory.
+- Persist `variant_id` into `Order_items` so cancellation/fulfilment uses the exact SKU selected at checkout.
+- For products without variants, reserve `products.stock` as the separate path. Test both paths and ensure a failed mixed cart rolls back every reservation.
+
 ### Idempotency
 
 - Use a database-backed key unique per authenticated customer and intentional checkout attempt.
@@ -55,9 +62,15 @@ Status: design note only. Not a migration; not approved for production execution
 
 ## Safety gates
 
-- [ ] Review full checkout RPC, table constraints, stock triggers, cancellation/refund/unpaid-order routines and seller-order functions.
+- [x] Read-only review of the full checkout RPC and customer cancellation/unpaid-order cleanup functions.
+- [ ] Inspect all constraints, triggers, payment failure/refund routines and seller-order functions in a test database; the read-only schema inventory is not yet a complete lifecycle audit.
 - [ ] Run the migration and tests in an isolated test database using synthetic data.
 - [ ] Review function grants, `search_path`, RLS and security advisors.
 - [ ] Get explicit approval before any live migration, Edge Function deployment, production deployment, merge or real payment test.
 
 No production SQL writes, migration, function deployment, payment, merge or production deployment was performed for this design note. This plan is not a claim that protections are already implemented.
+
+
+## Follow-up finding — variant inventory (2026-10-10)
+
+The live schema has `cart.variant_id` and `Order_items.variant_id`, but the inspected `create_order_from_cart_with_coins` RPC omits both from its cart validation/insert path. It reads only `products.stock`, then writes order items without the selected variant. This is a concrete correctness gap separate from the product-level stock reservation gap. Do not ship a product-only reservation patch as a complete checkout fix: it would leave variant carts incorrect. No database writes were performed.
