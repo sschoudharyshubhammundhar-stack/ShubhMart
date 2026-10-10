@@ -21,6 +21,7 @@ const safeCheckoutError = (message: string) => {
     "Invalid payment method",
     "Invalid delivery method",
     "Address not found",
+    "Address is required",
     "Cart empty",
     "Invalid product price",
     "Insufficient stock",
