@@ -72,3 +72,8 @@ There are two different failure-cleanup patterns: `index.html` invokes unpaid-or
 - Review current coin ledger rows read-only to determine whether duplicate release entries or unresolved redemption states exist.
 - Confirm the exact `release_shubhcoins_for_order` return value contract and make the frontend show success only when the RPC result confirms it.
 - No live writes, migrations, deployment or merge were performed for this trace.
+
+
+### Payment-function source availability check
+
+The PR branch repository tree contains `supabase/functions/create-customer-order` and `supabase/functions/shubhmart-ai`, but no `supabase/functions/razorpay-payment` source directory. Since `index.html` calls the deployed `razorpay-payment` endpoint, its implementation cannot be audited from the current checked-in source. Treat signature verification, gateway-order creation, payment capture/verification, webhook deduplication, and order-state updates as unverified until the actual deployed function source and provider webhook configuration are located. Do not infer that payment verification is secure merely because the customer-order function is protected.
