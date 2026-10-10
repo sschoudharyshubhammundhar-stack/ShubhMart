@@ -79,3 +79,10 @@ The follow-up SQL inspection checked the live function definition, table columns
 A branch-only implementation design note has been added: [Checkout Inventory and Idempotency Design](CHECKOUT_INVENTORY_IDEMPOTENCY_DESIGN.md). It defines the invariants and test matrix for inventory reservation, retry protection, cancellation release, and multi-seller order attribution.
 
 This is intentionally a design/test-plan slice rather than a live schema patch: the current cancellation code can add inventory back whenever `stock_reserved` is true, so setting that flag without an atomic matching decrement risks stock inflation. The next safe implementation requires an isolated test database and review of all related functions/triggers. Production migration/deployment remains blocked pending explicit approval.
+
+
+### Stock reservation patch draft (2026-10-10)
+
+Added [CHECKOUT_STOCK_RESERVATION_PATCH_DRAFT.sql](drafts/CHECKOUT_STOCK_RESERVATION_PATCH_DRAFT.sql). It records the transaction-safe approach for stable cart/product row locks, guarded stock decrement, positive-quantity validation, and setting `stock_reserved` only in the same transaction as the decrement. It is explicitly a draft, not a complete replacement function or executable migration.
+
+The patch is not ready to apply: the isolated database test environment is not confirmed, variant stock and idempotency remain unresolved, and the full cancellation/payment lifecycle still needs test coverage. No SQL was run from this draft.
