@@ -15,7 +15,7 @@ test("stock reservation SQL remains explicitly a draft, not production migration
 test("draft describes a guarded decrement and positive quantity validation", () => {
   assert.match(draft, /stock\s*>=\s*v_item\.quantity/);
   assert.match(draft, /v_item\.quantity\s*<=\s*0/);
-  assert.match(draft, /IF NOT FOUND THEN\\s+RAISE EXCEPTION 'Insufficient stock'/);
+  assert.match(draft, /IF NOT FOUND THEN\s+RAISE EXCEPTION 'Insufficient stock'/);
 });
 
 test("draft ties stock_reserved to an atomic stock decrement", () => {
