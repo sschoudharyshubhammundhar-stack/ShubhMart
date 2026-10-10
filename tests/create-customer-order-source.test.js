@@ -31,3 +31,8 @@ test("checkout rejects unsupported methods and unauthenticated requests", () => 
   assert.match(source, /!authorization\?\.startsWith\("Bearer "\) \|\| !apiKey/);
   assert.match(source, /if\s*\(userError\s*\|\|\s*!user\) return json\(\{ error: "Unauthorized" \}, 401\)/);
 });
+
+test("checkout preserves the safe address-required validation message", () => {
+  assert.match(source, /"Address is required"/);
+  assert.match(source, /safeCheckoutError\(error\.message\)/);
+});
