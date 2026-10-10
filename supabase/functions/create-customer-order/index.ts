@@ -59,7 +59,12 @@ Deno.serve(async (req) => {
     const method = String(body?.payment_method || "razorpay").toLowerCase();
     const delivery = String(body?.delivery_method || "standard").toLowerCase();
     const coupon = String(body?.coupon_code || "").trim().toUpperCase();
-    const coins = Math.max(0, Math.floor(Number(body?.shubhcoins || 0)));
+    const rawCoins = body?.shubhcoins ?? 0;
+    const requestedCoins = Number(rawCoins);
+    if (!Number.isFinite(requestedCoins) || requestedCoins < 0) {
+      return json({ error: "Invalid ShubhCoins amount" }, 400);
+    }
+    const coins = Math.floor(requestedCoins);
 
     if (!addressId || typeof addressId !== "string") {
       return json({ error: "Address is required" }, 400);
