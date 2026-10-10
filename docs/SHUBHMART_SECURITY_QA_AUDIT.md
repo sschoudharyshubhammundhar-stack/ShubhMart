@@ -95,3 +95,13 @@ The patch is not ready to apply: the isolated database test environment is not c
 - Added `tests/checkout-stock-draft.test.js` to check that the stock patch remains explicitly marked as a draft and records the guarded-decrement/quantity/reservation invariants. These are source/documentation checks; they are **not** database concurrency or integration tests.
 - Cloudflare's latest reported preview for commit `5eb01cc` was still in progress at the time of inspection. An earlier preview for `b3141d6` succeeded, but that does not validate the newest commit.
 - The GitHub workflow/status connector returned no status records for the newest commit, so CI success is not confirmed. Do not merge based on the preview build alone.
+
+
+### Follow-up inventory review (2026-10-10)
+
+- Read the full live checkout RPC definition and the customer cancellation/unpaid-order cleanup routines using read-only queries.
+- Confirmed the RPC currently checks product-level stock but does not decrement it or set `Orders.stock_reserved`.
+- Confirmed a second gap: `cart.variant_id` and `Order_items.variant_id` exist, but the checkout RPC ignores the selected variant and does not persist it to order items. A product-only patch would not be a complete fix.
+- Added the variant-aware inventory requirements to `docs/CHECKOUT_INVENTORY_IDEMPOTENCY_DESIGN.md`.
+- Corrected the draft-source test's matcher to match the commented, multiline SQL example. Focused checks of the relevant source strings pass. The full Node test runner and latest CI are still not confirmed by the GitHub status connector; do not treat these focused checks as full CI.
+- No SQL writes, migration, production deployment, merge, or live payment test was performed.
