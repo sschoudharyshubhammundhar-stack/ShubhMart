@@ -86,3 +86,12 @@ This is intentionally a design/test-plan slice rather than a live schema patch: 
 Added [CHECKOUT_STOCK_RESERVATION_PATCH_DRAFT.sql](drafts/CHECKOUT_STOCK_RESERVATION_PATCH_DRAFT.sql). It records the transaction-safe approach for stable cart/product row locks, guarded stock decrement, positive-quantity validation, and setting `stock_reserved` only in the same transaction as the decrement. It is explicitly a draft, not a complete replacement function or executable migration.
 
 The patch is not ready to apply: the isolated database test environment is not confirmed, variant stock and idempotency remain unresolved, and the full cancellation/payment lifecycle still needs test coverage. No SQL was run from this draft.
+
+
+### Follow-up implementation slice (2026-10-10)
+
+- Added `Address is required` to the checkout error allowlist so the Edge Function can return its own safe validation message rather than replacing it with the generic database-error response.
+- Added a regression assertion for that validation message.
+- Added `tests/checkout-stock-draft.test.js` to check that the stock patch remains explicitly marked as a draft and records the guarded-decrement/quantity/reservation invariants. These are source/documentation checks; they are **not** database concurrency or integration tests.
+- Cloudflare's latest reported preview for commit `5eb01cc` was still in progress at the time of inspection. An earlier preview for `b3141d6` succeeded, but that does not validate the newest commit.
+- The GitHub workflow/status connector returned no status records for the newest commit, so CI success is not confirmed. Do not merge based on the preview build alone.
