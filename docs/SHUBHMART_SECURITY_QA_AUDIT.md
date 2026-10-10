@@ -72,3 +72,10 @@ The follow-up SQL inspection checked the live function definition, table columns
 - Latest audited branch change: checkout error sanitization and source-level regression assertions.
 - The latest commit has a successful Netlify Deploy Preview status. Cloudflare preview status and GitHub Actions test results for this exact commit are not yet confirmed.
 - No database migration has been authored or applied in production. The next code change must wait until the stock/variant/cancellation lifecycle and idempotency strategy are fully mapped, because a partial reservation fix could return inventory twice or oversell.
+
+
+## Roadmap continuation (2026-10-10)
+
+A branch-only implementation design note has been added: [Checkout Inventory and Idempotency Design](CHECKOUT_INVENTORY_IDEMPOTENCY_DESIGN.md). It defines the invariants and test matrix for inventory reservation, retry protection, cancellation release, and multi-seller order attribution.
+
+This is intentionally a design/test-plan slice rather than a live schema patch: the current cancellation code can add inventory back whenever `stock_reserved` is true, so setting that flag without an atomic matching decrement risks stock inflation. The next safe implementation requires an isolated test database and review of all related functions/triggers. Production migration/deployment remains blocked pending explicit approval.
