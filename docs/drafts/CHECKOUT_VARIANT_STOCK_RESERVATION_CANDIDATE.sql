@@ -51,7 +51,16 @@ DECLARE
   v_unit_price numeric;
   v_mrp numeric;
 BEGIN
-  IF p_customer_id IS NULL OR auth.uid() IS NULL OR auth.uid() <> p_customer_id THEN
+  -- This RPC is intended to remain EXECUTE-granted only to postgres and
+  -- service_role until the complete idempotent checkout contract is released.
+  -- The Edge Function must validate the caller's bearer token with auth.getUser()
+  -- and pass that verified user.id. Do not grant this RPC directly to anon/public.
+  -- For a direct authenticated-context invocation, retain the customer ownership
+  -- check; for the trusted server-only invocation, allow the service_role claim.
+  IF p_customer_id IS NULL OR (
+    coalesce(auth.role(), '') <> 'service_role'
+    AND (auth.uid() IS NULL OR auth.uid() <> p_customer_id)
+  ) THEN
     RAISE EXCEPTION 'Unauthorized';
   END IF;
 
