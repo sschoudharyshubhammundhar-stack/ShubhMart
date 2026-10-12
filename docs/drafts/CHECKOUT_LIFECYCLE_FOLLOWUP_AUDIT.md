@@ -126,3 +126,31 @@ This section records a source/privilege mismatch found by read-only inspection. 
 - The current `guard_customer_payment_update()` trigger allows updates when `private.is_admin()` is true; that helper checks whether `auth.uid()` has an admin profile. A service-role Edge Function request normally has no customer `auth.uid()`, so the deployed `mark_razorpay_paid_secure` call may hit `Payment update denied` when its update reaches the `payments` trigger. This needs confirmation in isolated tests/logs; no live payment was attempted.
 - The SQL candidate now proposes a narrow `auth.role() = 'service_role'` exception in the payment-update trigger, preserving the existing ownership/protected-field checks for customer requests. It also proposes idempotent paid-state transitions. This is draft-only and must be tested against the exact production schema, trigger order and JWT claim behavior before applying.
 - This finding means payment verification can fail even after signature and provider data checks pass; do not assume the existing active payment function is working end-to-end.
+
+
+## Extended database lifecycle and privilege scan — read-only, 2026-10-12
+
+This pass inspected current live function definitions, non-internal triggers on Orders/payments, and EXECUTE grants. It did not change the database.
+
+### Additional confirmed findings
+
+1. **Order status has automatic side effects.** Orders has an AFTER UPDATE trigger that awards ShubhCoins when an order first transitions to Delivered, and another trigger that writes customer notifications for order/payment status changes. The reward routine checks for an existing order_reward ledger entry keyed by order ID before crediting, which is a useful idempotency guard. Any order state transition test must account for these triggers rather than testing only the RPC body.
+
+2. **Admin cancellation also restores inventory and may queue a refund.** admin_update_order_status locks the order, restores product/variant inventory only if stock_reserved=true, flips that flag off, and inserts a pending refund for paid orders. The current customer order-creation RPC that checks stock without reserving it does not set that flag, so these cancellation safeguards cannot restore inventory that was never reserved. This reinforces that inventory reservation and its flag must be written atomically with order/items.
+
+3. **Seller cancellation has a different path.** update_seller_order_status allows seller cancellation only for early states and updates order status, but the inspected definition does not itself restore stock, create a refund, or release ShubhCoins. Confirm whether seller cancellation is intentionally allowed to leave cleanup to another trusted workflow; do not assume it is equivalent to customer/admin cancellation.
+
+4. **Two payment-marking RPCs exist.** Both mark_razorpay_paid and mark_razorpay_paid_secure are present. The older mark_razorpay_paid checks auth.uid() ownership and updates Orders/payments but does not itself validate the provider payment entity, amount, currency or capture status. The inspected EXECUTE grants list only postgres and service_role for these two functions, not authenticated; the deployed function uses the secure-named RPC. Before any removal/revocation, search all Edge Functions and server-side callers to prove the older RPC is unused.
+
+5. **Payment row cardinality needs an explicit invariant.** The current attach function updates all payment rows matching the order/customer and returns no row-count result; the current secure mark-paid function selects one matching gateway order with LIMIT 1 and updates all matching order/customer payment rows. Candidate migration currently assumes the intended invariant is one payment row per order. Before applying it, inspect existing duplicate rows and confirm whether a unique constraint/index already enforces one payment intent per order; if not, add a safe deduplication/constraint plan only after data review.
+
+6. **Trigger security requires role-aware testing.** The payments table has BEFORE INSERT and BEFORE UPDATE guard triggers. The update guard permits an admin or the customer owner and otherwise raises Payment update denied; the candidate service-role exception is therefore a security-sensitive change. Test signed service-role claims, ordinary authenticated customer JWTs, anonymous requests, and admin JWTs separately in an isolated database. Preserve protected-field checks for customer sessions.
+
+### Required next checks
+
+- Read-only: check uniqueness/indexes and current duplicate payment rows per order without exposing customer details.
+- Read-only: search all deployed Edge Function source for calls to both payment-marking RPCs and all order-cancel/coin-release functions; inspect scheduled jobs/webhooks where supported.
+- Isolated tests: verify Delivered reward is credited once under concurrent status updates; customer/admin/seller cancellation and payment verification races restore inventory at most once; paid cancellation queues one refund; coin release cannot be duplicated or lost after cleanup.
+- Keep all database changes in the draft PR until exact-schema tests and review pass.
+
+No payment was initiated, no live SQL write/migration was performed, no Edge Function was deployed, and no PR merge or production deployment was performed.
