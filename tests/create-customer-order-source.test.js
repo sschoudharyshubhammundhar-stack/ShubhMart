@@ -5,6 +5,9 @@ const path = require("node:path");
 
 const sourcePath = path.join(__dirname, "../supabase/functions/create-customer-order/index.ts");
 const source = fs.readFileSync(sourcePath, "utf8");
+const sqlCandidatePath = path.join(__dirname, "../docs/drafts/CHECKOUT_VARIANT_STOCK_RESERVATION_CANDIDATE.sql");
+const sqlCandidate = fs.readFileSync(sqlCandidatePath, "utf8");
+
 
 test("checkout verifies the bearer token before using its user id", () => {
   assert.match(source, /admin\.auth\.getUser\(authorization\.slice\(7\)\)/);
@@ -43,4 +46,11 @@ test("checkout rejects invalid ShubhCoins input instead of forwarding NaN", () =
   assert.match(source, /Number\.isFinite\(requestedCoins\) \|\| requestedCoins < 0/);
   assert.match(source, /Invalid ShubhCoins amount/);
   assert.match(source, /const coins = Math\.floor\(requestedCoins\)/);
+});
+
+test("draft SQL candidate supports the trusted server role without weakening customer ownership", () => {
+  assert.match(sqlCandidate, /coalesce\(auth\.role\(\), ''\) <> 'service_role'/);
+  assert.match(sqlCandidate, /auth\.uid\(\) <> p_customer_id/);
+  assert.match(sqlCandidate, /Do not grant this RPC directly to anon\/public/);
+  assert.match(sqlCandidate, /stock_reserved/);
 });
