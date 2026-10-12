@@ -182,3 +182,15 @@ The live Edge Function inventory shows create-customer-order is ACTIVE (version 
 - The function inventory currently lists three active Edge Functions: create-customer-order, razorpay-payment, and shubhmart-ai. This is not evidence that no external Razorpay webhook or scheduled workflow exists outside this Edge Function inventory.
 
 No customer order was created, no live SQL write was performed, and no function was deployed or modified.
+
+
+## Checkout RPC authentication-context reconciliation — candidate-only, 2026-10-12
+
+A follow-up compared the live RPC EXECUTE grants with the checked-in Edge Function candidate.
+
+- The live create_order_from_cart_with_coins RPC is EXECUTE-granted to postgres and service_role, not authenticated. Therefore the candidate must not switch this call to a customer-scoped client unless a separately reviewed migration intentionally changes that grant.
+- The candidate Edge Function now verifies the incoming bearer token with admin.auth.getUser(), then calls the RPC using the server-only admin client. It passes only the verified user.id, not a client-supplied customer ID.
+- The stock-reservation SQL candidate now permits the trusted service_role claim while retaining the auth.uid() = p_customer_id check for authenticated-context invocations. Its comments explicitly prohibit granting the RPC to anon/public.
+- A static test was added to guard this intended pairing. It has not yet been confirmed by a new GitHub Actions run, and it does not prove PostgreSQL role claims behave as expected at runtime.
+- This candidate still does not implement checkout idempotency. It is not release-ready until the idempotency key/fingerprint/replay record, payment-attempt state, cancellation/coin cleanup, and both caller payloads are integrated and tested in an isolated database.
+- No production grant, SQL, Edge Function or runtime configuration was changed.
