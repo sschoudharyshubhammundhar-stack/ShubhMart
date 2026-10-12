@@ -4,6 +4,45 @@
 
 begin;
 
+create or replace function public.attach_razorpay_order(
+  p_order_id uuid,
+  p_gateway_order_id text,
+  p_method text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $function$
+begin
+  if auth.uid() is null then
+    raise exception 'Unauthorized';
+  end if;
+  if p_order_id is null or nullif(trim(p_gateway_order_id), '') is null then
+    raise exception 'Invalid payment order';
+  end if;
+  if not exists (
+    select 1 from public."Orders"
+    where id = p_order_id and customer_id = auth.uid()
+  ) then
+    raise exception 'Order not found';
+  end if;
+
+  update public.payments
+  set gateway = 'Razorpay',
+      gateway_order_id = p_gateway_order_id,
+      method = coalesce(nullif(trim(p_method), ''), 'razorpay'),
+      status = 'Pending',
+      updated_at = now()
+  where order_id = p_order_id
+    and customer_id = auth.uid();
+
+  if not found then
+    raise exception 'Payment record not found';
+  end if;
+end;
+$function$;
+
 revoke all on function public.attach_razorpay_order(uuid, text, text) from public, anon;
 grant execute on function public.attach_razorpay_order(uuid, text, text) to authenticated, service_role;
 
