@@ -110,3 +110,12 @@ The Supabase project function inventory shows `razorpay-payment` is ACTIVE (vers
 6. The source of the deployed function is checked into the repo and reviewed so the PR and production code cannot silently diverge.
 
 This section records a source/privilege mismatch found by read-only inspection. No live checkout was attempted, no payment was created, no SQL write/migration was performed, and no deployed function was changed.
+
+
+### Candidate remediation now checked into the PR branch (not deployed)
+
+- `supabase/functions/razorpay-payment/index.ts` now contains the reviewed function source under version control. Relative to the read-only live snapshot, the candidate confirms the Razorpay payment entity server-to-server and checks provider order ID, payment ID, INR currency, exact expected amount and `captured=true/status=captured` before invoking the privileged paid-state RPC. It also uses a narrow customer-scoped RPC call for attaching the gateway order and returns generic payment errors.
+- `docs/drafts/20261012_secure_razorpay_payment_transition_candidate.sql` is a draft-only database migration candidate. It grants authenticated EXECUTE only to the ownership-checking `attach_razorpay_order` RPC, checks that the payment row was actually updated, and makes the privileged paid-state RPC retry-safe for the same payment while rejecting a different payment for an already-paid order.
+- `tests/razorpay-payment-source.test.js` adds static source guardrails for authentication, provider-side amount/currency/capture checks, narrow RPC grants and idempotent paid-state behavior. These tests do not execute PostgreSQL or call Razorpay.
+- The function and SQL candidate have not been deployed or applied. Before rollout, run Deno/Edge Function checks and the SQL candidate against an isolated Supabase/Postgres environment; verify the actual `payments` row cardinality, status transitions, triggers, concurrent duplicate callbacks, and behavior if the provider order succeeds but attachment fails.
+- The draft function intentionally retains the existing wildcard CORS policy for now to avoid an untested origin change; restrict origins only after the actual web/app origin inventory and preflight behavior are confirmed.
