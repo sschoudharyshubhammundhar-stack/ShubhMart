@@ -161,3 +161,24 @@ No payment was initiated, no live SQL write/migration was performed, no Edge Fun
 - Current public.payments indexes are a primary key on id plus non-unique indexes on customer_id and order_id; no unique index on order_id was found.
 - A read-only aggregate found 0 orders currently having more than one payments row, and 0 duplicate non-null (order_id, customer_id, gateway_order_id) groups.
 - This is a snapshot, not a concurrency guarantee. The candidate assumes one payment intent per order, but that invariant is not enforced by the inspected indexes. Before adding a unique constraint, verify whether the business allows retries/new payment attempts per order; the safer model may be a separate payment-attempt table with a unique active attempt or provider-order ID rather than a blanket unique order_id constraint.
+
+
+## Deployed create-customer-order Edge Function trace — read-only, 2026-10-12
+
+The live Edge Function inventory shows create-customer-order is ACTIVE (version 4, JWT verification enabled). Its deployed source was retrieved read-only.
+
+### High-priority auth-context mismatch to validate
+
+- The function validates the incoming bearer token with admin.auth.getUser(), obtains the user ID, then calls create_order_from_cart_with_coins through an admin/service-role client.
+- The live SQL definition of create_order_from_cart_with_coins explicitly requires auth.uid() to be non-null and equal p_customer_id. A service-role client request normally has the service-role JWT context rather than the customer's JWT, so auth.uid() may be null and this RPC may reject the request as Unauthorized.
+- This is a source/schema compatibility mismatch that could block order creation. It must be confirmed using safe, non-purchasing diagnostics or an isolated environment; do not test by submitting a real customer checkout.
+- Do not fix this by removing the ownership check or broadly trusting a client-supplied customer ID. Preferred options are: invoke the RPC with the verified customer JWT so auth.uid() is preserved, or create a dedicated server-only RPC whose authorization contract explicitly accepts a trusted service-role call and derives/validates the verified customer identity from a signed server-side context. Review EXECUTE grants and all callers before choosing.
+
+### Other confirmed source facts
+
+- The function accepts address, payment method, delivery method, coupon code and ShubhCoins, and returns the created order ID/amount/coin amounts.
+- It has no idempotency key or request fingerprint, so a retry can attempt a second order if the RPC is otherwise successful.
+- It uses wildcard CORS, though it still validates a bearer token.
+- The function inventory currently lists three active Edge Functions: create-customer-order, razorpay-payment, and shubhmart-ai. This is not evidence that no external Razorpay webhook or scheduled workflow exists outside this Edge Function inventory.
+
+No customer order was created, no live SQL write was performed, and no function was deployed or modified.
