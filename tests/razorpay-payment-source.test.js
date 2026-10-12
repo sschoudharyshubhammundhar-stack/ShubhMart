@@ -41,3 +41,8 @@ test("candidate code and migration are not described as deployed", () => {
   assert.match(migration, /DRAFT MIGRATION CANDIDATE/);
   assert.match(edge, /authenticated EXECUTE grant must be installed through the reviewed/);
 });
+
+test("payment update trigger candidate permits only service-role server updates before customer checks", () => {
+  assert.match(migration, /create or replace function public\.guard_customer_payment_update\(\)[\s\S]*?if auth\.role\(\) = 'service_role' then\s+return new;/);
+  assert.match(migration, /if auth\.uid\(\) is null or old\.customer_id is distinct from auth\.uid\(\) then\s+raise exception 'Payment update denied'/);
+});
