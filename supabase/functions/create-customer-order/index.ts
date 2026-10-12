@@ -70,14 +70,11 @@ Deno.serve(async (req) => {
       return json({ error: "Address is required" }, 400);
     }
 
-    // Important: preserve the verified customer's JWT for auth.uid() inside
-    // create_order_from_cart_with_coins. A service-role RPC call has no customer
-    // auth.uid() and will fail the database function's ownership check.
-    const customer = createClient(url, apiKey, {
-      global: { headers: { Authorization: authorization } },
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const { data, error } = await customer.rpc("create_order_from_cart_with_coins", {
+    // The live RPC is EXECUTE-granted to service_role/postgres only. Keep it
+    // server-side after verifying the caller's bearer token above. The SQL
+    // candidate must explicitly allow service_role while retaining customer
+    // ownership validation for any authenticated-context invocation.
+    const { data, error } = await admin.rpc("create_order_from_cart_with_coins", {
       p_customer_id: user.id,
       p_address_id: addressId,
       p_payment_method: method,
