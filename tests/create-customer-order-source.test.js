@@ -12,10 +12,11 @@ test("checkout verifies the bearer token before using its user id", () => {
   assert.match(source, /p_customer_id:\s*user\.id/);
 });
 
-test("order RPC preserves the verified customer's JWT context", () => {
-  assert.match(source, /global:\s*\{\s*headers:\s*\{\s*Authorization:\s*authorization\s*\}\s*\}/);
-  assert.match(source, /customer\.rpc\(["']create_order_from_cart_with_coins["']/);
-  assert.doesNotMatch(source, /admin\.rpc\(["']create_order_from_cart_with_coins["']/);
+test("order RPC uses the server-only client only after verifying the bearer token", () => {
+  assert.match(source, /admin\.auth\.getUser\(authorization\.slice\(7\)\)/);
+  assert.match(source, /const \{ data, error \} = await admin\.rpc\(["']create_order_from_cart_with_coins["']/);
+  assert.match(source, /server-side after verifying the caller's bearer token above/);
+  assert.doesNotMatch(source, /customer\.rpc\(["']create_order_from_cart_with_coins["']/);
 });
 
 test("checkout exposes only allowlisted business errors from the database", () => {
