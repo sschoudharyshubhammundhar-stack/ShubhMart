@@ -77,3 +77,36 @@ There are two different failure-cleanup patterns: `index.html` invokes unpaid-or
 ### Payment-function source availability check
 
 The PR branch repository tree contains `supabase/functions/create-customer-order` and `supabase/functions/shubhmart-ai`, but no `supabase/functions/razorpay-payment` source directory. Since `index.html` calls the deployed `razorpay-payment` endpoint, its implementation cannot be audited from the current checked-in source. Treat signature verification, gateway-order creation, payment capture/verification, webhook deduplication, and order-state updates as unverified until the actual deployed function source and provider webhook configuration are located. Do not infer that payment verification is secure merely because the customer-order function is protected.
+
+
+## Live Supabase Edge Function and payment RPC audit — read-only, 2026-10-12
+
+The Supabase project function inventory shows `razorpay-payment` is ACTIVE (version 4, `verify_jwt=true`). Its deployed source was retrieved read-only through the Supabase function API; it is not currently checked into this PR branch.
+
+### Confirmed payment flow behavior
+
+- The function authenticates the bearer token with `sb.auth.getUser()` and scopes the order lookup to the authenticated customer.
+- `create_order` compares the client-supplied amount to the stored order total before creating a Razorpay order.
+- `verify_payment` computes an HMAC-SHA256 signature over the client-provided `razorpay_order_id|razorpay_payment_id`.
+- The function then calls `mark_razorpay_paid_secure` using a service-role client. The database function checks customer ownership and requires the supplied Razorpay order ID to equal the ID stored in `payments`.
+- The deployed function does not fetch the payment entity from Razorpay to independently confirm the payment's actual amount, currency, order ID and captured/authorized status before marking the order Paid. This needs a server-to-server provider verification step and idempotent state transition.
+- The CORS policy currently allows `Access-Control-Allow-Origin: *`. Because the function still requires an authenticated JWT, this alone is not proof of an authentication bypass, but production origin restrictions should be reviewed and tested before changing them.
+
+### High-priority integration mismatch found
+
+- During `create_order`, the deployed function calls `sb.rpc("attach_razorpay_order", ...)` on a client carrying the customer's Authorization header.
+- A read-only query of `information_schema.routine_privileges` showed `attach_razorpay_order` EXECUTE granted to `postgres` and `service_role`, but not `authenticated` or `anon`.
+- The same privilege inventory showed `mark_razorpay_paid_secure` EXECUTE granted to `postgres` and `service_role`; the deployed function correctly calls this latter RPC with a service-role client after verifying the user and order.
+- Therefore, the current `attach_razorpay_order` call appears unable to execute under the customer-scoped client. The function may create a Razorpay order externally and then fail to persist its gateway-order ID, leaving an orphaned gateway order and a checkout that cannot complete. Confirm with sanitized function logs and a sandbox test; do not test by charging a real customer.
+- Candidate correction: after customer authentication and the ownership/amount checks already present, call `attach_razorpay_order` through a server-side service-role client, while keeping strict ownership validation in the Edge Function and database RPC. Do not grant broad EXECUTE to authenticated users as a quick fix. Also add cleanup/reconciliation for a gateway order created when the DB attach step fails.
+
+### Required payment tests before rollout
+
+1. Razorpay sandbox order creation persists exactly one matching `payments.gateway_order_id`.
+2. RPC permission failure is handled without falsely reporting checkout success; orphan gateway orders are logged/reconciled.
+3. Invalid signature, mismatched order ID, mismatched amount/currency, failed/authorized-but-not-captured payment, and duplicate verification requests do not mark an order Paid incorrectly.
+4. Valid captured payment is confirmed server-to-server with Razorpay and transitions order/payment atomically and idempotently.
+5. Duplicate/late callbacks, client retries, network timeout after provider success, and cancellation racing with verification yield one consistent terminal state.
+6. The source of the deployed function is checked into the repo and reviewed so the PR and production code cannot silently diverge.
+
+This section records a source/privilege mismatch found by read-only inspection. No live checkout was attempted, no payment was created, no SQL write/migration was performed, and no deployed function was changed.
