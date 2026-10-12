@@ -119,3 +119,10 @@ This section records a source/privilege mismatch found by read-only inspection. 
 - `tests/razorpay-payment-source.test.js` adds static source guardrails for authentication, provider-side amount/currency/capture checks, narrow RPC grants and idempotent paid-state behavior. These tests do not execute PostgreSQL or call Razorpay.
 - The function and SQL candidate have not been deployed or applied. Before rollout, run Deno/Edge Function checks and the SQL candidate against an isolated Supabase/Postgres environment; verify the actual `payments` row cardinality, status transitions, triggers, concurrent duplicate callbacks, and behavior if the provider order succeeds but attachment fails.
 - The draft function intentionally retains the existing wildcard CORS policy for now to avoid an untested origin change; restrict origins only after the actual web/app origin inventory and preflight behavior are confirmed.
+
+
+### Additional payment trigger blocker found in read-only database inspection
+
+- The current `guard_customer_payment_update()` trigger allows updates when `private.is_admin()` is true; that helper checks whether `auth.uid()` has an admin profile. A service-role Edge Function request normally has no customer `auth.uid()`, so the deployed `mark_razorpay_paid_secure` call may hit `Payment update denied` when its update reaches the `payments` trigger. This needs confirmation in isolated tests/logs; no live payment was attempted.
+- The SQL candidate now proposes a narrow `auth.role() = 'service_role'` exception in the payment-update trigger, preserving the existing ownership/protected-field checks for customer requests. It also proposes idempotent paid-state transitions. This is draft-only and must be tested against the exact production schema, trigger order and JWT claim behavior before applying.
+- This finding means payment verification can fail even after signature and provider data checks pass; do not assume the existing active payment function is working end-to-end.
