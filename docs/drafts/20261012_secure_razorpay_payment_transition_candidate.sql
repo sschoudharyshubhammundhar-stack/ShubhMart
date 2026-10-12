@@ -46,6 +46,36 @@ $function$;
 revoke all on function public.attach_razorpay_order(uuid, text, text) from public, anon;
 grant execute on function public.attach_razorpay_order(uuid, text, text) to authenticated, service_role;
 
+-- The payment UPDATE trigger currently denies a service-role request because
+-- auth.uid() is null and private.is_admin() is false. Allow only the signed
+-- service_role JWT to make the server-verified payment-state update.
+create or replace function public.guard_customer_payment_update()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $function$
+begin
+  if auth.role() = 'service_role' then
+    return new;
+  end if;
+  if private.is_admin() then
+    return new;
+  end if;
+  if auth.uid() is null or old.customer_id is distinct from auth.uid() then
+    raise exception 'Payment update denied';
+  end if;
+  if new.amount is distinct from old.amount
+     or new.customer_id is distinct from old.customer_id
+     or new.status is distinct from old.status
+     or new.gateway_payment_id is distinct from old.gateway_payment_id
+     or new.gateway_signature is distinct from old.gateway_signature then
+    raise exception 'Protected payment fields cannot be changed by customer';
+  end if;
+  return new;
+end;
+$function$;
+
 create or replace function public.mark_razorpay_paid_secure(
   p_order_id uuid,
   p_customer_id uuid,
