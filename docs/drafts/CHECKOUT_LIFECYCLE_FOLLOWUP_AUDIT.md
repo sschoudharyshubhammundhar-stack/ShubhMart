@@ -154,3 +154,10 @@ This pass inspected current live function definitions, non-internal triggers on 
 - Keep all database changes in the draft PR until exact-schema tests and review pass.
 
 No payment was initiated, no live SQL write/migration was performed, no Edge Function was deployed, and no PR merge or production deployment was performed.
+
+
+### Payment-row cardinality check — read-only, 2026-10-12
+
+- Current public.payments indexes are a primary key on id plus non-unique indexes on customer_id and order_id; no unique index on order_id was found.
+- A read-only aggregate found 0 orders currently having more than one payments row, and 0 duplicate non-null (order_id, customer_id, gateway_order_id) groups.
+- This is a snapshot, not a concurrency guarantee. The candidate assumes one payment intent per order, but that invariant is not enforced by the inspected indexes. Before adding a unique constraint, verify whether the business allows retries/new payment attempts per order; the safer model may be a separate payment-attempt table with a unique active attempt or provider-order ID rather than a blanket unique order_id constraint.
