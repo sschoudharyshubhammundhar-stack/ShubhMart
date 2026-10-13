@@ -16,7 +16,7 @@ function show(id){["home","cart","orders","account"].forEach(x=>document.getElem
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 
 let productSearchTimer=null;
-function safeSearchTerm(value){return String(value??"").replace(/[,.():%_*!]/g," ").replaceAll("\\"," ").replaceAll('"'," ").replace(/\s+/g," ").trim().slice(0,80);}
+function safeSearchTerm(value){return String(value??"").replace(/[,.():%_*!']/g," ").replaceAll("\\"," ").replaceAll('"'," ").replace(/\s+/g," ").trim().slice(0,80);}
 
 function queueProductSearch(){clearTimeout(productSearchTimer);productSearchTimer=setTimeout(loadProducts,280);}
 
