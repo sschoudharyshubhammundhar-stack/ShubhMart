@@ -54,3 +54,15 @@ test("draft SQL candidate supports the trusted server role without weakening cus
   assert.match(sqlCandidate, /Do not grant this RPC directly to anon\/public/);
   assert.match(sqlCandidate, /stock_reserved/);
 });
+
+
+test("variant stock candidate rejects hidden products and pins an empty search path", () => {
+  assert.match(sqlCandidate, /v_product\.is_live IS NOT TRUE/);
+  assert.match(sqlCandidate, /SET search_path = ''/);
+});
+
+test("variant stock candidate decrements only the selected inventory with a stock guard", () => {
+  assert.match(sqlCandidate, /UPDATE public\.product_variants[\s\S]*?stock = stock - v_item\.quantity[\s\S]*?stock >= v_item\.quantity/);
+  assert.match(sqlCandidate, /UPDATE public\.products[\s\S]*?stock = stock - v_item\.quantity[\s\S]*?stock >= v_item\.quantity/);
+  assert.match(sqlCandidate, /variant_id/);
+});
