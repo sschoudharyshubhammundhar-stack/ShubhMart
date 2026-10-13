@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION public.create_order_from_cart_with_coins(
 RETURNS TABLE(order_id uuid, total_amount numeric, coins_redeemed bigint, coin_discount numeric)
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = ''
 AS $function$
 DECLARE
   v_order_id uuid;
@@ -101,7 +101,7 @@ BEGIN
       FROM public.products
      WHERE id = v_item.product_id
      FOR UPDATE;
-    IF NOT FOUND OR v_product.status <> 'Active' THEN
+    IF NOT FOUND OR v_product.status <> 'Active' OR v_product.is_live IS NOT TRUE THEN
       RAISE EXCEPTION 'Product is no longer active';
     END IF;
 
