@@ -88,3 +88,32 @@ Read-only catalog queries on 2026-10-13 examined all public-schema SECURITY DEFI
 5. Only after evidence exists, prepare a narrowly scoped SQL migration and rollback plan for review. Do not apply it to the production project as part of this audit.
 
 These findings are based on current read-only catalog/function-definition inspection. The suspected coin-checkout and refund issues require caller/schema/workflow confirmation before being labeled exploitable. No production changes were made.
+
+
+## Third-pass review — active Edge Function call graph and payment state integrity
+
+The current deployed Supabase Edge Function source was retrieved read-only on 2026-10-13. The following observations now have caller-level evidence, not only database-catalog evidence.
+
+### Confirmed active-path defects / blockers
+
+1. **create-customer-order appears unable to pass its own database authorization check.** The active Edge Function validates the incoming bearer token using admin.auth.getUser(...), then calls admin.rpc("create_order_from_cart_with_coins", ...) using a service-role client that does not forward the user's JWT. The called SQL function explicitly rejects when auth.uid() is null or differs from p_customer_id. A service-role-only client normally has no end-user auth.uid() context, so this call path is expected to fail with Unauthorized. Verify in a safe isolated integration test before changing it; do not remove the SQL ownership check. The current function also returns SQL exception messages directly to the caller, which may disclose implementation details.
+
+2. **If the authorization mismatch is corrected without fixing the SQL, coin checkout still has stock/variant integrity defects.** The called create_order_from_cart_with_coins routine checks stock but does not decrement it, ignores cart.variant_id, creates parent-product order items, and debits ShubhCoins. This can allow repeated purchases against unchanged stock and wrong SKU/variant pricing if this route becomes functional. Fix stock reservation, selected-variant pricing, order-item variant IDs, coin ledger consistency and idempotency atomically in one transaction before enabling this route.
+
+3. **razorpay-payment uses the user-JWT client to call attach_razorpay_order, but the current grants deny authenticated EXECUTE.** The active function creates a Razorpay order and then calls this RPC using sb, a client carrying the user's Authorization header. Catalog privileges show authenticated cannot execute this function, while service_role can. That sequence is expected to fail at the RPC permission check and can leave an orphan provider order. Do not broaden grants blindly; decide on a least-privilege user-context/server-context design and add a test proving the payment record is attached to the correct customer order.
+
+4. **Payment verification currently appears to mark an order paid without checking provider capture state or amount/currency.** The active Edge Function computes the expected HMAC signature from the submitted razorpay_order_id|razorpay_payment_id and, if it matches, invokes the service-role RPC mark_razorpay_paid_secure. The SQL routine checks customer/order ownership and matches the stored gateway order ID, but then directly sets both order and payment status to Paid; it does not itself validate captured status, provider-reported amount, currency, or payment/order association beyond the stored order ID. The Edge Function source inspected does not call Razorpay's payment-fetch endpoint before this state transition. Signature verification is necessary, but is not proof by itself that funds are captured and amount/currency match. Treat this as a **P0 financial-integrity release blocker** until a server-side provider verification checks payment ID, order ID, amount, currency, and captured/settled status before the database transition.
+
+5. **CORS is permissive on both active Edge Functions.** Their response headers use Access-Control-Allow-Origin: *. This is not authentication by itself and does not bypass JWT checks, but a strict allowlist of actual ShubhMart origins is preferable for browser abuse reduction. Validate current Cloudflare/preview origins and preflight behavior before changing it; never treat CORS as authorization.
+
+### Safe fix order — still no production changes
+
+1. Build isolated integration tests for the actual service-role/user-JWT context and prove both current RPC failures. No production checkout or real Razorpay payment attempt.
+2. Correct the checkout SQL design in a reviewed migration draft: authenticated identity must be verified at the server boundary; stock and variant reservation, order items, payment intent, coin debit/ledger, and idempotency must commit atomically.
+3. Correct the payment-attachment design with least privilege, no browser-exposed service-role key, and no removal of customer/order binding.
+4. Add provider-side payment fetch/verification before marking Paid; compare Razorpay payment order_id, amount in paise, currency, and captured state. Handle authorized-but-not-captured, failed, duplicate, delayed, and out-of-order callbacks idempotently.
+5. Add a transaction-safe refund ceiling and reconcile order/payment/refund states.
+6. Add restrictive CORS only after identifying the exact required production and preview origins, then run browser regression tests.
+7. Verify the fixes with isolated database tests, Edge Function integration tests and Razorpay sandbox—not by modifying live production data.
+
+The call-graph findings are based on current active function source and read-only SQL catalog inspection. The expected failures and financial risks should be reproduced in an isolated environment before production remediation. No production SQL, Auth settings, Edge Function versions, payments, or deployments were changed.
