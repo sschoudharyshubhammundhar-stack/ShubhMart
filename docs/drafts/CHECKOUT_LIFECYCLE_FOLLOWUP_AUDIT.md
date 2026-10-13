@@ -194,3 +194,10 @@ A follow-up compared the live RPC EXECUTE grants with the checked-in Edge Functi
 - A static test was added to guard this intended pairing. It has not yet been confirmed by a new GitHub Actions run, and it does not prove PostgreSQL role claims behave as expected at runtime.
 - This candidate still does not implement checkout idempotency. It is not release-ready until the idempotency key/fingerprint/replay record, payment-attempt state, cancellation/coin cleanup, and both caller payloads are integrated and tested in an isolated database.
 - No production grant, SQL, Edge Function or runtime configuration was changed.
+## CI and preview confirmation — 2026-10-12
+
+- Head commit `f949ed93c29c06f191adb06d8c3d2da9d19b3d33` completed GitHub Actions run #126 successfully. The job reports all JavaScript syntax checks and checkout source-regression tests passed: 30 tests passed, 0 failed.
+- Cloudflare preview for this commit reports Build: Success and Deployment: Success at `https://fix-secure-checkout-edge-function-shubhmart.sschoudharyshubhammundhar.workers.dev`. This is a branch preview, not the production Worker release.
+- The passing tests are static/source-level checks. They do not validate PostgreSQL transaction isolation, live role claims, deployed function grants, Deno runtime behavior, or Razorpay provider interactions.
+- **Release-blocking authentication mismatch remains:** the candidate `create-customer-order` Edge Function calls the RPC using the service-role client after validating the bearer token, but the live database function still requires `auth.uid() = p_customer_id`. The draft SQL changes the service-role guard, but it has not been applied. Do not interpret a successful preview build as proof that checkout can create orders against the current live database.
+- No isolated PostgreSQL database is currently available in this workflow for concurrency testing. Do not use the live checkout as a substitute. Continue with a test-only database/isolated environment before approving the candidate SQL.
