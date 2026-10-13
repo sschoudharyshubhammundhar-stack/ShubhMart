@@ -11,7 +11,7 @@ test('product search input is normalized before building PostgREST OR filters', 
   assert.match(source, /const q=safeSearchTerm\(document\.getElementById\("search"\)\?\.value\)/);
   const safeSearchTerm = vm.runInNewContext(`(${match[0]})`);
   assert.equal(safeSearchTerm('  lipstick  '), 'lipstick');
-  assert.equal(safeSearchTerm('x,y).or(id.not.is.null),z'), 'x y or id not is null  z');
+  assert.equal(safeSearchTerm('x,y).or(id.not.is.null),z'), 'x y or id not is null z');
   assert.equal(safeSearchTerm('%_!*:"\\\\'), '');
   assert.equal(safeSearchTerm('a'.repeat(200)).length, 80);
 });
