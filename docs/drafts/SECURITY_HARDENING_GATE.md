@@ -84,3 +84,12 @@ For every checked item, attach a test result, configuration evidence, or reviewe
 ## Change-control rule
 
 Do not apply candidate SQL to production, deploy Edge Functions, merge this draft PR, enable real payments, create a paid test branch, or change production security settings without the user's explicit approval and a reviewed rollback plan.
+## Initial code/config observations (2026-10-13)
+
+- The Cloudflare config (`wrangler.toml`) serves static assets from the repository root and does not define a Worker entry point. A root `_headers` file was not present at the inspected branch ref; do not assume Pages-style `_headers` rules apply to this Workers static-assets deployment. Confirm the supported response-header mechanism before rollout.
+- `index.html` loads Supabase JS from jsDelivr and Razorpay Checkout from Razorpay's hosted script, and includes inline JavaScript. A strict CSP cannot be pasted in blindly: first inventory all required script/connect/image/frame origins, introduce report-only monitoring where feasible, and avoid breaking login or payment checkout.
+- `customer/customer-app.js` escapes several displayed fields, which is a useful baseline, but product search constructs a PostgREST `.or(...)` filter by concatenating user-entered search text. Treat this as an input-grammar robustness issue: canonicalize/limit search text or move to a safer server-side search path; test quotes, commas, parentheses, percent and underscore wildcard behavior.
+- The client renders product/category data through `innerHTML` templates. Escaping is used in the inspected product listing path, but every rendering sink and URL context needs a full audit; HTML escaping alone is not a universal URL/JavaScript-context sanitizer.
+- Added `.github/workflows/security-secret-scan.yml` on this branch. It runs Gitleaks on full Git history for pull requests and this feature branch, with read-only repository permissions and no deploy step. A clean scan is not yet confirmed; if a real secret is detected, rotate/revoke it.
+
+These are initial observations, not a complete penetration test or confirmation that production response headers are already hardened.
