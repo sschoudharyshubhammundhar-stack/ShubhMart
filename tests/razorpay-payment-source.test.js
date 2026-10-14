@@ -28,7 +28,7 @@ test("Razorpay attachment uses the customer-scoped RPC, with a narrow grant in t
   assert.match(migration, /auth\.uid\(\)/);
   assert.match(migration, /where order_id = p_order_id\s+and customer_id = auth\.uid\(\)/);
   assert.match(migration, /grant execute on function public\.attach_razorpay_order\(uuid, text, text\) to authenticated, service_role/i);
-  assert.match(migration, /if not found then\s+raise exception 'Payment record not found'/);
+  assert.match(migration, /if not found then\s+raise exception 'Payment record not found or changed during verification'/);
 });
 
 test("paid transition draft is retry-safe for the same payment and rejects a different payment", () => {
