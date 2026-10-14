@@ -64,7 +64,7 @@ BEGIN
     RAISE EXCEPTION 'Unauthorized';
   END IF;
 
-  IF lower(p_payment_method) NOT IN ('cod','razorpay','upi','card','netbanking') THEN
+  IF lower(coalesce(p_payment_method, '')) NOT IN ('cod','razorpay','upi','card','netbanking') THEN
     RAISE EXCEPTION 'Invalid payment method';
   END IF;
   IF v_delivery_method NOT IN ('standard','fast','express','scheduled') THEN
@@ -101,7 +101,7 @@ BEGIN
       FROM public.products
      WHERE id = v_item.product_id
      FOR UPDATE;
-    IF NOT FOUND OR v_product.status <> 'Active' OR v_product.is_live IS NOT TRUE THEN
+    IF NOT FOUND OR v_product.status IS DISTINCT FROM 'Active' OR v_product.is_live IS NOT TRUE THEN
       RAISE EXCEPTION 'Product is no longer active';
     END IF;
 
@@ -166,6 +166,10 @@ BEGIN
     v_delivery := 40;
   ELSE
     v_delivery := 0;
+  END IF;
+
+  IF p_shubhcoins < 0 THEN
+    RAISE EXCEPTION 'Invalid ShubhCoins amount';
   END IF;
 
   IF v_requested > 0 THEN
