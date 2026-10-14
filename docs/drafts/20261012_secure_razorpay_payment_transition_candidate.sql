@@ -12,7 +12,7 @@ create or replace function public.attach_razorpay_order(
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $function$
 begin
   if auth.uid() is null then
@@ -23,11 +23,15 @@ begin
   end if;
   if not exists (
     select 1 from public."Orders"
-    where id = p_order_id and customer_id = auth.uid()
+    where id = p_order_id
+      and customer_id = auth.uid()
+      and payment_status is distinct from 'Paid'
   ) then
-    raise exception 'Order not found';
+    raise exception 'Order not found or already paid';
   end if;
 
+  -- Do not let a customer replace a previously attached gateway order ID.
+  -- Same-ID retries are idempotent; a different ID requires reconciliation.
   update public.payments
   set gateway = 'Razorpay',
       gateway_order_id = p_gateway_order_id,
@@ -35,16 +39,30 @@ begin
       status = 'Pending',
       updated_at = now()
   where order_id = p_order_id
-    and customer_id = auth.uid();
+    and customer_id = auth.uid()
+    and status is distinct from 'Paid'
+    and (gateway_order_id is null or gateway_order_id = p_gateway_order_id);
 
   if not found then
-    raise exception 'Payment record not found';
+    raise exception 'Payment record missing, already paid, or gateway order already attached';
   end if;
 end;
 $function$;
 
 revoke all on function public.attach_razorpay_order(uuid, text, text) from public, anon;
 grant execute on function public.attach_razorpay_order(uuid, text, text) to authenticated, service_role;
+
+
+-- Payment IDs must never be claimed by two orders, including concurrent callbacks.
+-- PRE-FLIGHT REQUIRED before creating this index:
+--   SELECT gateway_payment_id, count(*) FROM public.payments
+--   WHERE gateway_payment_id IS NOT NULL
+--   GROUP BY gateway_payment_id HAVING count(*) > 1;
+-- If this returns rows, reconcile them manually; do not delete/merge records automatically.
+-- Only create the unique index after the preflight returns no rows.
+create unique index if not exists payments_gateway_payment_id_unique
+  on public.payments (gateway_payment_id)
+  where gateway_payment_id is not null;
 
 -- The payment UPDATE trigger currently denies a service-role request because
 -- auth.uid() is null and private.is_admin() is false. Allow only the signed
@@ -53,7 +71,7 @@ create or replace function public.guard_customer_payment_update()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $function$
 begin
   if auth.role() = 'service_role' then
@@ -86,7 +104,7 @@ create or replace function public.mark_razorpay_paid_secure(
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $function$
 declare
   v_customer_id uuid;
