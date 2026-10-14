@@ -123,6 +123,7 @@ declare
   v_order_payment_id text;
   v_gateway_order_id text;
   v_existing_gateway_payment_id text;
+  v_payment_row_id uuid;
 begin
   if p_order_id is null
      or p_customer_id is null
@@ -142,12 +143,14 @@ begin
     raise exception 'Order not found';
   end if;
 
-  select gateway_order_id, gateway_payment_id
-    into v_gateway_order_id, v_existing_gateway_payment_id
+  -- Resolve and lock one specific current attempt deterministically, then update
+  -- that same row below. A timestamp tie must not select one row and update several.
+  select id, gateway_order_id, gateway_payment_id
+    into v_payment_row_id, v_gateway_order_id, v_existing_gateway_payment_id
   from public.payments
   where order_id = p_order_id
     and customer_id = p_customer_id
-  order by updated_at desc nulls last
+  order by updated_at desc nulls last, id desc
   limit 1
   for update;
 
@@ -191,12 +194,13 @@ begin
       gateway_payment_id = p_payment_id,
       gateway_signature = p_signature,
       updated_at = now()
-  where order_id = p_order_id
+  where id = v_payment_row_id
+    and order_id = p_order_id
     and customer_id = p_customer_id
     and gateway_order_id = p_razorpay_order_id;
 
   if not found then
-    raise exception 'Payment record not found';
+    raise exception 'Payment record not found or changed during verification';
   end if;
 end;
 $function$;
