@@ -32,16 +32,27 @@ begin
 
   -- Do not let a customer replace a previously attached gateway order ID.
   -- Same-ID retries are idempotent; a different ID requires reconciliation.
-  update public.payments
-  set gateway = 'Razorpay',
-      gateway_order_id = p_gateway_order_id,
-      method = coalesce(nullif(trim(p_method), ''), 'razorpay'),
-      status = 'Pending',
-      updated_at = now()
-  where order_id = p_order_id
-    and customer_id = auth.uid()
-    and status is distinct from 'Paid'
-    and (gateway_order_id is null or gateway_order_id = p_gateway_order_id);
+  -- Update exactly one current payment-attempt row. Do not mutate historical
+  -- attempts if the schema permits more than one payment row per order.
+  with target as (
+    select id
+    from public.payments
+    where order_id = p_order_id
+      and customer_id = auth.uid()
+      and status is distinct from 'Paid'
+      and (gateway_order_id is null or gateway_order_id = p_gateway_order_id)
+    order by updated_at desc nulls last, id desc
+    for update
+    limit 1
+  )
+  update public.payments as p
+     set gateway = 'Razorpay',
+         gateway_order_id = p_gateway_order_id,
+         method = coalesce(nullif(trim(p_method), ''), 'razorpay'),
+         status = 'Pending',
+         updated_at = now()
+    from target
+   where p.id = target.id;
 
   if not found then
     raise exception 'Payment record missing, already paid, or gateway order already attached';
