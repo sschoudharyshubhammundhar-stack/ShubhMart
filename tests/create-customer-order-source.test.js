@@ -66,3 +66,9 @@ test("variant stock candidate decrements only the selected inventory with a stoc
   assert.match(sqlCandidate, /UPDATE public\.products[\s\S]*?stock = stock - v_item\.quantity[\s\S]*?stock >= v_item\.quantity/);
   assert.match(sqlCandidate, /variant_id/);
 });
+
+test("checkout candidate rejects nullable product status and invalid database inputs", () => {
+  assert.match(sqlCandidate, /status IS DISTINCT FROM 'Active'/);
+  assert.match(sqlCandidate, /lower\(coalesce\(p_payment_method, ''\)\) NOT IN/);
+  assert.match(sqlCandidate, /IF p_shubhcoins < 0 THEN/);
+});
