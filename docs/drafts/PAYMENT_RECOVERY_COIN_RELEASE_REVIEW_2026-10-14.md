@@ -81,3 +81,12 @@ The customer checkout frontend does not send a database-backed checkout idempote
 ## Release decision
 
 **Do not release checkout/payment changes yet.** The branch has passed source syntax checks and secret scanning, but those checks do not test PostgreSQL transaction semantics, provider behavior, RLS/grants, race conditions, or deployed-version parity. No production changes are authorized by this document.
+
+## Follow-up evidence — 2026-10-15
+
+- The Supabase Security Advisor currently reports **58** exposed SECURITY DEFINER functions executable by the authenticated role. This is an inventory/triage warning, not proof that all 58 are exploitable; each function needs a body, ownership, effective-grant, and authorization review.
+- The advisor specifically lists public.release_shubhcoins_for_order(p_order_id uuid) as callable by authenticated. Since the browser invokes this RPC after a modal dismissal, a payment-failed callback, and a verification/catch error, the database routine's exact authorization and payment-state guards are a release-blocking verification item. A customer being able to call a function on their own order is not itself proof of a vulnerability; whether it can incorrectly release coins depends on the routine's transactional checks.
+- The attempted read-only SQL inspection of the live function definition was blocked before execution. Accordingly, this follow-up does not claim to have inspected the live function body or prove the deployed routine is unsafe.
+- Supabase Security Advisor also reports leaked-password protection disabled. This is an Auth configuration finding; it was not changed.
+- GitHub Actions for commit 20291a2680dfe4200aedd56ab96c51e292a73f49 completed successfully: ShubhMart Secret Scan (run #45) and ShubhMart PR Syntax Checks (run #177). These checks do not validate database transaction behavior, live Edge Function parity, payment-provider reconciliation, or concurrency.
+- No SQL was applied, no Auth settings were changed, no deployment/merge occurred, and no live payment was attempted.
