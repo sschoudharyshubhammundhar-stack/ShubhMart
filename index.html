@@ -525,7 +525,7 @@ function openProduct(p){
  if(selectedId){document.getElementById('smSelectedVariantNotice')?.remove();setTimeout(function(){if(window.smVariantCache?.some(v=>String(v.id)===String(selectedId)))window.smSelectVariant(selectedId,p.id)},0)}
 }
 function closeProductModal(){document.getElementById('productModal').classList.add('hidden')}
-async async function loadProducts(){
+async function loadProducts(){
  const el=document.getElementById('products');
  if(!el)return;
  loadWholesaleProducts().catch(()=>{});
