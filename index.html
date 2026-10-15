@@ -470,11 +470,23 @@ function openWholesaleMarket(){show('home');setTimeout(()=>{document.getElementB
 function openWholesaleLogin(){openWholesaleMarket();note('Wholesale Market dekhne ke liye login ki zarurat nahi hai. Inquiry/quote bhejne par hi customer login maanga jayega.')}
 
 async function loadWholesaleProducts(){
- const e=document.getElementById('wholesaleProducts'); if(!e)return;
- e.innerHTML='<div class="loaderr">Wholesale products load ho rahe hain…</div>';
- const {data,error}=await sb.from('products').select('id,name,category,price,mrp,stock,image_url,wholesale_moq,wholesale_price,seller_id').eq('status','Active').eq('is_live',true).eq('wholesale_enabled',true).gt('stock',0).not('wholesale_price','is',null).order('created_at',{ascending:false}).limit(24);
- if(error){e.innerHTML='<div class="errorbox">Wholesale products load error: '+esc(error.message)+'</div>';return}
- e.innerHTML=(data||[]).length?(data||[]).map(p=>'<div class="card"><img src="'+(p.image_url||'https://placehold.co/500x400?text=Wholesale')+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">WHOLESALE</span><h3>'+esc(p.name)+'</h3><div class="small">'+esc(p.category||'')+'</div><div><span class="wholesale-price">₹'+Number(p.wholesale_price||0).toFixed(0)</span> <span class="small">per piece</span></div><div class="small">Retail ₹'+Number(p.price||0).toFixed(0)+' · Stock '+Number(p.stock||0)+'</div><span class="wholesale-moq">MOQ: '+Number(p.wholesale_moq||1)+'</span><div class="contact-shield">🔒 Seller contact hidden · Inquiry only through ShubhMart</div><button class="btn" onclick="sendWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'Abhi koi approved wholesale product available nahi hai.';
+ const e=document.getElementById('wholesaleProducts');
+ if(!e)return;
+ e.innerHTML='<div class="loaderr" role="status">Wholesale products load ho rahe hain…</div>';
+ let settled=false;
+ const timer=setTimeout(()=>{if(!settled&&e.isConnected&&e.querySelector('.loaderr'))e.innerHTML='<div class="errorbox" role="alert">Wholesale products load hone mein samay lag raha hai. <button class="btn alt" type="button" onclick="loadWholesaleProducts()">Retry</button></div>'},15000);
+ try{
+  const {data,error}=await sb.from('products')
+   .select('id,name,category,price,mrp,stock,image_url,wholesale_moq,wholesale_price,seller_id,created_at')
+   .eq('status','Active').eq('is_live',true).eq('wholesale_enabled',true)
+   .gt('stock',0).not('wholesale_price','is',null)
+   .order('created_at',{ascending:false}).limit(24);
+  if(error)throw error;
+  e.innerHTML=(data||[]).length?(data||[]).map(p=>'<div class="card"><img loading="lazy" decoding="async" src="'+esc(p.image_url||'https://placehold.co/500x400?text=Wholesale')+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">WHOLESALE</span><h3>'+esc(p.name)+'</h3><div class="small">'+esc(p.category||'')+'</div><div><span class="wholesale-price">₹'+Number(p.wholesale_price||0).toFixed(0)+'</span> <span class="small">per piece</span></div><div class="small">Retail ₹'+Number(p.price||0).toFixed(0)+' · Stock '+Number(p.stock||0)+'</div><span class="wholesale-moq">MOQ: '+Math.max(1,Number(p.wholesale_moq||1))+'</span><div class="contact-shield">🔒 Seller contact hidden · Inquiry only through ShubhMart</div><button class="btn" onclick="sendWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'<div class="empty-state">Abhi koi approved wholesale product available nahi hai.</div>';
+ }catch(error){
+  console.error('[ShubhMart] Wholesale load failed:',error);
+  if(e.isConnected)e.innerHTML='<div class="errorbox" role="alert">Wholesale products load nahi ho paaye. API, database permission ya wholesale product settings check karein. <button class="btn alt" type="button" onclick="loadWholesaleProducts()">Retry</button></div>';
+ }finally{settled=true;clearTimeout(timer)}
 }
 async function sendWholesaleInquiry(productId){
  if(!currentUser){show('account');setTimeout(()=>document.getElementById('email')?.focus(),50);note('Wholesale Market open hai. Inquiry bhejne ke liye pehle normal ShubhMart customer login/signup kijiye.',true);return}
@@ -513,35 +525,57 @@ function openProduct(p){
  if(selectedId){document.getElementById('smSelectedVariantNotice')?.remove();setTimeout(function(){if(window.smVariantCache?.some(v=>String(v.id)===String(selectedId)))window.smSelectVariant(selectedId,p.id)},0)}
 }
 function closeProductModal(){document.getElementById('productModal').classList.add('hidden')}
-async function loadProducts(){loadWholesaleProducts();
+async async function loadProducts(){
  const el=document.getElementById('products');
- if(el){el.innerHTML='<div class="loaderr">Products load ho rahe hain…</div>';}
+ if(!el)return;
+ loadWholesaleProducts().catch(()=>{});
+ el.innerHTML='<div class="loaderr" role="status">Products load ho rahe hain…</div>';
  clearTimeout(productsLoadingTimer);
- productsLoadingTimer=setTimeout(()=>{if(el&&el.textContent.includes('Products load ho rahe'))el.innerHTML='<div class="errorbox">Products load hone mein zyada time lag raha hai. Internet check karke Refresh kijiye.</div>'},12000);
- const q=document.getElementById('search').value.trim();
- const sellerFilter=new URLSearchParams(location.search).get('seller')||'';
- const cat=document.getElementById('categoryFilter')?.value||'';
- const sort=document.getElementById('sortFilter')?.value||'new';
- let query=sb.from('products').select('*').eq('status','Active').eq('is_live',true);
- if(q)query=query.ilike('name','%'+q+'%');
- if(sellerFilter)query=query.eq('seller_id',sellerFilter);
- if(cat)query=query.eq('category',cat);
- if(sort==='price_asc')query=query.order('price',{ascending:true});
- else if(sort==='price_desc')query=query.order('price',{ascending:false});
- else if(sort==='name')query=query.order('name',{ascending:true});
- else query=query.order('created_at',{ascending:false});
- const {data,error}=await query; clearTimeout(productsLoadingTimer);
- if(error){el.innerHTML='<div>Products load error: '+error.message+'</div>';return}
- let wishIds=new Set();
- if(currentUser){const {data:wishes}=await sb.from('wishlist').select('product_id').eq('customer_id',currentUser.id);(wishes||[]).forEach(w=>wishIds.add(String(w.product_id)))}
- el.innerHTML=data?.length?data.map(p=>{const wished=wishIds.has(String(p.id));return `<div class="card">
- <img src="${esc(p.image_url||'https://placehold.co/500x400?text=ShubhMart')}" alt="${esc(p.name)}" onclick="openProductById('${p.id}')" style="cursor:pointer"><h3 onclick="openProductById('${p.id}')" style="cursor:pointer">${esc(p.name)}</h3>
- <div class="price">₹${Number(p.price||0).toFixed(0)} <span class="old">₹${Number(p.mrp||0).toFixed(0)}</span></div>
- <div class="small">${esc(p.category||'')} ${Number(p.mrp)>Number(p.price)?' • '+Math.round((1-Number(p.price)/Number(p.mrp))*100)+'% OFF':''}</div>
- <div class="small">${Number(p.stock||0)>0?'In Stock':'Out of Stock'}</div>
- <button class="btn" ${Number(p.stock||0)<=0?'disabled':''} onclick="addCart('${p.id}')">Add to Cart</button>
- <button class="btn alt" ${Number(p.stock||0)<=0?'disabled':''} onclick="buy('${p.id}')">Buy Now</button>
- <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button></div>`}).join(''):'No active products found.';
+ let settled=false;
+ productsLoadingTimer=setTimeout(()=>{if(!settled&&el.isConnected&&el.querySelector('.loaderr'))el.innerHTML='<div class="errorbox" role="alert">Products load hone mein samay lag raha hai. Network/API connection check karke dobara try karein. <button class="btn alt" type="button" onclick="loadProducts()">Retry</button></div>'},15000);
+ try{
+  const searchEl=document.getElementById('search');
+  const q=searchEl?.value?.trim()||'';
+  const sellerFilter=new URLSearchParams(location.search).get('seller')||'';
+  const cat=document.getElementById('categoryFilter')?.value||'';
+  const sort=document.getElementById('sortFilter')?.value||'new';
+  let query=sb.from('products').select('*').eq('status','Active').eq('is_live',true);
+  if(q)query=query.ilike('name','%'+q.replace(/[%_]/g,'')+'%');
+  if(sellerFilter)query=query.eq('seller_id',sellerFilter);
+  if(cat)query=query.eq('category',cat);
+  if(sort==='price_asc')query=query.order('price',{ascending:true});
+  else if(sort==='price_desc')query=query.order('price',{ascending:false});
+  else if(sort==='name')query=query.order('name',{ascending:true});
+  else query=query.order('created_at',{ascending:false});
+  const result=await query;
+  if(result.error)throw result.error;
+  const data=result.data||[];
+  let wishIds=new Set();
+  if(currentUser){
+   const wishesResult=await sb.from('wishlist').select('product_id').eq('customer_id',currentUser.id);
+   if(!wishesResult.error)(wishesResult.data||[]).forEach(w=>wishIds.add(String(w.product_id)));
+  }
+  el.innerHTML=data.length?data.map(p=>{
+   const wished=wishIds.has(String(p.id));
+   const price=Number(p.price||0),mrp=Number(p.mrp||0),stock=Number(p.stock||0);
+   return `<div class="card">
+    <img src="${esc(p.image_url||'https://placehold.co/500x400?text=ShubhMart')}" alt="${esc(p.name)}" loading="lazy" decoding="async" onclick="openProductById('${p.id}')" style="cursor:pointer">
+    <h3 onclick="openProductById('${p.id}')" style="cursor:pointer">${esc(p.name)}</h3>
+    <div class="price">₹${price.toFixed(0)} <span class="old">${mrp>price?'₹'+mrp.toFixed(0):''}</span></div>
+    <div class="small">${esc(p.category||'')} ${mrp>price?' • '+Math.round((1-price/mrp)*100)+'% OFF':''}</div>
+    <div class="small">${stock>0?'In Stock':'Out of Stock'}</div>
+    <button class="btn" ${stock<=0?'disabled':''} onclick="addCart('${p.id}')">Add to Cart</button>
+    <button class="btn alt" ${stock<=0?'disabled':''} onclick="buy('${p.id}')">Buy Now</button>
+    <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button>
+   </div>`;
+  }).join(''):'<div class="empty-state">Abhi is category mein koi active product available nahi hai.</div>';
+ }catch(error){
+  console.error('[ShubhMart] Product load failed:',error);
+  if(el.isConnected)el.innerHTML='<div class="errorbox" role="alert">Products load nahi ho paaye. API, internet ya database permission ki dikkat ho sakti hai. <button class="btn alt" type="button" onclick="loadProducts()">Retry</button></div>';
+ }finally{
+  settled=true;
+  clearTimeout(productsLoadingTimer);
+ }
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function addCart(id,variantId=null){
