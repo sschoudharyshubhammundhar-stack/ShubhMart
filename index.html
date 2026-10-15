@@ -2,6 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <title>ShubhMart — Live Marketplace</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -139,6 +140,130 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
  .chip{min-height:65px!important}
  .promo-tile strong{font-size:18px!important}
 }
+</style>
+
+<style id="shubhmart-button-polish-final">
+/* Button polish is intentionally last so legacy visual-lock rules cannot override it. */
+:root{--sm-action:#ff6b00;--sm-action-dark:#e85d04;--sm-action-shadow:rgba(255,107,0,.22)}
+button,.btn,.hero-btn,.searchbtn,.clearsearch,.navlink,.side-item,.chip,.head-action,.wishlist-btn{font-family:inherit;-webkit-tap-highlight-color:transparent;transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease,filter .18s ease}
+.btn,.hero-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:11px 17px;border:1px solid transparent;border-radius:12px;background:linear-gradient(135deg,#ff8a00 0%,#ff6b00 58%,#f45b00 100%)!important;color:#fff!important;font-weight:800;letter-spacing:.05px;line-height:1.2;text-align:center;box-shadow:0 5px 13px var(--sm-action-shadow),inset 0 1px 0 rgba(255,255,255,.22);cursor:pointer}
+.btn:hover:not(:disabled),.hero-btn:hover:not(:disabled){background:linear-gradient(135deg,#ff981f 0%,#ff7408 58%,#ed5a00 100%)!important;box-shadow:0 8px 19px rgba(255,107,0,.3),inset 0 1px 0 rgba(255,255,255,.25);transform:translateY(-2px);filter:none}
+.btn:active:not(:disabled),.hero-btn:active:not(:disabled){transform:translateY(0) scale(.985);box-shadow:0 2px 6px rgba(255,107,0,.2)}
+.btn.alt{background:#fff!important;color:#26324a!important;border-color:#dce2ed;box-shadow:0 2px 6px rgba(15,23,42,.04)}
+.btn.alt:hover:not(:disabled){color:#0f2b60!important;border-color:#9fb5db;background:#f5f8ff!important;box-shadow:0 5px 13px rgba(25,55,110,.09)}
+.searchbtn{background:linear-gradient(135deg,#183b80,#10275a)!important;color:#fff!important;border:1px solid rgba(255,255,255,.16);box-shadow:0 4px 10px rgba(16,39,90,.2)}
+.searchbtn:hover{background:linear-gradient(135deg,#2452a2,#163875)!important;box-shadow:0 6px 14px rgba(16,39,90,.28);transform:translateY(-1px)}
+.clearsearch{border:1px solid #e5e9f1}
+.clearsearch:hover{background:#e9eef8;color:#172c52}
+.navlink{border-radius:10px}
+.navlink:hover{background:#f2f6ff!important;color:#153a7a!important}
+.navlink.active{background:#f0f4ff!important;color:#153a7a!important;border-bottom:3px solid #ff7a00!important}
+.chip{border-color:#e6eaf1;box-shadow:0 2px 7px rgba(15,23,42,.025)}
+.chip:hover{border-color:#c4d4f4;background:linear-gradient(180deg,#fff,#f7f9ff)!important;color:#153a7a;box-shadow:0 9px 22px rgba(20,55,115,.1);transform:translateY(-3px)}
+.side-item{border-left:3px solid transparent}
+.side-item:hover,.side-item.selected{border-left-color:#ff7a00}
+.head-action{border-radius:12px;padding:7px 8px}
+.head-action:hover{background:rgba(255,255,255,.12)!important;color:#fff;transform:translateY(-1px)}
+.wishlist-btn{box-shadow:0 3px 12px rgba(15,23,42,.13)}
+.wishlist-btn:hover{transform:scale(1.07);box-shadow:0 6px 17px rgba(15,23,42,.2)}
+.btn:focus-visible,.hero-btn:focus-visible,.searchbtn:focus-visible,.clearsearch:focus-visible,.navlink:focus-visible,.side-item:focus-visible,.chip:focus-visible,.head-action:focus-visible,.wishlist-btn:focus-visible,.modal-close:focus-visible{outline:3px solid #76a7ff!important;outline-offset:3px}
+button:disabled,.btn:disabled,.hero-btn:disabled{opacity:.48;cursor:not-allowed;transform:none!important;box-shadow:none!important;filter:grayscale(.12)}
+.card .btn{width:100%;margin:4px 0 0;min-height:40px}
+@media(max-width:700px){.btn,.hero-btn{min-height:42px;padding:10px 12px;border-radius:11px}.searchbtn,.clearsearch{min-width:36px;width:36px;min-height:36px;height:36px}.head-action{padding:7px 5px}}
+@media(prefers-reduced-motion:reduce){button,.btn,.hero-btn,.searchbtn,.clearsearch,.navlink,.side-item,.chip,.head-action,.wishlist-btn{transition:none!important}.btn:hover,.hero-btn:hover,.chip:hover,.head-action:hover{transform:none!important}}
+</style>
+
+<style id="shubhmart-business-first-design">
+/* Business-first marketplace system: clarity, trust, product discovery, and one obvious next step. */
+:root{--sm-brand:#102b60;--sm-brand-2:#17458f;--sm-cta:#f97316;--sm-cta-hover:#ea580c;--sm-page:#f5f7fb;--sm-border:#e5eaf2;--sm-text:#172033;--sm-muted:#64748b}
+body{background:var(--sm-page)!important;color:var(--sm-text)!important}
+.top{background:var(--sm-brand)!important;box-shadow:0 3px 14px rgba(16,43,96,.14)!important}
+.header{max-width:1440px!important;grid-template-columns:minmax(200px,285px) minmax(240px,1fr) auto!important;gap:18px!important;padding:8px 22px!important}
+.brandbar{filter:none!important}
+.brand-full-logo{filter:drop-shadow(0 3px 4px rgba(0,0,0,.16))!important}
+.searchwrap{border:2px solid #e5eaf2!important;border-radius:12px!important;box-shadow:none!important}
+.searchwrap:focus-within{border-color:#8aa9e7!important;box-shadow:0 0 0 3px rgba(59,130,246,.1)!important}
+.searchbtn{background:var(--sm-cta)!important;border-color:var(--sm-cta)!important;border-radius:9px!important;box-shadow:none!important}
+.searchbtn:hover{background:var(--sm-cta-hover)!important;transform:none!important}
+.head-action{color:#fff!important}
+.head-action .ico{color:#fff!important}
+.subnav{max-width:1440px!important;margin:auto!important;padding:0 18px!important;gap:5px!important;border-top:1px solid rgba(255,255,255,.13)!important}
+.navlink{color:#26364f!important;border-radius:8px 8px 0 0!important}
+.navlink:hover{background:#edf3ff!important;color:var(--sm-brand)!important}
+.navlink.active{background:#edf3ff!important;color:var(--sm-brand)!important;border-bottom:3px solid var(--sm-cta)!important}
+.main{padding-top:18px!important}
+#home .layout{grid-template-columns:220px minmax(0,1fr)!important;gap:18px!important;align-items:start!important}
+.sidebar{display:block!important;background:#fff!important;border:1px solid var(--sm-border)!important;border-radius:12px!important;box-shadow:0 2px 8px rgba(15,23,42,.025)!important}
+.side-title{border-bottom:1px solid #eef1f6!important}
+.side-item{font-size:13px!important;border-radius:0 8px 8px 0!important}
+.side-item:hover,.side-item.selected{background:#f1f5ff!important;color:var(--sm-brand)!important}
+.side-deal{background:#fff7ed!important;border:1px solid #ffedd5!important}
+.hero.shubh-reference-hero{display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:245px!important;padding:30px 36px!important;border:1px solid #dce6f7!important;border-radius:16px!important;background:linear-gradient(105deg,#f0f5ff 0%,#fff 65%,#fff7ed 100%)!important;box-shadow:none!important;overflow:hidden!important}
+.hero-copy{position:relative!important;z-index:2!important;max-width:620px!important}
+.hero-kicker{color:var(--sm-brand-2)!important;font-size:12px!important;font-weight:800!important;letter-spacing:1px!important}
+.shubh-reference-hero h1{margin:9px 0 3px!important;font-size:clamp(36px,4vw,52px)!important;line-height:1.05!important;color:var(--sm-brand)!important;letter-spacing:-1.3px!important}
+.shubh-reference-hero h1 b{color:var(--sm-brand)!important}
+.shubh-reference-hero h1 span{color:var(--sm-brand-2)!important}
+.hero-script{font-size:18px!important;font-weight:700!important;color:#334155!important}
+.shubh-reference-hero p{max-width:520px!important;font-size:14px!important;line-height:1.7!important;color:#526078!important}
+.hero-3d-scene{display:none!important}
+.hero-btn{background:var(--sm-cta)!important;border-radius:10px!important;box-shadow:0 4px 10px rgba(249,115,22,.17)!important}
+.hero-btn:hover{background:var(--sm-cta-hover)!important}
+.chips{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;margin:16px 0 20px!important}
+.chip{display:flex!important;align-items:center!important;gap:11px!important;min-height:72px!important;padding:12px!important;border:1px solid var(--sm-border)!important;border-radius:12px!important;background:#fff!important;box-shadow:0 2px 7px rgba(15,23,42,.025)!important;text-align:left!important}
+.chip .cico{display:grid!important;place-items:center!important;flex:0 0 40px!important;width:40px!important;height:40px!important;margin:0!important;border-radius:10px!important;background:#f1f5ff!important;font-size:23px!important}
+.chip span{font-size:12px!important;line-height:1.35!important;font-weight:700!important;color:#26364f!important}
+.chip:hover{border-color:#b9cbed!important;background:#fbfdff!important;box-shadow:0 6px 16px rgba(16,43,96,.08)!important;transform:translateY(-2px)!important}
+.promo-showcase{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
+.promo-tile{border-radius:13px!important;border:1px solid var(--sm-border)!important;box-shadow:none!important}
+.panel,.reference-products-panel{background:#fff!important;border:1px solid var(--sm-border)!important;border-radius:14px!important;box-shadow:0 2px 8px rgba(15,23,42,.025)!important}
+.section-head{margin:24px 0 12px!important}
+.section-head h2{font-size:21px!important;letter-spacing:-.3px!important;color:#172033!important}
+.grid{gap:13px!important}
+.card{background:#fff!important;border:1px solid var(--sm-border)!important;border-radius:13px!important;box-shadow:0 2px 8px rgba(15,23,42,.035)!important;transition:box-shadow .18s ease,border-color .18s ease!important}
+.card:hover{border-color:#c8d5e9!important;box-shadow:0 8px 22px rgba(15,23,42,.09)!important;transform:translateY(-2px)!important}
+.card img{background:#f8fafc!important;object-fit:contain!important;padding:6px!important}
+.card h3{font-size:14px!important;font-weight:600!important;color:#26364f!important}
+.price{color:#111827!important;font-size:20px!important}
+.discount{background:#fff1e7!important;color:#c2410c!important}
+.stock{background:#ecfdf3!important;color:#027a48!important}
+.btn,.hero-btn{background:var(--sm-cta)!important;box-shadow:0 4px 10px rgba(249,115,22,.16)!important}
+.btn:hover:not(:disabled),.hero-btn:hover:not(:disabled){background:var(--sm-cta-hover)!important;box-shadow:0 7px 15px rgba(249,115,22,.23)!important}
+.btn.alt{background:#fff!important;color:var(--sm-brand)!important;border:1px solid #d5deec!important;box-shadow:none!important}
+.btn.alt:hover:not(:disabled){background:#f3f7ff!important;border-color:#a8bfeb!important}
+.benefit{border:1px solid var(--sm-border)!important;border-radius:11px!important;background:#fff!important}
+.footer{background:#0b1d3e!important}
+@media(max-width:1100px){
+ #home .layout{grid-template-columns:minmax(0,1fr)!important}
+ .sidebar{display:none!important}
+ .header{grid-template-columns:minmax(170px,230px) minmax(0,1fr)!important}
+ .chips{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+ .header{display:flex!important;flex-direction:column!important;gap:8px!important;padding:8px 0!important}
+ .brandbar{height:54px!important}
+ .brand-full-logo{width:min(200px,78vw)!important;height:54px!important;object-position:center!important}
+ .subnav{padding:0 12px!important;margin:0 -12px!important}
+ .hero.shubh-reference-hero{min-height:0!important;padding:23px 19px!important;display:block!important;border-radius:13px!important}
+ .shubh-reference-hero h1{font-size:clamp(34px,9vw,43px)!important}
+ .hero-script{font-size:16px!important}
+ .shubh-reference-hero p{font-size:13px!important}
+ .chips{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ .chip{min-height:62px!important;padding:9px!important;gap:9px!important}
+ .chip .cico{width:35px!important;height:35px!important;flex-basis:35px!important;font-size:20px!important}
+ .chip span{font-size:11px!important}
+ .promo-showcase{grid-template-columns:minmax(0,1fr)!important}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .card{padding:8px!important}
+ .card img{height:clamp(120px,38vw,175px)!important}
+ .card h3{font-size:12px!important}
+ .price{font-size:17px!important}
+ .card .btn{font-size:12px!important;min-height:42px!important}
+ .section-head h2{font-size:18px!important}
+ .footer-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(prefers-reduced-motion:reduce){.card,.chip,.btn,.hero-btn{transition:none!important}}
 </style>
 <body><div id="shubhDelight" class="sm-delight-backdrop hidden" onclick="if(event.target===this)closeShubhSurprise()"><div class="sm-delight" role="dialog" aria-modal="true"><div class="sm-gift">🎁✨</div><h3>Shubh Surprise!</h3><p id="shubhDelightText">Aapke liye ShubhMart ka chhota sa surprise तैयार है.</p><div class="sm-delight-grid"><button class="sm-delight-item" onclick="surprisePick('deal')"><b>🔥</b>Hot Deals</button><button class="sm-delight-item" onclick="surprisePick('new')"><b>🆕</b>New Finds</button><button class="sm-delight-item" onclick="surprisePick('magic')"><b>💫</b>Magic Tip</button></div><button class="sm-delight-close" onclick="closeShubhSurprise()">Continue Shopping</button></div></div>
 
@@ -461,7 +586,7 @@ function note(t,danger=false){const e=document.getElementById('msg');e.className
 function filterCategory(cat){const f=document.getElementById('categoryFilter');if(f)f.value=cat;show('home');loadProducts()}
 function show(id){['home','cart','orders','support','notifications','wishlist','account'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id)); if(id==='cart')loadCart(); if(id==='orders')loadOrders(); if(id==='support')loadSupportTickets(); if(id==='notifications')loadNotifications(); if(id==='wishlist')loadWishlist(); if(id==='account')loadAccount();}
 let productsLoadingTimer=null;
-async function searchChanged(){const q=document.getElementById('search').value.trim();document.getElementById('clearSearchBtn').style.visibility=q?'visible':'hidden';const box=document.getElementById('searchSuggest');if(!q){box.classList.add('hidden');loadProducts();return}box.innerHTML='<div class="small" style="padding:8px">Searching…</div>';box.classList.remove('hidden');try{const {data,error}=await sb.from('products').select('id,name,price,image_url').eq('status','Active').eq('is_live',true).ilike('name','%'+q.replace(/[%_]/g,'')+'%').order('created_at',{ascending:false}).limit(6);if(error)throw error;box.innerHTML=data?.length?data.map(p=>'<button type="button" onclick="openProductById(\''+p.id+'\')"><img src="'+esc(p.image_url||'https://placehold.co/40')+'" alt="" style="width:34px;height:34px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:7px"> '+esc(p.name)+' <span style="float:right">₹'+Number(p.price||0).toFixed(0)+'</span></button>').join(''):'<div class="small" style="padding:8px">No matching product found.</div>'}catch(e){box.innerHTML='<div class="small" style="padding:8px">Search unavailable. Press Enter to continue.</div>'}loadProducts()}
+async function searchChanged(){const q=document.getElementById('search').value.trim();document.getElementById('clearSearchBtn').style.visibility=q?'visible':'hidden';const box=document.getElementById('searchSuggest');if(!q){box.classList.add('hidden');loadProducts();return}box.innerHTML='<div class="small" style="padding:8px">Searching…</div>';box.classList.remove('hidden');try{const {data,error}=await sb.from('products').select('id,name,price,image_url').eq('status','Active').or('seller_id.is.null,is_live.eq.true').ilike('name','%'+q.replace(/[%_]/g,'')+'%').order('created_at',{ascending:false}).limit(6);if(error)throw error;box.innerHTML=data?.length?data.map(p=>'<button type="button" onclick="openProductById(\''+p.id+'\')"><img src="'+esc(p.image_url||'https://placehold.co/40')+'" alt="" style="width:34px;height:34px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:7px"> '+esc(p.name)+' <span style="float:right">₹'+Number(p.price||0).toLocaleString('en-IN',{maximumFractionDigits:0})+'</span></button>').join(''):'<div class="small" style="padding:8px">No matching product found.</div>'}catch(e){box.innerHTML='<div class="small" style="padding:8px">Search unavailable. Press Enter to continue.</div>'}loadProducts()}
 function chooseSearch(value){document.getElementById('search').value=value;document.getElementById('searchSuggest').classList.add('hidden');document.getElementById('clearSearchBtn').style.visibility='visible';loadProducts()}
 function runSearch(){document.getElementById('searchSuggest').classList.add('hidden');loadProducts();document.getElementById('products')?.scrollIntoView({behavior:'smooth',block:'start'})}
 function clearSearch(){document.getElementById('search').value='';document.getElementById('clearSearchBtn').style.visibility='hidden';document.getElementById('searchSuggest').classList.add('hidden');loadProducts();document.getElementById('search').focus()}
@@ -470,11 +595,23 @@ function openWholesaleMarket(){show('home');setTimeout(()=>{document.getElementB
 function openWholesaleLogin(){openWholesaleMarket();note('Wholesale Market dekhne ke liye login ki zarurat nahi hai. Inquiry/quote bhejne par hi customer login maanga jayega.')}
 
 async function loadWholesaleProducts(){
- const e=document.getElementById('wholesaleProducts'); if(!e)return;
- e.innerHTML='<div class="loaderr">Wholesale products load ho rahe hain…</div>';
- const {data,error}=await sb.from('products').select('id,name,category,price,mrp,stock,image_url,wholesale_moq,wholesale_price,seller_id').eq('status','Active').eq('is_live',true).eq('wholesale_enabled',true).gt('stock',0).not('wholesale_price','is',null).order('created_at',{ascending:false}).limit(24);
- if(error){e.innerHTML='<div class="errorbox">Wholesale products load error: '+esc(error.message)+'</div>';return}
- e.innerHTML=(data||[]).length?(data||[]).map(p=>'<div class="card"><img src="'+(p.image_url||'https://placehold.co/500x400?text=Wholesale')+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">WHOLESALE</span><h3>'+esc(p.name)+'</h3><div class="small">'+esc(p.category||'')+'</div><div><span class="wholesale-price">₹'+Number(p.wholesale_price||0).toFixed(0)</span> <span class="small">per piece</span></div><div class="small">Retail ₹'+Number(p.price||0).toFixed(0)+' · Stock '+Number(p.stock||0)+'</div><span class="wholesale-moq">MOQ: '+Number(p.wholesale_moq||1)+'</span><div class="contact-shield">🔒 Seller contact hidden · Inquiry only through ShubhMart</div><button class="btn" onclick="sendWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'Abhi koi approved wholesale product available nahi hai.';
+ const e=document.getElementById('wholesaleProducts');
+ if(!e)return;
+ e.innerHTML='<div class="loaderr" role="status">Wholesale products load ho rahe hain…</div>';
+ let settled=false;
+ const timer=setTimeout(()=>{if(!settled&&e.isConnected&&e.querySelector('.loaderr'))e.innerHTML='<div class="errorbox" role="alert">Wholesale products load hone mein samay lag raha hai. <button class="btn alt" type="button" onclick="loadWholesaleProducts()">Retry</button></div>'},15000);
+ try{
+  const {data,error}=await sb.from('products')
+   .select('id,name,category,price,mrp,stock,image_url,wholesale_moq,wholesale_price,seller_id,created_at')
+   .eq('status','Active').or('seller_id.is.null,is_live.eq.true').eq('wholesale_enabled',true)
+   .gt('stock',0).not('wholesale_price','is',null)
+   .order('created_at',{ascending:false}).limit(24);
+  if(error)throw error;
+  e.innerHTML=(data||[]).length?(data||[]).map(p=>'<div class="card"><img loading="lazy" decoding="async" src="'+esc(p.image_url||'https://placehold.co/500x400?text=Wholesale')+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">WHOLESALE</span><h3>'+esc(p.name)+'</h3><div class="small">'+esc(p.category||'')+'</div><div><span class="wholesale-price">₹'+Number(p.wholesale_price||0).toLocaleString('en-IN',{maximumFractionDigits:0})+'</span> <span class="small">per piece</span></div><div class="small">Retail ₹'+Number(p.price||0).toLocaleString('en-IN',{maximumFractionDigits:0})+' · Stock '+Number(p.stock||0)+'</div><span class="wholesale-moq">MOQ: '+Math.max(1,Number(p.wholesale_moq||1))+'</span><div class="contact-shield">🔒 Seller contact hidden · Inquiry only through ShubhMart</div><button class="btn" onclick="sendWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'<div class="empty-state">Abhi koi approved wholesale product available nahi hai.</div>';
+ }catch(error){
+  console.error('[ShubhMart] Wholesale load failed:',error);
+  if(e.isConnected)e.innerHTML='<div class="errorbox" role="alert">Wholesale products load nahi ho paaye. API, database permission ya wholesale product settings check karein. <button class="btn alt" type="button" onclick="loadWholesaleProducts()">Retry</button></div>';
+ }finally{settled=true;clearTimeout(timer)}
 }
 async function sendWholesaleInquiry(productId){
  if(!currentUser){show('account');setTimeout(()=>document.getElementById('email')?.focus(),50);note('Wholesale Market open hai. Inquiry bhejne ke liye pehle normal ShubhMart customer login/signup kijiye.',true);return}
@@ -490,7 +627,7 @@ async function sendWholesaleInquiry(productId){
 }
 
 async function openProductById(id){
- const {data,error}=await sb.from('products').select('*').eq('id',id).eq('status','Active').eq('is_live',true).maybeSingle();
+ const {data,error}=await sb.from('products').select('*').eq('id',id).eq('status','Active').or('seller_id.is.null,is_live.eq.true').maybeSingle();
  if(error||!data){note(error?.message||'Product nahi mila',true);return}
  openProduct(data);
 }
@@ -499,7 +636,7 @@ async function openProductByName(name){
  const cleanName=String(name||'').trim();
  document.getElementById('search').value=cleanName;
  document.getElementById('clearSearchBtn').style.visibility='visible';
- let {data,error}=await sb.from('products').select('*').eq('status','Active').eq('is_live',true).ilike('name',`%${cleanName}%`).limit(1);
+ let {data,error}=await sb.from('products').select('*').eq('status','Active').or('seller_id.is.null,is_live.eq.true').ilike('name',`%${cleanName}%`).limit(1);
  if(error){note('Product open error: '+error.message,true);return}
  if(!data||!data.length){note('Product nahi mila',true);return}
  openProduct(data[0]);
@@ -508,40 +645,65 @@ function openProduct(p){
  const modal=document.getElementById('productModal');const box=document.getElementById('productModalContent');
  const mrp=Number(p.mrp||0),price=Number(p.price||0);const off=mrp>price?Math.round((1-price/mrp)*100):0;
  const selectedId=window.smSelectedVariants?.[p.id]||'';
- box.innerHTML='<div class="product-modal-grid"><img id="smModalImage" src="'+esc(p.image_url||'https://placehold.co/600x500?text=ShubhMart')+'" alt="'+esc(p.name)+'"><div><div class="small">'+esc(p.category||'')+'</div><h2>'+esc(p.name)+'</h2><p class="small">'+esc(p.description||'Demo product for ShubhMart')+'</p><p><span class="price" id="smModalPrice">₹'+price.toFixed(0)+'</span> '+(mrp>price?'<span class="old">₹'+mrp.toFixed(0)+'</span> <span class="discount">'+off+'% OFF</span>':'')+'</p><p class="stock" id="smModalStock">'+(Number(p.stock||0)>0?'In Stock: '+p.stock:'Out of Stock')+'</p><div class="row"><button class="btn" id="smModalAddButton" onclick="addCart(\''+p.id+'\',window.smSelectedVariants?.[\''+p.id+'\']||null).then(function(ok){if(ok)closeProductModal()})">Add to Cart</button><button class="btn alt" onclick="closeProductModal()">Close</button></div></div></div>';
+ const canBuy=p.is_live===true;
+ const actionLabel=p.is_live===true?'Add to Cart':'Demo Listing';
+ box.innerHTML='<div class="product-modal-grid"><img id="smModalImage" src="'+esc(p.image_url||'https://placehold.co/600x500?text=ShubhMart')+'" alt="'+esc(p.name)+'"><div><div class="small">'+esc(p.category||'')+'</div><h2>'+esc(p.name)+'</h2><p class="small">'+esc(p.description||'Demo product for ShubhMart')+'</p><p><span class="price" id="smModalPrice">₹'+price.toLocaleString('en-IN',{maximumFractionDigits:0})+'</span> '+(mrp>price?'<span class="old">₹'+mrp.toLocaleString('en-IN',{maximumFractionDigits:0})+'</span> <span class="discount">'+off+'% OFF</span>':'')+'</p><p class="stock" id="smModalStock">'+(p.is_live!==true?'Demo listing — purchasing is disabled':(Number(p.stock||0)>0?'In Stock: '+p.stock:'Out of Stock'))+'</p><div class="row"><button class="btn" id="smModalAddButton" '+(!canBuy?'disabled aria-disabled="true"':'')+' onclick="addCart(\''+p.id+'\',window.smSelectedVariants?.[\''+p.id+'\']||null).then(function(ok){if(ok)closeProductModal()})">'+actionLabel+'</button><button class="btn alt" onclick="closeProductModal()">Close</button></div></div></div>';
  modal.classList.remove('hidden');
  if(selectedId){document.getElementById('smSelectedVariantNotice')?.remove();setTimeout(function(){if(window.smVariantCache?.some(v=>String(v.id)===String(selectedId)))window.smSelectVariant(selectedId,p.id)},0)}
 }
 function closeProductModal(){document.getElementById('productModal').classList.add('hidden')}
-async function loadProducts(){loadWholesaleProducts();
+async function loadProducts(){
  const el=document.getElementById('products');
- if(el){el.innerHTML='<div class="loaderr">Products load ho rahe hain…</div>';}
+ if(!el)return;
+ loadWholesaleProducts().catch(()=>{});
+ el.innerHTML='<div class="loaderr" role="status">Products load ho rahe hain…</div>';
  clearTimeout(productsLoadingTimer);
- productsLoadingTimer=setTimeout(()=>{if(el&&el.textContent.includes('Products load ho rahe'))el.innerHTML='<div class="errorbox">Products load hone mein zyada time lag raha hai. Internet check karke Refresh kijiye.</div>'},12000);
- const q=document.getElementById('search').value.trim();
- const sellerFilter=new URLSearchParams(location.search).get('seller')||'';
- const cat=document.getElementById('categoryFilter')?.value||'';
- const sort=document.getElementById('sortFilter')?.value||'new';
- let query=sb.from('products').select('*').eq('status','Active').eq('is_live',true);
- if(q)query=query.ilike('name','%'+q+'%');
- if(sellerFilter)query=query.eq('seller_id',sellerFilter);
- if(cat)query=query.eq('category',cat);
- if(sort==='price_asc')query=query.order('price',{ascending:true});
- else if(sort==='price_desc')query=query.order('price',{ascending:false});
- else if(sort==='name')query=query.order('name',{ascending:true});
- else query=query.order('created_at',{ascending:false});
- const {data,error}=await query; clearTimeout(productsLoadingTimer);
- if(error){el.innerHTML='<div>Products load error: '+error.message+'</div>';return}
- let wishIds=new Set();
- if(currentUser){const {data:wishes}=await sb.from('wishlist').select('product_id').eq('customer_id',currentUser.id);(wishes||[]).forEach(w=>wishIds.add(String(w.product_id)))}
- el.innerHTML=data?.length?data.map(p=>{const wished=wishIds.has(String(p.id));return `<div class="card">
- <img src="${esc(p.image_url||'https://placehold.co/500x400?text=ShubhMart')}" alt="${esc(p.name)}" onclick="openProductById('${p.id}')" style="cursor:pointer"><h3 onclick="openProductById('${p.id}')" style="cursor:pointer">${esc(p.name)}</h3>
- <div class="price">₹${Number(p.price||0).toFixed(0)} <span class="old">₹${Number(p.mrp||0).toFixed(0)}</span></div>
- <div class="small">${esc(p.category||'')} ${Number(p.mrp)>Number(p.price)?' • '+Math.round((1-Number(p.price)/Number(p.mrp))*100)+'% OFF':''}</div>
- <div class="small">${Number(p.stock||0)>0?'In Stock':'Out of Stock'}</div>
- <button class="btn" ${Number(p.stock||0)<=0?'disabled':''} onclick="addCart('${p.id}')">Add to Cart</button>
- <button class="btn alt" ${Number(p.stock||0)<=0?'disabled':''} onclick="buy('${p.id}')">Buy Now</button>
- <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button></div>`}).join(''):'No active products found.';
+ let settled=false;
+ productsLoadingTimer=setTimeout(()=>{if(!settled&&el.isConnected&&el.querySelector('.loaderr'))el.innerHTML='<div class="errorbox" role="alert">Products load hone mein samay lag raha hai. Network/API connection check karke dobara try karein. <button class="btn alt" type="button" onclick="loadProducts()">Retry</button></div>'},15000);
+ try{
+  const searchEl=document.getElementById('search');
+  const q=searchEl?.value?.trim()||'';
+  const sellerFilter=new URLSearchParams(location.search).get('seller')||'';
+  const cat=document.getElementById('categoryFilter')?.value||'';
+  const sort=document.getElementById('sortFilter')?.value||'new';
+  let query=sb.from('products').select('*').eq('status','Active').or('seller_id.is.null,is_live.eq.true');
+  if(q)query=query.ilike('name','%'+q.replace(/[%_]/g,'')+'%');
+  if(sellerFilter)query=query.eq('seller_id',sellerFilter);
+  if(cat)query=query.eq('category',cat);
+  if(sort==='price_asc')query=query.order('price',{ascending:true});
+  else if(sort==='price_desc')query=query.order('price',{ascending:false});
+  else if(sort==='name')query=query.order('name',{ascending:true});
+  else query=query.order('created_at',{ascending:false});
+  const result=await query;
+  if(result.error)throw result.error;
+  const data=result.data||[];
+  let wishIds=new Set();
+  if(currentUser){
+   const wishesResult=await sb.from('wishlist').select('product_id').eq('customer_id',currentUser.id);
+   if(!wishesResult.error)(wishesResult.data||[]).forEach(w=>wishIds.add(String(w.product_id)));
+  }
+  el.innerHTML=data.length?data.map(p=>{
+   const wished=wishIds.has(String(p.id));
+   const price=Number(p.price||0),mrp=Number(p.mrp||0),stock=Number(p.stock||0),canBuy=p.is_live===true&&stock>0;
+   const actionLabel=p.is_live===true?(stock>0?'Add to Cart':'Out of Stock'):'Demo Listing';
+   return `<div class="card">
+    <img src="${esc(p.image_url||'https://placehold.co/500x400?text=ShubhMart')}" alt="${esc(p.name)}" loading="lazy" decoding="async" onclick="openProductById('${p.id}')" style="cursor:pointer">
+    <h3 onclick="openProductById('${p.id}')" style="cursor:pointer">${esc(p.name)}</h3>
+    <div class="price">₹${price.toLocaleString('en-IN',{maximumFractionDigits:0})} <span class="old">${mrp>price?'₹'+mrp.toLocaleString('en-IN',{maximumFractionDigits:0}):''}</span></div>
+    <div class="small">${esc(p.category||'')} ${mrp>price?' • '+Math.round((1-price/mrp)*100)+'% OFF':''}</div>
+    <div class="small">${p.is_live!==true?'Demo listing — purchase disabled':(stock>0?'In Stock':'Out of Stock')}</div>
+    <button class="btn" ${!canBuy?'disabled aria-disabled="true"':''} onclick="addCart('${p.id}')">${actionLabel}</button>
+    <button class="btn alt" ${!canBuy?'disabled aria-disabled="true"':''} onclick="buy('${p.id}')">Buy Now</button>
+    <button id="wish-${p.id}" class="btn alt wishlist-btn ${wished?'wished':''}" aria-label="${wished?'Remove from wishlist':'Add to wishlist'}" onclick="toggleWishlist('${p.id}')">${wished?'♥':'♡'}</button>
+   </div>`;
+  }).join(''):'<div class="empty-state">Abhi is category mein koi active product available nahi hai.</div>';
+ }catch(error){
+  console.error('[ShubhMart] Product load failed:',error);
+  if(el.isConnected)el.innerHTML='<div class="errorbox" role="alert">Products load nahi ho paaye. API, internet ya database permission ki dikkat ho sakti hai. <button class="btn alt" type="button" onclick="loadProducts()">Retry</button></div>';
+ }finally{
+  settled=true;
+  clearTimeout(productsLoadingTimer);
+ }
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function addCart(id,variantId=null){
@@ -759,7 +921,7 @@ async function revealMagicDrop(){
  document.getElementById('magicName').textContent='Finding your pick...';
  document.getElementById('magicPrice').textContent='';
  try{
-   const {data,error}=await sb.from('products').select('id,name,price,image_url,status').eq('status','Active').eq('is_live',true).gt('stock',0).limit(30);
+   const {data,error}=await sb.from('products').select('id,name,price,image_url,status').eq('status','Active').or('seller_id.is.null,is_live.eq.true').gt('stock',0).limit(30);
    if(error||!data||!data.length) throw error||new Error('No products');
    const p=data[Math.floor(Math.random()*data.length)];
    document.getElementById('magicImg').src=p.image_url||'assets/shubhmart-logo.png?v=20260925';
@@ -793,4 +955,19 @@ async function submitSellerCompliance(){
  if(error){m.innerHTML='<div class="errorbox">KYC save nahi hua: '+esc(error.message)+'</div>';return;}
  m.innerHTML='<div class="msg">Seller KYC submit ho gaya. Status: Pending verification.</div>';
 }
-</script><script src="customer/marketplace-completion.js?v=20260926-1"></script>\n<script src="customer/marketplace-pro-layer.js?v=20260926-1"></script></body></html>
+</script><script src="customer/marketplace-completion.js?v=20260926-1"></script>\n<script src="customer/marketplace-pro-layer.js?v=20260926-1"></script>
+<style id="shubhmart-final-nav-contrast">
+/* Keep navigation readable against the navy header; only the logo uses 3D styling. */
+.subnav{background:transparent!important;border-top:1px solid rgba(255,255,255,.16)!important}
+.subnav .navlink{color:#eaf1ff!important;background:transparent!important}
+.subnav .navlink:hover{color:#fff!important;background:rgba(255,255,255,.10)!important}
+.subnav .navlink.active{color:#fff!important;background:rgba(255,255,255,.12)!important;border-bottom:3px solid var(--sm-cta)!important}
+@media(max-width:700px){
+ .subnav{background:transparent!important;max-width:100%!important;overflow-x:auto!important}
+ .subnav .navlink{color:#eaf1ff!important;flex:0 0 auto!important}
+ .subnav .navlink.active{color:#fff!important}
+ .card img{object-fit:contain!important}
+ .card .price{font-variant-numeric:tabular-nums}
+}
+</style>
+</body></html>
