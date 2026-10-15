@@ -521,8 +521,8 @@ function openProduct(p){
  const modal=document.getElementById('productModal');const box=document.getElementById('productModalContent');
  const mrp=Number(p.mrp||0),price=Number(p.price||0);const off=mrp>price?Math.round((1-price/mrp)*100):0;
  const selectedId=window.smSelectedVariants?.[p.id]||'';
- const canBuy=p.is_live===true&&Number(p.stock||0)>0;
- const actionLabel=p.is_live===true?(Number(p.stock||0)>0?'Add to Cart':'Out of Stock'):'Demo Listing';
+ const canBuy=p.is_live===true;
+ const actionLabel=p.is_live===true?'Add to Cart':'Demo Listing';
  box.innerHTML='<div class="product-modal-grid"><img id="smModalImage" src="'+esc(p.image_url||'https://placehold.co/600x500?text=ShubhMart')+'" alt="'+esc(p.name)+'"><div><div class="small">'+esc(p.category||'')+'</div><h2>'+esc(p.name)+'</h2><p class="small">'+esc(p.description||'Demo product for ShubhMart')+'</p><p><span class="price" id="smModalPrice">₹'+price.toFixed(0)+'</span> '+(mrp>price?'<span class="old">₹'+mrp.toFixed(0)+'</span> <span class="discount">'+off+'% OFF</span>':'')+'</p><p class="stock" id="smModalStock">'+(p.is_live!==true?'Demo listing — purchasing is disabled':(Number(p.stock||0)>0?'In Stock: '+p.stock:'Out of Stock'))+'</p><div class="row"><button class="btn" id="smModalAddButton" '+(!canBuy?'disabled aria-disabled="true"':'')+' onclick="addCart(\''+p.id+'\',window.smSelectedVariants?.[\''+p.id+'\']||null).then(function(ok){if(ok)closeProductModal()})">'+actionLabel+'</button><button class="btn alt" onclick="closeProductModal()">Close</button></div></div></div>';
  modal.classList.remove('hidden');
  if(selectedId){document.getElementById('smSelectedVariantNotice')?.remove();setTimeout(function(){if(window.smVariantCache?.some(v=>String(v.id)===String(selectedId)))window.smSelectVariant(selectedId,p.id)},0)}
