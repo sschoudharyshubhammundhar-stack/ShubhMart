@@ -52,3 +52,59 @@ body{font-family:"Poppins","Montserrat",system-ui,-apple-system,sans-serif}
  .card .btn{font-size:11px!important}
  .chips{gap:5px!important}
 }
+
+
+/* Final mobile/desktop repair — keep this block last to resolve legacy CSS collisions */
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+.main,.layout,.layout>div,.panel,.grid,.card{min-width:0!important}
+.layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+.layout>div{width:100%!important;max-width:100%!important}
+.grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;align-items:stretch}
+.card{display:flex;flex-direction:column;gap:7px}
+.card h3{margin:5px 0;line-height:1.35;overflow-wrap:anywhere}
+.card .btn{align-self:stretch;max-width:100%;white-space:normal}
+.card img{display:block;max-width:100%;object-fit:cover}
+@media(min-width:1101px){
+ .layout{grid-template-columns:228px minmax(0,1fr)!important}
+ .sidebar{display:block!important}
+ .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:1100px){
+ .layout{grid-template-columns:minmax(0,1fr)!important}
+ .sidebar{display:none!important}
+ .head-actions{display:none!important}
+ .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+ .wrap{padding-left:12px!important;padding-right:12px!important}
+ .header{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important}
+ .brandbar{width:100%!important;min-width:0!important;height:58px!important;margin:0!important;justify-content:center!important;overflow:hidden!important}
+ .brand-full-logo{width:min(220px,82vw)!important;max-width:100%!important;height:56px!important;object-position:center!important}
+ .logo-surprise,.shubh-daily{display:none!important}
+ .searchwrap{width:100%!important;min-width:0!important}
+ .subnav{display:flex!important;width:calc(100% + 24px)!important;max-width:calc(100% + 24px)!important;margin-left:-12px!important;margin-right:-12px!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important}
+ .main{padding-top:12px!important}
+ .layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+ .hero,.shubh-reference-hero{width:100%!important;min-height:280px!important;padding:22px 17px!important;overflow:hidden!important}
+ .hero h1,.shubh-reference-hero h1{font-size:clamp(28px,8vw,38px)!important;line-height:1.1!important}
+ .hero-3d-scene{width:100%!important;max-width:100%!important;overflow:hidden!important}
+ .chips{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}
+ .promo-showcase{grid-template-columns:minmax(0,1fr)!important}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;width:100%!important}
+ .card{padding:8px!important;overflow:hidden!important}
+ .card img{width:100%!important;height:clamp(118px,36vw,170px)!important}
+ .card h3{font-size:13px!important}
+ .price{font-size:17px!important}
+ .card .btn{font-size:12px!important;padding:9px 7px!important}
+ .toolbar{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+ .toolbar select{width:100%!important;max-width:none!important}
+ .benefits{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .footer-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .product-modal{padding:10px!important}
+ .product-modal-inner{width:100%!important;max-height:94vh!important}
+}
+@media(max-width:360px){
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+ .card{padding:6px!important}
+ .card .btn{font-size:11px!important;padding:8px 5px!important}
+}
