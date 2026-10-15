@@ -586,7 +586,7 @@ function note(t,danger=false){const e=document.getElementById('msg');e.className
 function filterCategory(cat){const f=document.getElementById('categoryFilter');if(f)f.value=cat;show('home');loadProducts()}
 function show(id){['home','cart','orders','support','notifications','wishlist','account'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id)); if(id==='cart')loadCart(); if(id==='orders')loadOrders(); if(id==='support')loadSupportTickets(); if(id==='notifications')loadNotifications(); if(id==='wishlist')loadWishlist(); if(id==='account')loadAccount();}
 let productsLoadingTimer=null;
-async function searchChanged(){const q=document.getElementById('search').value.trim();document.getElementById('clearSearchBtn').style.visibility=q?'visible':'hidden';const box=document.getElementById('searchSuggest');if(!q){box.classList.add('hidden');loadProducts();return}box.innerHTML='<div class="small" style="padding:8px">Searching…</div>';box.classList.remove('hidden');try{const {data,error}=await sb.from('products').select('id,name,price,image_url').eq('status','Active').or('seller_id.is.null,is_live.eq.true').ilike('name','%'+q.replace(/[%_]/g,'')+'%').order('created_at',{ascending:false}).limit(6);if(error)throw error;box.innerHTML=data?.length?data.map(p=>'<button type="button" onclick="openProductById(\''+p.id+'\')"><img src="'+esc(p.image_url||'https://placehold.co/40')+'" alt="" style="width:34px;height:34px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:7px"> '+esc(p.name)+' <span style="float:right">₹'+Number(p.price||0).toFixed(0)+'</span></button>').join(''):'<div class="small" style="padding:8px">No matching product found.</div>'}catch(e){box.innerHTML='<div class="small" style="padding:8px">Search unavailable. Press Enter to continue.</div>'}loadProducts()}
+async function searchChanged(){const q=document.getElementById('search').value.trim();document.getElementById('clearSearchBtn').style.visibility=q?'visible':'hidden';const box=document.getElementById('searchSuggest');if(!q){box.classList.add('hidden');loadProducts();return}box.innerHTML='<div class="small" style="padding:8px">Searching…</div>';box.classList.remove('hidden');try{const {data,error}=await sb.from('products').select('id,name,price,image_url').eq('status','Active').or('seller_id.is.null,is_live.eq.true').ilike('name','%'+q.replace(/[%_]/g,'')+'%').order('created_at',{ascending:false}).limit(6);if(error)throw error;box.innerHTML=data?.length?data.map(p=>'<button type="button" onclick="openProductById(\''+p.id+'\')"><img src="'+esc(p.image_url||'https://placehold.co/40')+'" alt="" style="width:34px;height:34px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:7px"> '+esc(p.name)+' <span style="float:right">₹'+Number(p.price||0).toLocaleString('en-IN',{maximumFractionDigits:0})+'</span></button>').join(''):'<div class="small" style="padding:8px">No matching product found.</div>'}catch(e){box.innerHTML='<div class="small" style="padding:8px">Search unavailable. Press Enter to continue.</div>'}loadProducts()}
 function chooseSearch(value){document.getElementById('search').value=value;document.getElementById('searchSuggest').classList.add('hidden');document.getElementById('clearSearchBtn').style.visibility='visible';loadProducts()}
 function runSearch(){document.getElementById('searchSuggest').classList.add('hidden');loadProducts();document.getElementById('products')?.scrollIntoView({behavior:'smooth',block:'start'})}
 function clearSearch(){document.getElementById('search').value='';document.getElementById('clearSearchBtn').style.visibility='hidden';document.getElementById('searchSuggest').classList.add('hidden');loadProducts();document.getElementById('search').focus()}
@@ -607,7 +607,7 @@ async function loadWholesaleProducts(){
    .gt('stock',0).not('wholesale_price','is',null)
    .order('created_at',{ascending:false}).limit(24);
   if(error)throw error;
-  e.innerHTML=(data||[]).length?(data||[]).map(p=>'<div class="card"><img loading="lazy" decoding="async" src="'+esc(p.image_url||'https://placehold.co/500x400?text=Wholesale')+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">WHOLESALE</span><h3>'+esc(p.name)+'</h3><div class="small">'+esc(p.category||'')+'</div><div><span class="wholesale-price">₹'+Number(p.wholesale_price||0).toFixed(0)+'</span> <span class="small">per piece</span></div><div class="small">Retail ₹'+Number(p.price||0).toFixed(0)+' · Stock '+Number(p.stock||0)+'</div><span class="wholesale-moq">MOQ: '+Math.max(1,Number(p.wholesale_moq||1))+'</span><div class="contact-shield">🔒 Seller contact hidden · Inquiry only through ShubhMart</div><button class="btn" onclick="sendWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'<div class="empty-state">Abhi koi approved wholesale product available nahi hai.</div>';
+  e.innerHTML=(data||[]).length?(data||[]).map(p=>'<div class="card"><img loading="lazy" decoding="async" src="'+esc(p.image_url||'https://placehold.co/500x400?text=Wholesale')+'" alt="'+esc(p.name)+'"><span class="wholesale-badge">WHOLESALE</span><h3>'+esc(p.name)+'</h3><div class="small">'+esc(p.category||'')+'</div><div><span class="wholesale-price">₹'+Number(p.wholesale_price||0).toLocaleString('en-IN',{maximumFractionDigits:0})+'</span> <span class="small">per piece</span></div><div class="small">Retail ₹'+Number(p.price||0).toLocaleString('en-IN',{maximumFractionDigits:0})+' · Stock '+Number(p.stock||0)+'</div><span class="wholesale-moq">MOQ: '+Math.max(1,Number(p.wholesale_moq||1))+'</span><div class="contact-shield">🔒 Seller contact hidden · Inquiry only through ShubhMart</div><button class="btn" onclick="sendWholesaleInquiry(\''+p.id+'\')">Send Wholesale Inquiry</button></div>').join(''):'<div class="empty-state">Abhi koi approved wholesale product available nahi hai.</div>';
  }catch(error){
   console.error('[ShubhMart] Wholesale load failed:',error);
   if(e.isConnected)e.innerHTML='<div class="errorbox" role="alert">Wholesale products load nahi ho paaye. API, database permission ya wholesale product settings check karein. <button class="btn alt" type="button" onclick="loadWholesaleProducts()">Retry</button></div>';
@@ -647,7 +647,7 @@ function openProduct(p){
  const selectedId=window.smSelectedVariants?.[p.id]||'';
  const canBuy=p.is_live===true;
  const actionLabel=p.is_live===true?'Add to Cart':'Demo Listing';
- box.innerHTML='<div class="product-modal-grid"><img id="smModalImage" src="'+esc(p.image_url||'https://placehold.co/600x500?text=ShubhMart')+'" alt="'+esc(p.name)+'"><div><div class="small">'+esc(p.category||'')+'</div><h2>'+esc(p.name)+'</h2><p class="small">'+esc(p.description||'Demo product for ShubhMart')+'</p><p><span class="price" id="smModalPrice">₹'+price.toFixed(0)+'</span> '+(mrp>price?'<span class="old">₹'+mrp.toFixed(0)+'</span> <span class="discount">'+off+'% OFF</span>':'')+'</p><p class="stock" id="smModalStock">'+(p.is_live!==true?'Demo listing — purchasing is disabled':(Number(p.stock||0)>0?'In Stock: '+p.stock:'Out of Stock'))+'</p><div class="row"><button class="btn" id="smModalAddButton" '+(!canBuy?'disabled aria-disabled="true"':'')+' onclick="addCart(\''+p.id+'\',window.smSelectedVariants?.[\''+p.id+'\']||null).then(function(ok){if(ok)closeProductModal()})">'+actionLabel+'</button><button class="btn alt" onclick="closeProductModal()">Close</button></div></div></div>';
+ box.innerHTML='<div class="product-modal-grid"><img id="smModalImage" src="'+esc(p.image_url||'https://placehold.co/600x500?text=ShubhMart')+'" alt="'+esc(p.name)+'"><div><div class="small">'+esc(p.category||'')+'</div><h2>'+esc(p.name)+'</h2><p class="small">'+esc(p.description||'Demo product for ShubhMart')+'</p><p><span class="price" id="smModalPrice">₹'+price.toLocaleString('en-IN',{maximumFractionDigits:0})+'</span> '+(mrp>price?'<span class="old">₹'+mrp.toLocaleString('en-IN',{maximumFractionDigits:0})+'</span> <span class="discount">'+off+'% OFF</span>':'')+'</p><p class="stock" id="smModalStock">'+(p.is_live!==true?'Demo listing — purchasing is disabled':(Number(p.stock||0)>0?'In Stock: '+p.stock:'Out of Stock'))+'</p><div class="row"><button class="btn" id="smModalAddButton" '+(!canBuy?'disabled aria-disabled="true"':'')+' onclick="addCart(\''+p.id+'\',window.smSelectedVariants?.[\''+p.id+'\']||null).then(function(ok){if(ok)closeProductModal()})">'+actionLabel+'</button><button class="btn alt" onclick="closeProductModal()">Close</button></div></div></div>';
  modal.classList.remove('hidden');
  if(selectedId){document.getElementById('smSelectedVariantNotice')?.remove();setTimeout(function(){if(window.smVariantCache?.some(v=>String(v.id)===String(selectedId)))window.smSelectVariant(selectedId,p.id)},0)}
 }
@@ -689,7 +689,7 @@ async function loadProducts(){
    return `<div class="card">
     <img src="${esc(p.image_url||'https://placehold.co/500x400?text=ShubhMart')}" alt="${esc(p.name)}" loading="lazy" decoding="async" onclick="openProductById('${p.id}')" style="cursor:pointer">
     <h3 onclick="openProductById('${p.id}')" style="cursor:pointer">${esc(p.name)}</h3>
-    <div class="price">₹${price.toFixed(0)} <span class="old">${mrp>price?'₹'+mrp.toFixed(0):''}</span></div>
+    <div class="price">₹${price.toLocaleString('en-IN',{maximumFractionDigits:0})} <span class="old">${mrp>price?'₹'+mrp.toLocaleString('en-IN',{maximumFractionDigits:0}):''}</span></div>
     <div class="small">${esc(p.category||'')} ${mrp>price?' • '+Math.round((1-price/mrp)*100)+'% OFF':''}</div>
     <div class="small">${p.is_live!==true?'Demo listing — purchase disabled':(stock>0?'In Stock':'Out of Stock')}</div>
     <button class="btn" ${!canBuy?'disabled aria-disabled="true"':''} onclick="addCart('${p.id}')">${actionLabel}</button>
@@ -955,4 +955,19 @@ async function submitSellerCompliance(){
  if(error){m.innerHTML='<div class="errorbox">KYC save nahi hua: '+esc(error.message)+'</div>';return;}
  m.innerHTML='<div class="msg">Seller KYC submit ho gaya. Status: Pending verification.</div>';
 }
-</script><script src="customer/marketplace-completion.js?v=20260926-1"></script>\n<script src="customer/marketplace-pro-layer.js?v=20260926-1"></script></body></html>
+</script><script src="customer/marketplace-completion.js?v=20260926-1"></script>\n<script src="customer/marketplace-pro-layer.js?v=20260926-1"></script>
+<style id="shubhmart-final-nav-contrast">
+/* Keep navigation readable against the navy header; only the logo uses 3D styling. */
+.subnav{background:transparent!important;border-top:1px solid rgba(255,255,255,.16)!important}
+.subnav .navlink{color:#eaf1ff!important;background:transparent!important}
+.subnav .navlink:hover{color:#fff!important;background:rgba(255,255,255,.10)!important}
+.subnav .navlink.active{color:#fff!important;background:rgba(255,255,255,.12)!important;border-bottom:3px solid var(--sm-cta)!important}
+@media(max-width:700px){
+ .subnav{background:transparent!important;max-width:100%!important;overflow-x:auto!important}
+ .subnav .navlink{color:#eaf1ff!important;flex:0 0 auto!important}
+ .subnav .navlink.active{color:#fff!important}
+ .card img{object-fit:contain!important}
+ .card .price{font-variant-numeric:tabular-nums}
+}
+</style>
+</body></html>
