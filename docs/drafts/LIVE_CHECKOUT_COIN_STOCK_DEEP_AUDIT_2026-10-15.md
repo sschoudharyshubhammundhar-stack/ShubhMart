@@ -96,3 +96,16 @@ The latter two use schema-qualified names; the first three should be rewritten w
 ## Explicit release gate
 
 No production migration, function deployment, grant change, PR merge, real payment test, or live data modification is authorized by this document. The candidate branch reconciliation function intentionally does not release coins; it is fail-closed but incomplete. The production RPC remains risky until a coordinated fix is reviewed and explicitly approved.
+
+
+## Additional catalog verification — effective permissions and RLS (read-only)
+
+A direct `has_function_privilege` query confirmed effective privileges for the inspected functions:
+- `anon`: cannot execute the inspected release, checkout-with-coins, or cancellation functions.
+- `authenticated`: **can execute** `release_shubhcoins_for_order(uuid)`, `cancel_customer_order(uuid,text)`, and `cancel_unpaid_order(uuid)`; cannot execute `create_order_from_cart_with_coins(...)`.
+- `service_role` and `postgres`: can execute all inspected functions.
+
+This verifies that the legacy release function is not merely a theoretical explicit-ACL concern: the authenticated role has effective EXECUTE permission. Revoke only after internal call sites have been migrated and regression-tested, because the cancellation function currently invokes it internally.
+
+Read-only RLS policy inventory for core tables showed owner-scoped SELECT policies for `Orders`, `Order_items`, `payments`, `shubhcoins_wallets`, and `shubhcoins_ledger`; cart operations are owner-scoped; active product variants are publicly selectable, with seller/admin policies for variant management. This is a useful baseline but **not a full RLS certification**: table grants, every policy on every table, views, RPC execution, triggers, and cross-table write paths still require review. In particular, RLS does not protect against a vulnerable SECURITY DEFINER function that is executable by a customer.
+
