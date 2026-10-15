@@ -20,7 +20,6 @@ body{font-family:"Poppins","Montserrat",system-ui,-apple-system,sans-serif}
  .brandbar{min-width:0!important;width:100%!important}
  .brand-full-logo{max-width:100%!important}
  .head-actions{display:flex!important}
- .layout{display:block!important}
  .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
  .hero,.shubh-reference-hero{isolation:isolate}
 }
