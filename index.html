@@ -141,6 +141,37 @@ body{background:linear-gradient(180deg,#f4f7fc 0%,#fff 58%)!important}
  .promo-tile strong{font-size:18px!important}
 }
 </style>
+
+<style id="shubhmart-button-polish-final">
+/* Button polish is intentionally last so legacy visual-lock rules cannot override it. */
+:root{--sm-action:#ff6b00;--sm-action-dark:#e85d04;--sm-action-shadow:rgba(255,107,0,.22)}
+button,.btn,.hero-btn,.searchbtn,.clearsearch,.navlink,.side-item,.chip,.head-action,.wishlist-btn{font-family:inherit;-webkit-tap-highlight-color:transparent;transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease,filter .18s ease}
+.btn,.hero-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:11px 17px;border:1px solid transparent;border-radius:12px;background:linear-gradient(135deg,#ff8a00 0%,#ff6b00 58%,#f45b00 100%)!important;color:#fff!important;font-weight:800;letter-spacing:.05px;line-height:1.2;text-align:center;box-shadow:0 5px 13px var(--sm-action-shadow),inset 0 1px 0 rgba(255,255,255,.22);cursor:pointer}
+.btn:hover:not(:disabled),.hero-btn:hover:not(:disabled){background:linear-gradient(135deg,#ff981f 0%,#ff7408 58%,#ed5a00 100%)!important;box-shadow:0 8px 19px rgba(255,107,0,.3),inset 0 1px 0 rgba(255,255,255,.25);transform:translateY(-2px);filter:none}
+.btn:active:not(:disabled),.hero-btn:active:not(:disabled){transform:translateY(0) scale(.985);box-shadow:0 2px 6px rgba(255,107,0,.2)}
+.btn.alt{background:#fff!important;color:#26324a!important;border-color:#dce2ed;box-shadow:0 2px 6px rgba(15,23,42,.04)}
+.btn.alt:hover:not(:disabled){color:#0f2b60!important;border-color:#9fb5db;background:#f5f8ff!important;box-shadow:0 5px 13px rgba(25,55,110,.09)}
+.searchbtn{background:linear-gradient(135deg,#183b80,#10275a)!important;color:#fff!important;border:1px solid rgba(255,255,255,.16);box-shadow:0 4px 10px rgba(16,39,90,.2)}
+.searchbtn:hover{background:linear-gradient(135deg,#2452a2,#163875)!important;box-shadow:0 6px 14px rgba(16,39,90,.28);transform:translateY(-1px)}
+.clearsearch{border:1px solid #e5e9f1}
+.clearsearch:hover{background:#e9eef8;color:#172c52}
+.navlink{border-radius:10px}
+.navlink:hover{background:#f2f6ff!important;color:#153a7a!important}
+.navlink.active{background:#f0f4ff!important;color:#153a7a!important;border-bottom:3px solid #ff7a00!important}
+.chip{border-color:#e6eaf1;box-shadow:0 2px 7px rgba(15,23,42,.025)}
+.chip:hover{border-color:#c4d4f4;background:linear-gradient(180deg,#fff,#f7f9ff)!important;color:#153a7a;box-shadow:0 9px 22px rgba(20,55,115,.1);transform:translateY(-3px)}
+.side-item{border-left:3px solid transparent}
+.side-item:hover,.side-item.selected{border-left-color:#ff7a00}
+.head-action{border-radius:12px;padding:7px 8px}
+.head-action:hover{background:rgba(255,255,255,.12)!important;color:#fff;transform:translateY(-1px)}
+.wishlist-btn{box-shadow:0 3px 12px rgba(15,23,42,.13)}
+.wishlist-btn:hover{transform:scale(1.07);box-shadow:0 6px 17px rgba(15,23,42,.2)}
+.btn:focus-visible,.hero-btn:focus-visible,.searchbtn:focus-visible,.clearsearch:focus-visible,.navlink:focus-visible,.side-item:focus-visible,.chip:focus-visible,.head-action:focus-visible,.wishlist-btn:focus-visible,.modal-close:focus-visible{outline:3px solid #76a7ff!important;outline-offset:3px}
+button:disabled,.btn:disabled,.hero-btn:disabled{opacity:.48;cursor:not-allowed;transform:none!important;box-shadow:none!important;filter:grayscale(.12)}
+.card .btn{width:100%;margin:4px 0 0;min-height:40px}
+@media(max-width:700px){.btn,.hero-btn{min-height:42px;padding:10px 12px;border-radius:11px}.searchbtn,.clearsearch{min-width:36px;width:36px;min-height:36px;height:36px}.head-action{padding:7px 5px}}
+@media(prefers-reduced-motion:reduce){button,.btn,.hero-btn,.searchbtn,.clearsearch,.navlink,.side-item,.chip,.head-action,.wishlist-btn{transition:none!important}.btn:hover,.hero-btn:hover,.chip:hover,.head-action:hover{transform:none!important}}
+</style>
 <body><div id="shubhDelight" class="sm-delight-backdrop hidden" onclick="if(event.target===this)closeShubhSurprise()"><div class="sm-delight" role="dialog" aria-modal="true"><div class="sm-gift">🎁✨</div><h3>Shubh Surprise!</h3><p id="shubhDelightText">Aapke liye ShubhMart ka chhota sa surprise तैयार है.</p><div class="sm-delight-grid"><button class="sm-delight-item" onclick="surprisePick('deal')"><b>🔥</b>Hot Deals</button><button class="sm-delight-item" onclick="surprisePick('new')"><b>🆕</b>New Finds</button><button class="sm-delight-item" onclick="surprisePick('magic')"><b>💫</b>Magic Tip</button></div><button class="sm-delight-close" onclick="closeShubhSurprise()">Continue Shopping</button></div></div>
 
 <div id="productModal" class="product-modal hidden" onclick="if(event.target===this)closeProductModal()"><div class="product-modal-inner"><button class="modal-close" onclick="closeProductModal()" aria-label="Close">×</button><div id="productModalContent"></div></div></div>
