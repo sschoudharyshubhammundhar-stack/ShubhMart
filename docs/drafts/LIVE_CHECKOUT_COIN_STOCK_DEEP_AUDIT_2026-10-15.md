@@ -109,3 +109,17 @@ This verifies that the legacy release function is not merely a theoretical expli
 
 Read-only RLS policy inventory for core tables showed owner-scoped SELECT policies for `Orders`, `Order_items`, `payments`, `shubhcoins_wallets`, and `shubhcoins_ledger`; cart operations are owner-scoped; active product variants are publicly selectable, with seller/admin policies for variant management. This is a useful baseline but **not a full RLS certification**: table grants, every policy on every table, views, RPC execution, triggers, and cross-table write paths still require review. In particular, RLS does not protect against a vulnerable SECURITY DEFINER function that is executable by a customer.
 
+
+
+## Candidate SQL review — an important mismatch with the locked inventory requirement
+
+The branch-only file `docs/drafts/CHECKOUT_VARIANT_STOCK_RESERVATION_CANDIDATE.sql` is **not ready to apply**. It decrements only `product_variants.stock` for variant items and explicitly does not decrement `products.stock` for those items. The user's locked requirement is that parent product and variant stock both be accounted for. More importantly, current cancellation functions restore either variant stock or parent product stock, not both. Simply changing checkout to decrement both would create another bug unless reservation metadata and every cancellation/failed-payment/return path are updated atomically to restore exactly the same stock quantities once.
+
+Before rewriting this candidate, decide and document the inventory invariant:
+- If parent `products.stock` means total inventory and variants partition that inventory, variant checkout must atomically reserve both the parent total and the selected variant; unvariant checkout reserves only parent stock.
+- If parent stock is informational and variants are independent, do not claim both are reserved; change the product requirement and all UI/admin stock semantics explicitly before release.
+- Never mix these models across checkout, seller edits, cancellation, returns, imports, and admin adjustments.
+
+The current draft also hard-codes a `WELCOME10` coupon calculation instead of retaining the live function's `public.coupons` validation rules. That is a behavior regression risk and must be reconciled before candidate acceptance. The draft's `auth.role()` usage also needs review against current Supabase guidance and the actual Edge Function's role context; do not use it as an untested authorization shortcut.
+
+**Action:** Keep the candidate marked draft. Do not apply it or treat its presence as proof that variant stock has been fixed.
