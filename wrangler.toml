@@ -4,6 +4,10 @@ compatibility_date = "2026-09-26"
 [assets]
 directory = "."
 
+# Isolated Cloudflare Worker Previews for non-production branches.
+# This does not change the production deployment command or live Worker.
+[previews]
+
 # Automatic deployment trigger
 # Deployment connection verified after secret update
 # CI trigger check
