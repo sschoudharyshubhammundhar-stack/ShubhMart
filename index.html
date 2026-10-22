@@ -1044,5 +1044,70 @@ async function submitSellerCompliance(){
 @media(prefers-reduced-motion:reduce){
  .hero.shubh-reference-hero *{scroll-behavior:auto!important}
 }
+
+<style id="shubhmart-mobile-header-category-fix">
+/* Compact, readable mobile header: larger centered logo without a tall header. */
+@media(max-width:700px){
+ .top{overflow:visible!important}
+ .top>.wrap{padding-left:8px!important;padding-right:8px!important}
+ .header{
+   display:grid!important;
+   grid-template-columns:minmax(0,1fr)!important;
+   gap:7px!important;
+   padding:5px 0 8px!important;
+   align-items:center!important;
+ }
+ .brandbar{
+   width:100%!important;min-width:0!important;height:58px!important;
+   min-height:0!important;justify-content:center!important;
+   overflow:hidden!important;margin:0 auto!important;
+ }
+ .brand-full-logo{
+   width:min(260px,76vw)!important;height:58px!important;
+   max-width:100%!important;object-fit:contain!important;
+   object-position:center center!important;
+ }
+ .searchwrap{
+   width:100%!important;min-height:48px!important;height:48px!important;
+   padding:3px 4px 3px 0!important;border-radius:13px!important;
+   box-sizing:border-box!important;
+ }
+ .search{font-size:14px!important;padding:9px 7px 9px 38px!important}
+ .searchicon{left:12px!important;top:12px!important;font-size:19px!important}
+ .searchbtn,.clearsearch{height:40px!important;min-width:40px!important;border-radius:10px!important}
+ .subnav{
+   display:flex!important;align-items:center!important;
+   gap:3px!important;height:42px!important;min-height:42px!important;
+   padding:0 2px!important;margin:0!important;
+   overflow-x:auto!important;overflow-y:hidden!important;
+   scrollbar-width:none!important;white-space:nowrap!important;
+   background:#102954!important;border-top:1px solid rgba(255,255,255,.12)!important;
+ }
+ .subnav::-webkit-scrollbar{display:none!important}
+ .subnav .navlink{
+   display:inline-flex!important;align-items:center!important;justify-content:center!important;
+   flex:0 0 auto!important;height:34px!important;min-height:34px!important;
+   padding:7px 10px!important;margin:0!important;
+   border:0!important;border-radius:8px!important;
+   font-size:12px!important;line-height:18px!important;font-weight:700!important;
+   color:#eaf1ff!important;background:transparent!important;
+ }
+ .subnav .navlink.active{
+   color:#fff!important;background:rgba(255,255,255,.12)!important;
+   border-bottom:2px solid #ff6b00!important;border-radius:8px 8px 5px 5px!important;
+ }
+ .subnav .navlink:hover{background:rgba(255,255,255,.09)!important}
+ .main{padding-top:12px!important}
+}
+@media(max-width:390px){
+ .brandbar{height:54px!important}
+ .brand-full-logo{width:min(238px,78vw)!important;height:54px!important}
+ .header{gap:6px!important;padding-top:4px!important;padding-bottom:6px!important}
+ .subnav{height:40px!important;min-height:40px!important}
+ .subnav .navlink{height:32px!important;min-height:32px!important;padding:6px 9px!important;font-size:11px!important}
+}
+/* Avoid any surprise badge covering the logo on small screens. */
+@media(max-width:700px){.logo-surprise,.shubh-daily{display:none!important}}
+</style>
 </style>
 </body></html>
