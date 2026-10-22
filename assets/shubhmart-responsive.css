@@ -12,3 +12,213 @@
 @media(max-width:380px){.grid{grid-template-columns:1fr!important}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 /* visual-lock: reference-inspired premium blue 3D marketplace layer */
+/* ShubhMart responsive repair — appended after the legacy visual lock */
+:root{--sm-deep:#0a0e1a;--sm-navy:#0d162d;--sm-orange:#ff6b00;--sm-gold:#ffc700;--sm-pink:#ff1768}
+body{font-family:"Poppins","Montserrat",system-ui,-apple-system,sans-serif}
+@media(min-width:1101px){
+ .header{grid-template-columns:minmax(240px,320px) minmax(280px,1fr) auto!important}
+ .brandbar{min-width:0!important;width:100%!important}
+ .brand-full-logo{max-width:100%!important}
+ .head-actions{display:flex!important}
+ .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .hero,.shubh-reference-hero{isolation:isolate}
+}
+@media(max-width:700px){
+ .wrap{padding-left:12px!important;padding-right:12px!important}
+ .header{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important;padding:8px 0!important}
+ .brandbar{width:100%!important;min-width:0!important;height:58px!important;margin:0!important;justify-content:center!important;overflow:hidden!important}
+ .brand-full-logo{width:min(220px,82vw)!important;max-width:100%!important;height:56px!important;object-position:center!important}
+ .searchwrap{width:100%!important;min-width:0!important}
+ .subnav{display:flex!important;max-width:100vw!important;overflow-x:auto!important;white-space:nowrap!important}
+ .main{padding-top:12px!important}
+ .shubh-reference-hero,.hero{min-height:300px!important;padding:22px 18px!important;border-radius:20px!important}
+ .shubh-reference-hero h1,.hero h1{font-size:clamp(28px,8vw,38px)!important;line-height:1.08!important}
+ .hero-3d-scene{max-width:100%!important;height:auto!important;min-height:130px!important}
+ .chips{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}
+ .chip{min-width:0!important}
+ .promo-showcase{grid-template-columns:1fr!important}
+ .promo-electronics{display:block!important}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .card{min-width:0!important;padding:10px!important;overflow:hidden!important}
+ .card img{width:100%!important;max-width:100%!important;height:clamp(115px,36vw,180px)!important;object-fit:cover!important}
+ .card h3{font-size:13px!important;line-height:1.35!important;overflow-wrap:anywhere}
+ .card .btn{font-size:12px!important;padding:9px 7px!important;min-width:0!important}
+ .benefits{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .footer{overflow-wrap:anywhere}
+}
+@media(max-width:360px){
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+ .card{padding:8px!important}
+ .card .btn{font-size:11px!important}
+ .chips{gap:5px!important}
+}
+
+
+/* Final mobile/desktop repair — keep this block last to resolve legacy CSS collisions */
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+.main,.layout,.layout>div,.panel,.grid,.card{min-width:0!important}
+.layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+.layout>div{width:100%!important;max-width:100%!important}
+.grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;align-items:stretch}
+.card{display:flex;flex-direction:column;gap:7px}
+.card h3{margin:5px 0;line-height:1.35;overflow-wrap:anywhere}
+.card .btn{align-self:stretch;max-width:100%;white-space:normal}
+.card img{display:block;max-width:100%;object-fit:cover}
+@media(min-width:1101px){
+ .layout{grid-template-columns:228px minmax(0,1fr)!important}
+ .sidebar{display:block!important}
+ .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:1100px){
+ .layout{grid-template-columns:minmax(0,1fr)!important}
+ .sidebar{display:none!important}
+ .head-actions{display:none!important}
+ .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+ .wrap{padding-left:12px!important;padding-right:12px!important}
+ .header{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important}
+ .brandbar{width:100%!important;min-width:0!important;height:58px!important;margin:0!important;justify-content:center!important;overflow:hidden!important}
+ .brand-full-logo{width:min(220px,82vw)!important;max-width:100%!important;height:56px!important;object-position:center!important}
+ .logo-surprise,.shubh-daily{display:none!important}
+ .searchwrap{width:100%!important;min-width:0!important}
+ .subnav{display:flex!important;width:calc(100% + 24px)!important;max-width:calc(100% + 24px)!important;margin-left:-12px!important;margin-right:-12px!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important}
+ .main{padding-top:12px!important}
+ .layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+ .hero,.shubh-reference-hero{width:100%!important;min-height:280px!important;padding:22px 17px!important;overflow:hidden!important}
+ .hero h1,.shubh-reference-hero h1{font-size:clamp(28px,8vw,38px)!important;line-height:1.1!important}
+ .hero-3d-scene{width:100%!important;max-width:100%!important;overflow:hidden!important}
+ .chips{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}
+ .promo-showcase{grid-template-columns:minmax(0,1fr)!important}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;width:100%!important}
+ .card{padding:8px!important;overflow:hidden!important}
+ .card img{width:100%!important;height:clamp(118px,36vw,170px)!important}
+ .card h3{font-size:13px!important}
+ .price{font-size:17px!important}
+ .card .btn{font-size:12px!important;padding:9px 7px!important}
+ .toolbar{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+ .toolbar select{width:100%!important;max-width:none!important}
+ .benefits{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .footer-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .product-modal{padding:10px!important}
+ .product-modal-inner{width:100%!important;max-height:94vh!important}
+}
+@media(max-width:360px){
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+ .card{padding:6px!important}
+ .card .btn{font-size:11px!important;padding:8px 5px!important}
+}
+
+
+/* ShubhMart conversion-friendly controls — polished, consistent, accessible */
+:root{
+ --sm-action:#ff6b00;
+ --sm-action-dark:#e85d04;
+ --sm-action-shadow:rgba(255,107,0,.22);
+ --sm-focus:#2563eb;
+}
+button,.btn,.hero-btn,.searchbtn,.clearsearch,.navlink,.side-item,.chip,.head-action{
+ font-family:inherit;
+ -webkit-tap-highlight-color:transparent;
+ transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease,filter .18s ease;
+}
+button,.btn,.hero-btn,.searchbtn{
+ position:relative;
+}
+.btn,.hero-btn{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ min-height:42px;
+ padding:11px 17px;
+ border:1px solid transparent;
+ border-radius:12px;
+ background:linear-gradient(135deg,#ff8a00 0%,#ff6b00 58%,#f45b00 100%);
+ color:#fff;
+ font-weight:800;
+ letter-spacing:.05px;
+ line-height:1.2;
+ text-align:center;
+ box-shadow:0 5px 13px var(--sm-action-shadow),inset 0 1px 0 rgba(255,255,255,.22);
+ cursor:pointer;
+}
+.btn:hover:not(:disabled),.hero-btn:hover:not(:disabled){
+ background:linear-gradient(135deg,#ff981f 0%,#ff7408 58%,#ed5a00 100%);
+ box-shadow:0 8px 19px rgba(255,107,0,.3),inset 0 1px 0 rgba(255,255,255,.25);
+ transform:translateY(-2px);
+ filter:none;
+}
+.btn:active:not(:disabled),.hero-btn:active:not(:disabled){
+ transform:translateY(0) scale(.985);
+ box-shadow:0 2px 6px rgba(255,107,0,.2);
+}
+.btn.alt{
+ background:#fff;
+ color:#26324a;
+ border-color:#dce2ed;
+ box-shadow:0 2px 6px rgba(15,23,42,.04);
+}
+.btn.alt:hover:not(:disabled){
+ color:#0f2b60;
+ border-color:#9fb5db;
+ background:#f5f8ff;
+ box-shadow:0 5px 13px rgba(25,55,110,.09);
+}
+.searchbtn{
+ min-width:44px;
+ min-height:42px;
+ background:linear-gradient(135deg,#183b80,#10275a);
+ border:1px solid rgba(255,255,255,.16);
+ box-shadow:0 4px 10px rgba(16,39,90,.2);
+}
+.searchbtn:hover{background:linear-gradient(135deg,#2452a2,#163875);box-shadow:0 6px 14px rgba(16,39,90,.28);transform:translateY(-1px)}
+.clearsearch{border:1px solid #e5e9f1}
+.clearsearch:hover{background:#e9eef8;color:#172c52}
+.navlink{border-radius:10px}
+.navlink:hover{background:#f2f6ff;color:#153a7a}
+.navlink.active{background:#f0f4ff;color:#153a7a;border-bottom:3px solid #ff7a00}
+.chip{
+ border-color:#e6eaf1;
+ box-shadow:0 2px 7px rgba(15,23,42,.025);
+}
+.chip:hover{
+ border-color:#c4d4f4;
+ background:linear-gradient(180deg,#fff,#f7f9ff);
+ color:#153a7a;
+ box-shadow:0 9px 22px rgba(20,55,115,.1);
+ transform:translateY(-3px);
+}
+.side-item{border-left:3px solid transparent}
+.side-item:hover,.side-item.selected{border-left-color:#ff7a00}
+.head-action{border-radius:12px;padding:7px 8px}
+.head-action:hover{background:#f3f6fc;color:#173c7e;transform:translateY(-1px)}
+.wishlist-btn{
+ box-shadow:0 3px 12px rgba(15,23,42,.13);
+ transition:transform .18s ease,background-color .18s ease,color .18s ease,box-shadow .18s ease;
+}
+.wishlist-btn:hover{transform:scale(1.07);box-shadow:0 6px 17px rgba(15,23,42,.2)}
+.btn:focus-visible,.hero-btn:focus-visible,.searchbtn:focus-visible,.clearsearch:focus-visible,
+.navlink:focus-visible,.side-item:focus-visible,.chip:focus-visible,.head-action:focus-visible,
+.wishlist-btn:focus-visible,.modal-close:focus-visible{
+ outline:3px solid #76a7ff;
+ outline-offset:3px;
+}
+button:disabled,.btn:disabled,.hero-btn:disabled{
+ opacity:.48;
+ cursor:not-allowed;
+ transform:none!important;
+ box-shadow:none!important;
+ filter:grayscale(.12);
+}
+.card .btn{width:100%;margin:4px 0 0;min-height:40px}
+.card .btn.alt{width:auto}
+@media(max-width:700px){
+ .btn,.hero-btn{min-height:42px;padding:10px 12px;border-radius:11px}
+ .searchbtn,.clearsearch{min-width:36px;width:36px;min-height:36px;height:36px}
+ .head-action{padding:7px 5px}
+}
+@media(prefers-reduced-motion:reduce){
+ button,.btn,.hero-btn,.searchbtn,.clearsearch,.navlink,.side-item,.chip,.head-action,.wishlist-btn{transition:none!important}
+ .btn:hover,.hero-btn:hover,.chip:hover,.head-action:hover{transform:none!important}
+}
