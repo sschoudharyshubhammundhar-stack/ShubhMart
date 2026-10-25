@@ -27,12 +27,14 @@ The candidate marks `stock_reserved=true` and decrements inventory inside the tr
 
 **Required:** in an isolated database, test cancel-before-payment, repeated cancellation, cleanup retry, failed payment, paid-order refund path, and coin release. Every reservation/debit must have exactly one corresponding restoration/release, and repeated cleanup must be a no-op. Do not call an order-dependent coin-release function after deleting its order row.
 
-### H-03 — Payment-attempt selection is based on latest `updated_at`, not an explicit attempt identity
-**Status: FAIL / requires design correction before release**
+### H-03 — Payment-attempt identity: paid transition improved, attachment remains unresolved
+**Status: PARTIAL / release blocker**
 
-Both `attach_razorpay_order` and `mark_razorpay_paid_secure` select a payment row by `updated_at DESC, id DESC`. The verification request carries the gateway order ID, but the secure transition first selects the latest row and then compares that row's gateway order ID. With multiple attempts or out-of-order callbacks, the latest row may not be the attempt associated with the verified provider payment.
+The latest draft now resolves `mark_razorpay_paid_secure` using the exact `order_id + customer_id + gateway_order_id` tuple and locks that row. The source regression test for this change passes. This corrects the earlier “latest row” selection in the paid transition.
 
-**Required:** resolve the payment row by the exact `order_id + customer_id + gateway_order_id` tuple and lock that row; require exactly one match. Make retries for the same payment idempotent even if a later attempt exists. Add tests for two attempts, callbacks arriving out of order, and duplicate callbacks.
+However, `attach_razorpay_order` still selects the latest eligible row where `gateway_order_id` is null or already equals the supplied ID. The flow does not yet carry a durable attempt ID from attempt creation through provider order creation and attachment. Concurrent create-order requests or retries therefore still need a deterministic, idempotent attempt-creation contract.
+
+**Required:** create/claim one durable attempt before making the external provider request; bind the provider order to that exact attempt; enforce uniqueness/locking and stable retry behavior. Add isolated tests for two attempts, concurrent creation, out-of-order callbacks and duplicate callbacks. Do not apply the draft until tested.
 
 ### H-04 — The unique payment-ID index draft needs broader duplicate preflight and retry tests
 **Status: BLOCKED**
@@ -69,11 +71,26 @@ The stock candidate assumes exact columns, status values, triggers, and wallet/l
 
 **Required:** export/read the schema and function definitions from an isolated clone or non-production test database; verify every referenced column, constraint, trigger, RLS policy, function owner, search path, and EXECUTE grant. Do not use production checkout as a test.
 
+### H-09 — Stock-reservation candidate conflicts with the locked inventory contract
+**Status: FAIL / release blocker**
+
+The isolated-test runbook's current locked contract says variant orders decrement both `products.stock` and the selected `product_variants.stock` atomically, with rollback if either decrement fails. The current `CHECKOUT_VARIANT_STOCK_RESERVATION_CANDIDATE.sql` explicitly says variant inventory is owned by the variant and does not also decrement parent product stock. These two artifacts conflict. We must not pick one based on assumptions: the real meaning of both stock counters and all other stock mutation paths must be verified first.
+
+**Required:** inspect the real schema and every seller/admin/import/return/restock/cancel mutation path in an isolated fixture; agree and document one invariant; then update the candidate and tests together. Until this conflict is resolved, the stock candidate is not eligible for application.
+
+### H-10 — Latest CI evidence is source-level only
+**Status: PASS for configured checks; BLOCKED for runtime proof**
+
+For commit `fba59838f829c8f1d96eb7df434b192a9f3182fe`, GitHub Actions reports the configured JavaScript syntax and checkout regression tests passed (42 tests, 0 failures), and the configured secret scan passed. The Razorpay exact-attempt regression test is included. These tests read source text and use pattern assertions; they do not execute PL/pgSQL or prove concurrent runtime behavior.
+
+**Required:** preserve these source checks, then run the isolated PostgreSQL and provider-mock acceptance suite in `CHECKOUT_ISOLATED_TEST_RUNBOOK.md`. The latest successful run is not evidence that production database/functions were changed or validated.
+
 ## Mandatory release gates
 
 - [ ] Complete schema and privilege inventory; no guessed columns or grants.
 - [ ] Implement database-level idempotency in the same transaction as all checkout side effects.
-- [ ] Bind payment confirmation to the exact payment-attempt row.
+- [ ] Bind payment confirmation and provider-order attachment to one durable, exact payment-attempt row.
+- [ ] Resolve the parent/variant stock-counter contract conflict and align candidate SQL, cancellation and tests.
 - [ ] Prove cancellation, unpaid cleanup, payment failure, and coin release are idempotent and atomic.
 - [ ] Add isolated PostgreSQL concurrency and rollback tests.
 - [ ] Add Edge Function behavior tests for invalid, delayed, duplicate, and captured provider payments.
