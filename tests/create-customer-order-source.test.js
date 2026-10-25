@@ -41,11 +41,12 @@ test("checkout preserves the safe address-required validation message", () => {
   assert.match(source, /safeCheckoutError\(error\.message\)/);
 });
 
-test("checkout rejects invalid ShubhCoins input instead of forwarding NaN", () => {
+test("checkout rejects unsafe, fractional, negative, and non-finite ShubhCoins input", () => {
   assert.match(source, /const rawCoins = body\?\.shubhcoins \?\? 0/);
-  assert.match(source, /Number\.isFinite\(requestedCoins\) \|\| requestedCoins < 0/);
+  assert.match(source, /Number\.isSafeInteger\(requestedCoins\) \|\| requestedCoins < 0/);
   assert.match(source, /Invalid ShubhCoins amount/);
-  assert.match(source, /const coins = Math\.floor\(requestedCoins\)/);
+  assert.match(source, /const coins = requestedCoins/);
+  assert.doesNotMatch(source, /Math\.floor\(requestedCoins\)/);
 });
 
 test("draft SQL candidate supports the trusted server role without weakening customer ownership", () => {
