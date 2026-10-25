@@ -143,19 +143,22 @@ begin
     raise exception 'Order not found';
   end if;
 
-  -- Resolve and lock one specific current attempt deterministically, then update
-  -- that same row below. A timestamp tie must not select one row and update several.
+  -- Resolve the exact provider attempt, never "the newest payment row".
+  -- An older callback must not mutate a newer attempt just because updated_at is later.
   select id, gateway_order_id, gateway_payment_id
     into v_payment_row_id, v_gateway_order_id, v_existing_gateway_payment_id
   from public.payments
   where order_id = p_order_id
     and customer_id = p_customer_id
-  order by updated_at desc nulls last, id desc
+    and gateway_order_id = p_razorpay_order_id
+  order by id
   limit 1
   for update;
 
-  if v_gateway_order_id is null or v_gateway_order_id <> p_razorpay_order_id then
-    raise exception 'Payment gateway order mismatch';
+  if v_payment_row_id is null
+     or v_gateway_order_id is null
+     or v_gateway_order_id <> p_razorpay_order_id then
+    raise exception 'Payment attempt not found for this gateway order';
   end if;
 
   -- Idempotent retry: same already-confirmed payment is a no-op.
