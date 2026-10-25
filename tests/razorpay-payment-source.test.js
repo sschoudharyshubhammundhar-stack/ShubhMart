@@ -47,8 +47,9 @@ test("payment update trigger candidate permits only service-role server updates 
   assert.match(migration, /if auth\.uid\(\) is null or old\.customer_id is distinct from auth\.uid\(\) then\s+raise exception 'Payment update denied'/);
 });
 
-test("paid transition locks and updates exactly one deterministically selected payment attempt", () => {
-  assert.match(migration, /select id, gateway_order_id, gateway_payment_id[\s\S]*?order by updated_at desc nulls last, id desc[\s\S]*?limit 1[\s\S]*?for update/);
-  assert.match(migration, /update public\.payments[\s\S]*?where id = v_payment_row_id[\s\S]*?and gateway_order_id = p_razorpay_order_id/);
+test("paid transition resolves the exact Razorpay attempt, not the latest row", () => {
+  assert.match(migration, /select id, gateway_order_id, gateway_payment_id[\\s\\S]*?where order_id = p_order_id[\\s\\S]*?and customer_id = p_customer_id[\\s\\S]*?and gateway_order_id = p_razorpay_order_id[\\s\\S]*?for update/);
+  assert.doesNotMatch(migration, /where order_id = p_order_id\\s+and customer_id = p_customer_id\\s+order by updated_at desc nulls last, id desc\\s+limit 1\\s+for update/);
+  assert.match(migration, /update public\\.payments[\\s\\S]*?where id = v_payment_row_id[\\s\\S]*?and gateway_order_id = p_razorpay_order_id/);
   assert.match(migration, /v_payment_row_id uuid/);
 });
