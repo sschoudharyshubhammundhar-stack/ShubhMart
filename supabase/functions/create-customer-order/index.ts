@@ -60,11 +60,13 @@ Deno.serve(async (req) => {
     const delivery = String(body?.delivery_method || "standard").toLowerCase();
     const coupon = String(body?.coupon_code || "").trim().toUpperCase();
     const rawCoins = body?.shubhcoins ?? 0;
-    const requestedCoins = Number(rawCoins);
-    if (!Number.isFinite(requestedCoins) || requestedCoins < 0) {
+    // PostgreSQL receives a bigint. Reject unsafe, fractional, negative, NaN,
+    // and infinite values rather than silently rounding or overflowing them.
+    const requestedCoins = typeof rawCoins === "number" ? rawCoins : Number(rawCoins);
+    if (!Number.isSafeInteger(requestedCoins) || requestedCoins < 0) {
       return json({ error: "Invalid ShubhCoins amount" }, 400);
     }
-    const coins = Math.floor(requestedCoins);
+    const coins = requestedCoins;
 
     if (!addressId || typeof addressId !== "string") {
       return json({ error: "Address is required" }, 400);
