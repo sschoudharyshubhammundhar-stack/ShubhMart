@@ -49,6 +49,14 @@ test("checkout rejects unsafe, fractional, negative, and non-finite ShubhCoins i
   assert.doesNotMatch(source, /Math\.floor\(requestedCoins\)/);
 });
 
+test("ShubhCoins accepts only JSON integers or canonical digit strings; rejects coercible types", () => {
+  assert.match(source, /typeof rawCoins === "number"/);
+  assert.match(source, /typeof rawCoins === "string" && \/\^\(0\|\[1-9\]\\d\*\)\$\//);
+  assert.match(source, /Do not coerce booleans, arrays, objects, empty strings, whitespace/);
+  assert.match(source, /else\s*\{\s*return json\(\{ error: "Invalid ShubhCoins amount" \}, 400\);\s*\}/);
+  assert.doesNotMatch(source, /typeof rawCoins === "number" \? rawCoins : Number\(rawCoins\)/);
+});
+
 test("draft SQL candidate supports the trusted server role without weakening customer ownership", () => {
   assert.match(sqlCandidate, /coalesce\(auth\.role\(\), ''\) <> 'service_role'/);
   assert.match(sqlCandidate, /auth\.uid\(\) <> p_customer_id/);
