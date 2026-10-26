@@ -37,6 +37,16 @@ test("paid transition draft is retry-safe for the same payment and rejects a dif
   assert.match(migration, /grant execute on function public\.mark_razorpay_paid_secure\(uuid, uuid, text, text, text\) to service_role/i);
 });
 
+
+test("Razorpay order creation rejects invalid, zero-paise, and unsafe integer amounts", () => {
+  assert.match(edge, /const orderAmountPaise = Math\.round\(Number\(order\.total_amount\) \* 100\)/);
+  assert.match(edge, /const requestedAmountPaise = Math\.round\(amount \* 100\)/);
+  assert.match(edge, /!Number\.isSafeInteger\(orderAmountPaise\) \|\| orderAmountPaise <= 0/);
+  assert.match(edge, /!Number\.isSafeInteger\(requestedAmountPaise\) \|\| requestedAmountPaise <= 0/);
+  assert.match(edge, /amount: orderAmountPaise/);
+  assert.doesNotMatch(edge, /amount: Math\.round\(amount \* 100\)/);
+});
+
 test("candidate code and migration are not described as deployed", () => {
   assert.match(migration, /DRAFT MIGRATION CANDIDATE/);
   assert.match(edge, /authenticated EXECUTE grant must be installed through the reviewed/);
