@@ -58,6 +58,8 @@ jobs:
   deploy:
     name: Deploy Cloudflare Worker only after source checks pass
     needs: pre-deploy-checks
+    # Fail closed: a manual dispatch from any non-main ref must never deploy production.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
