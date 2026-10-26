@@ -83,11 +83,20 @@ Deno.serve(async (req) => {
       if (order.payment_status === "Paid") return json({ error: "Order is already paid" }, 409);
       // Validate integer paise amounts before calling the provider. This blocks
       // zero-paise orders, unsafe integers, and malformed stored totals.
-      const orderAmountPaise = Math.round(Number(order.total_amount) * 100);
+      const storedAmount = Number(order.total_amount);
+      const orderAmountPaise = Math.round(storedAmount * 100);
       const requestedAmountPaise = Math.round(amount * 100);
+      // Reject fractions smaller than one paise instead of silently rounding
+      // them into a different payable amount. The tolerance only accounts for
+      // ordinary IEEE-754 representation noise (for example, 10.23 * 100).
+      const storedPaiseValue = storedAmount * 100;
+      const requestedPaiseValue = amount * 100;
       if (
+        !Number.isFinite(storedAmount) ||
         !Number.isSafeInteger(orderAmountPaise) || orderAmountPaise <= 0 ||
-        !Number.isSafeInteger(requestedAmountPaise) || requestedAmountPaise <= 0
+        !Number.isSafeInteger(requestedAmountPaise) || requestedAmountPaise <= 0 ||
+        Math.abs(storedPaiseValue - orderAmountPaise) > 1e-7 ||
+        Math.abs(requestedPaiseValue - requestedAmountPaise) > 1e-7
       ) {
         return json({ error: "Invalid order amount" }, 400);
       }
