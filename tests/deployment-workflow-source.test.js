@@ -43,11 +43,11 @@ test("the workflow does not apply database migrations or deploy Supabase Edge Fu
 
 test("PR validation workflow has no deployment or Supabase migration capability", () => {
   assert.match(prWorkflow, /pull_request:/);
-  assert.match(prWorkflow, /permissions:\\s*\\n\\s+contents: read/);
-  assert.doesNotMatch(prWorkflow, /cloudflare\\/wrangler-action|CLOUDFLARE_API_TOKEN|CLOUDFLARE_ACCOUNT_ID/);
+  assert.match(prWorkflow, /permissions:\s*\n\s+contents: read/);
+  assert.doesNotMatch(prWorkflow, /cloudflare\/wrangler-action|CLOUDFLARE_API_TOKEN|CLOUDFLARE_ACCOUNT_ID/);
   assert.doesNotMatch(prWorkflow, /supabase db push|supabase migration up|supabase functions deploy/i);
 });
 
 test("PR validation workflow does not grant repository write permissions", () => {
-  assert.doesNotMatch(prWorkflow, /contents:\\s*write|pull-requests:\\s*write|actions:\\s*write|id-token:\\s*write/);
+  assert.doesNotMatch(prWorkflow, /contents:\s*write|pull-requests:\s*write|actions:\s*write|id-token:\s*write/);
 });
