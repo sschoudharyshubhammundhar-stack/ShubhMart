@@ -6,6 +6,9 @@ const path = require("node:path");
 const workflowPath = path.join(__dirname, "../.github/workflows/cloudflare-deploy.yml");
 const workflow = fs.readFileSync(workflowPath, "utf8");
 
+const prWorkflowPath = path.join(__dirname, "../.github/workflows/shubhmart-pr-checks.yml");
+const prWorkflow = fs.readFileSync(prWorkflowPath, "utf8");
+
 test("Cloudflare deployment is a separate job that depends on pre-deploy checks", () => {
   assert.match(workflow, /pre-deploy-checks:/);
   assert.match(workflow, /deploy:[\s\S]*?needs:\s*pre-deploy-checks/);
@@ -36,4 +39,15 @@ test("Cloudflare deploy action is not placed in the pre-deploy checks job", () =
 
 test("the workflow does not apply database migrations or deploy Supabase Edge Functions", () => {
   assert.doesNotMatch(workflow, /supabase db push|supabase migration up|supabase functions deploy/i);
+});
+
+test("PR validation workflow has no deployment or Supabase migration capability", () => {
+  assert.match(prWorkflow, /pull_request:/);
+  assert.match(prWorkflow, /permissions:\\s*\\n\\s+contents: read/);
+  assert.doesNotMatch(prWorkflow, /cloudflare\\/wrangler-action|CLOUDFLARE_API_TOKEN|CLOUDFLARE_ACCOUNT_ID/);
+  assert.doesNotMatch(prWorkflow, /supabase db push|supabase migration up|supabase functions deploy/i);
+});
+
+test("PR validation workflow does not grant repository write permissions", () => {
+  assert.doesNotMatch(prWorkflow, /contents:\\s*write|pull-requests:\\s*write|actions:\\s*write|id-token:\\s*write/);
 });
