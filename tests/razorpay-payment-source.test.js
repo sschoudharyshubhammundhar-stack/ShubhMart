@@ -65,3 +65,11 @@ test("paid transition resolves the exact Razorpay attempt, not the latest row", 
   assert.match(migration, /update public\.payments[\s\S]*?where id = v_payment_row_id[\s\S]*?and gateway_order_id = p_razorpay_order_id/);
   assert.match(migration, /v_payment_row_id uuid/);
 });
+
+test("Razorpay verification rejects invalid, unsafe, zero-paise, and sub-paise stored order amounts before provider lookup", () => {
+  assert.match(edge, /const storedAmount = Number\(order\.total_amount\);[\s\S]*?const storedPaiseValue = storedAmount \* 100;[\s\S]*?const expectedAmount = Math\.round\(storedPaiseValue\)/);
+  assert.match(edge, /!Number\.isFinite\(storedAmount\)/);
+  assert.match(edge, /!Number\.isSafeInteger\(expectedAmount\) \|\| expectedAmount <= 0/);
+  assert.match(edge, /Math\.abs\(storedPaiseValue - expectedAmount\) > 1e-7/);
+  assert.ok(edge.indexOf('return json({ error: "Invalid order amount" }, 400)') < edge.indexOf('const payment = await razorpay'));
+});
