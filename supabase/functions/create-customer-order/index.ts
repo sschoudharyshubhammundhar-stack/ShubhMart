@@ -60,9 +60,20 @@ Deno.serve(async (req) => {
     const delivery = String(body?.delivery_method || "standard").toLowerCase();
     const coupon = String(body?.coupon_code || "").trim().toUpperCase();
     const rawCoins = body?.shubhcoins ?? 0;
-    // PostgreSQL receives a bigint. Reject unsafe, fractional, negative, NaN,
-    // and infinite values rather than silently rounding or overflowing them.
-    const requestedCoins = typeof rawCoins === "number" ? rawCoins : Number(rawCoins);
+
+    // Accept only an integer JSON number or a canonical decimal digit string.
+    // Do not coerce booleans, arrays, objects, empty strings, whitespace,
+    // decimals, signs, or exponent notation into a valid coin amount.
+    let requestedCoins: number;
+    if (typeof rawCoins === "number") {
+      requestedCoins = rawCoins;
+    } else if (typeof rawCoins === "string" && /^(0|[1-9]\d*)$/.test(rawCoins)) {
+      requestedCoins = Number(rawCoins);
+    } else {
+      return json({ error: "Invalid ShubhCoins amount" }, 400);
+    }
+    // PostgreSQL receives a bigint: reject unsafe, fractional, negative,
+    // NaN, and infinite values before any database side effect.
     if (!Number.isSafeInteger(requestedCoins) || requestedCoins < 0) {
       return json({ error: "Invalid ShubhCoins amount" }, 400);
     }
