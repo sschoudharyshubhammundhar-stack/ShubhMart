@@ -9,36 +9,61 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  pre-deploy-checks:
+    name: Required source checks before deployment
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Validate JavaScript syntax
         shell: bash
         run: |
-          set +e
+          set -euo pipefail
           : > syntax-report.txt
-          failed=0
+          count=0
           while IFS= read -r -d '' file; do
             echo "Checking $file" | tee -a syntax-report.txt
-            node --check "$file" >>syntax-report.txt 2>&1
-            rc=$?
-            if [ "$rc" -ne 0 ]; then
-              echo "SYNTAX ERROR: $file" | tee -a syntax-report.txt
-              failed=1
-            fi
+            node --check "$file" 2>&1 | tee -a syntax-report.txt
+            count=$((count + 1))
           done < <(find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" -print0)
-          exit $failed
+          echo "Syntax check passed for $count JavaScript files." | tee -a syntax-report.txt
 
-      - name: Upload syntax report
+      - name: Run checkout security regression tests
+        run: node --test tests/*.test.js
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: "2.4.5"
+
+      - name: Type-check Supabase Edge Functions
+        run: |
+          deno check supabase/functions/create-customer-order/index.ts
+          deno check supabase/functions/razorpay-payment/index.ts
+
+      - name: Upload validation report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: shubhmart-syntax-report
+          name: shubhmart-pre-deploy-validation
           path: syntax-report.txt
           if-no-files-found: ignore
+
+  deploy:
+    name: Deploy Cloudflare Worker only after source checks pass
+    needs: pre-deploy-checks
+    # Fail closed: a manual dispatch from any non-main ref must never deploy production.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v4

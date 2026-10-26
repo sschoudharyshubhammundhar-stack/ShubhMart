@@ -1,0 +1,64 @@
+-- DRAFT ONLY: do not apply to the connected/production database.
+-- Proposed checkout inventory patch based on read-only inspection of
+-- public.create_order_from_cart_with_coins. Review constraints and test in an
+-- isolated Supabase project before converting this draft into a migration.
+--
+-- Intended changes when integrated into the full CREATE OR REPLACE FUNCTION:
+-- 1. Before validating cart contents, lock the customer's cart rows in a stable
+--    order, then lock the matching product rows in a stable order.
+--
+--    PERFORM c.product_id
+--      FROM public.cart AS c
+--     WHERE c.customer_id = p_customer_id
+--     ORDER BY c.product_id
+--       FOR UPDATE OF c;
+--
+--    PERFORM p.id
+--      FROM public.products AS p
+--      JOIN public.cart AS c ON c.product_id = p.id
+--     WHERE c.customer_id = p_customer_id
+--     ORDER BY p.id
+--       FOR UPDATE OF p;
+--
+-- 2. In the existing validation loop, reject non-positive quantities and do a
+--    guarded stock decrement for each validated cart row. Example logic:
+--
+--    IF v_item.quantity IS NULL OR v_item.quantity <= 0 THEN
+--      RAISE EXCEPTION 'Invalid quantity';
+--    END IF;
+--
+--    UPDATE public.products
+--       SET stock = stock - v_item.quantity
+--     WHERE id = v_item.product_id
+--       AND stock >= v_item.quantity;
+--    IF NOT FOUND THEN
+--      RAISE EXCEPTION 'Insufficient stock: %', v_item.name;
+--    END IF;
+--
+--    The function's later errors roll back these updates because they occur in
+--    the same PostgreSQL transaction. Keep the current stock check as a clear
+--    validation message, but the guarded UPDATE is the final concurrency gate.
+--
+-- 3. In the existing Orders INSERT, include stock_reserved and set it TRUE
+--    only after all cart items have successfully reserved stock in this same
+--    transaction:
+--
+--    ... payment_method, payment_status, order_status, ..., stock_reserved
+--    VALUES (..., lower(p_payment_method), 'Pending', 'Pending', ..., TRUE)
+--
+-- 4. Keep Order_items, payment row and ShubhCoins ledger writes in the same
+--    function/transaction. If any later insert or coin validation fails, the
+--    stock decrements must roll back with the whole transaction.
+--
+-- IMPORTANT LIMITATIONS:
+-- - This is a patch design, not a complete CREATE OR REPLACE FUNCTION.
+-- - The inspected checkout function currently handles product-level stock
+--   only; variant inventory needs a separate, schema-aware implementation.
+-- - This does not add idempotency, multi-seller splitting, or resolve paid-order
+--   refund/reservation timing. Those are separate required gates.
+-- - Before adoption, inspect product stock nullability/check constraints,
+--   cart quantity constraints, stock triggers, all cancel/cleanup functions,
+--   and payment-failure paths. Confirm all consumers of this RPC.
+-- - Do not set stock_reserved TRUE without the matching decrement in the same
+--   transaction; existing cancellation functions add stock back based on it.
+-- - No live SQL has been executed by this draft.
