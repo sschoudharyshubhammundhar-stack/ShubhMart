@@ -39,10 +39,12 @@ test("paid transition draft is retry-safe for the same payment and rejects a dif
 
 
 test("Razorpay order creation rejects invalid, zero-paise, and unsafe integer amounts", () => {
-  assert.match(edge, /const orderAmountPaise = Math\.round\(Number\(order\.total_amount\) \* 100\)/);
+  assert.match(edge, /const orderAmountPaise = Math\.round\(storedAmount \* 100\)/);
   assert.match(edge, /const requestedAmountPaise = Math\.round\(amount \* 100\)/);
   assert.match(edge, /!Number\.isSafeInteger\(orderAmountPaise\) \|\| orderAmountPaise <= 0/);
   assert.match(edge, /!Number\.isSafeInteger\(requestedAmountPaise\) \|\| requestedAmountPaise <= 0/);
+  assert.match(edge, /Math\.abs\(storedPaiseValue - orderAmountPaise\) > 1e-7/);
+  assert.match(edge, /Math\.abs\(requestedPaiseValue - requestedAmountPaise\) > 1e-7/);
   assert.match(edge, /amount: orderAmountPaise/);
   assert.doesNotMatch(edge, /amount: Math\.round\(amount \* 100\)/);
 });
