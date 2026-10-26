@@ -24,6 +24,10 @@ test("deployment workflow grants only repository read permission to its GitHub t
   assert.doesNotMatch(workflow, /pull-requests:\s*write/);
 });
 
+test("manual dispatch from a non-main ref cannot deploy the production Worker", () => {
+  assert.match(workflow, /deploy:\s*\n[\s\S]*?needs:\s*pre-deploy-checks[\s\S]*?if:\s*github\.ref\s*==\s*['"]refs\/heads\/main['"]/);
+});
+
 test("Cloudflare deploy action is not placed in the pre-deploy checks job", () => {
   const gate = workflow.split(/\n  deploy:\n/)[0];
   assert.doesNotMatch(gate, /cloudflare\/wrangler-action/);
