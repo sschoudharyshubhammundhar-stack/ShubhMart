@@ -81,14 +81,24 @@ Deno.serve(async (req) => {
         .single();
       if (orderError || !order) return json({ error: "Order not found" }, 404);
       if (order.payment_status === "Paid") return json({ error: "Order is already paid" }, 409);
-      if (Math.round(Number(order.total_amount) * 100) !== Math.round(amount * 100)) {
+      // Validate integer paise amounts before calling the provider. This blocks
+      // zero-paise orders, unsafe integers, and malformed stored totals.
+      const orderAmountPaise = Math.round(Number(order.total_amount) * 100);
+      const requestedAmountPaise = Math.round(amount * 100);
+      if (
+        !Number.isSafeInteger(orderAmountPaise) || orderAmountPaise <= 0 ||
+        !Number.isSafeInteger(requestedAmountPaise) || requestedAmountPaise <= 0
+      ) {
+        return json({ error: "Invalid order amount" }, 400);
+      }
+      if (orderAmountPaise !== requestedAmountPaise) {
         return json({ error: "Amount mismatch" }, 400);
       }
 
       const created = await razorpay("/orders", {
         method: "POST",
         body: JSON.stringify({
-          amount: Math.round(amount * 100),
+          amount: orderAmountPaise,
           currency: "INR",
           receipt: `shubhmart_${String(order.id).slice(0, 20)}`,
           notes: { shubhmart_order_id: String(order.id), customer_id: user.id },
