@@ -175,10 +175,23 @@ Deno.serve(async (req) => {
         return json({ error: "Invalid payment signature" }, 400);
       }
 
+      // Validate the persisted amount independently before contacting the provider.
+      // Reject invalid, unsafe, zero-paise, or sub-paise values rather than rounding
+      // malformed database amounts into a different amount during payment verification.
+      const storedAmount = Number(order.total_amount);
+      const storedPaiseValue = storedAmount * 100;
+      const expectedAmount = Math.round(storedPaiseValue);
+      if (
+        !Number.isFinite(storedAmount) ||
+        !Number.isSafeInteger(expectedAmount) || expectedAmount <= 0 ||
+        Math.abs(storedPaiseValue - expectedAmount) > 1e-7
+      ) {
+        return json({ error: "Invalid order amount" }, 400);
+      }
+
       // Signature alone proves the signed pair, not that the provider payment
       // is captured for the expected amount/currency. Confirm the provider record.
       const payment = await razorpay(`/payments/${encodeURIComponent(String(paymentId))}`);
-      const expectedAmount = Math.round(Number(order.total_amount) * 100);
       if (
         payment?.id !== paymentId ||
         payment?.order_id !== razorpayOrderId ||
