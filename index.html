@@ -594,7 +594,7 @@ async function loadCart(){
      const available=live&&stock>0&&(!x.variant_id||variant?.status==='Active');
      if(!available){unavailable++;return '<div class="panel row" style="border-color:#fecaca;background:#fff7f7"><div style="flex:1"><b>'+esc(x.products?.name||'Product')+'</b>'+(variant?'<br><span class="small">Variant: '+esc((variant.variant_name||'')+' '+(variant.option_value||''))+'</span>':'')+'<br><span class="danger">Product/variant abhi available nahi hai. Kripya Remove kijiye.</span></div><button class="btn alt" onclick="removeCart(\''+esc(x.id)+'\')">Remove</button></div>'}
      const qty=Math.min(Math.max(1,Number(x.quantity||1)),stock);const unit=variant?Number(variant.price||0):Number(x.products?.price||0);total+=unit*qty;
-     return '<div class="panel row"><img src="'+esc(variant?.image_url||x.products?.image_url||'https://placehold.co/100x80')+'" alt="'+esc(x.products?.name||'Product')+'" style="width:80px;height:60px;object-fit:cover;border-radius:8px"><div style="flex:1"><b>'+esc(x.products?.name||'Product')+'</b>'+(variant?'<br><span class="small">Variant: '+esc((variant.variant_name||'')+' '+(variant.option_value||''))+'</span>':'')+'<br>₹'+unit.toFixed(2)+' × '+qty+'<br><span class="small">Stock: '+stock+'</span></div><button class="btn" onclick="changeQty(\''+esc(x.id)+'\','+(qty-1)+')">−</button><button class="btn" onclick="changeQty(\''+esc(x.id)+'\','+(qty+1)+')">+</button><button class="btn alt" onclick="removeCart(\''+esc(x.id)+'\')">Remove</button></div>';
+     return '<div class="panel row"><img src="'+safeImageUrl(variant?.image_url||x.products?.image_url,'https://placehold.co/100x80')+'" alt="'+esc(x.products?.name||'Product')+'" style="width:80px;height:60px;object-fit:cover;border-radius:8px"><div style="flex:1"><b>'+esc(x.products?.name||'Product')+'</b>'+(variant?'<br><span class="small">Variant: '+esc((variant.variant_name||'')+' '+(variant.option_value||''))+'</span>':'')+'<br>₹'+unit.toFixed(2)+' × '+qty+'<br><span class="small">Stock: '+stock+'</span></div><button class="btn" onclick="changeQty(\''+esc(x.id)+'\','+(qty-1)+')">−</button><button class="btn" onclick="changeQty(\''+esc(x.id)+'\','+(qty+1)+')">+</button><button class="btn alt" onclick="removeCart(\''+esc(x.id)+'\')">Remove</button></div>';
    }).join('');
    box.innerHTML+=(unavailable?'<div class="errorbox">Kuch cart items available nahi hain. Checkout se pehle unhe remove kijiye.</div>':'')+'<h3>Total: ₹'+total.toFixed(2)+'</h3>';
    if(unavailable){document.getElementById('checkoutStart').classList.add('hidden');document.getElementById('addressCheckout').classList.add('hidden');document.getElementById('checkoutbox').classList.add('hidden')}
@@ -769,7 +769,7 @@ async function revealMagicDrop(){
    const {data,error}=await sb.from('products').select('id,name,price,image_url,status').eq('status','Active').eq('is_live',true).gt('stock',0).limit(30);
    if(error||!data||!data.length) throw error||new Error('No products');
    const p=data[Math.floor(Math.random()*data.length)];
-   document.getElementById('magicImg').src=p.image_url||'assets/shubhmart-logo.png?v=20260925';
+   document.getElementById('magicImg').src=safeImageUrl(p.image_url,'assets/shubhmart-logo.png?v=20260925');
    document.getElementById('magicName').textContent=p.name||'ShubhMart Product';
    document.getElementById('magicPrice').textContent=p.price!=null?'₹'+Number(p.price).toLocaleString('en-IN'):'See product';
    r.dataset.productId=p.id||'';
