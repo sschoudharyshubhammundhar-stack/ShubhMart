@@ -1,0 +1,25 @@
+name: Security Image URL Regression Test
+
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "tests/safe-image-url-source.test.js"
+      - ".github/workflows/security-image-url-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  safe-image-url-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run safe image URL regression tests
+        run: node --test tests/safe-image-url-source.test.js
