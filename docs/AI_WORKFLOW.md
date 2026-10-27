@@ -1,6 +1,7 @@
 # AI-Assisted Development Workflow
 
 ## Required preflight
+- Follow the detailed, canonical [AI Task Protocol](AI_TASK_PROTOCOL.md) to prevent repeated work, regressions, and incomplete handoffs.
 - Read `AGENTS.md`, `MEMORY.md`, `RULES.md`, and relevant security documents.
 - Confirm branch, current HEAD, PR status, and worktree context.
 - Inspect current source/configuration before proposing edits.
