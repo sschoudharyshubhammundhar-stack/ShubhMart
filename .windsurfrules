@@ -1,0 +1,10 @@
+# ShubhMart Windsurf Rules
+
+Before work, read `AGENTS.md`, `MEMORY.md`, and `RULES.md`. Confirm the current branch and inspect the relevant code before editing.
+
+- Treat all project safety boundaries as mandatory.
+- Do not modify production data/schema/security policies, deploy, merge, activate real payments/OTP/credit, create paid resources, or change external services without explicit approval.
+- No destructive rebuilds or removal of working features.
+- Prefer minimal, reversible, tested changes and isolated synthetic fixtures.
+- Protect secrets and personal data.
+- Report actual evidence, tests, limitations, and PASS / FAIL / BLOCKED / MISSING / UNVERIFIED status. Never claim unverified security.
