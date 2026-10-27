@@ -24,6 +24,7 @@ Purpose: the security handbook and evidence index for ShubhMart. Update this ind
 - Cross-tool project rules — [../../RULES.md](../../RULES.md)
 - Project context — [../PROJECT_CONTEXT.md](../PROJECT_CONTEXT.md)
 - AI-assisted workflow — [../AI_WORKFLOW.md](../AI_WORKFLOW.md)
+- Canonical AI task protocol and handoff — [../AI_TASK_PROTOCOL.md](../AI_TASK_PROTOCOL.md)
 - Contribution workflow — [../../CONTRIBUTING.md](../../CONTRIBUTING.md)
 - Security reporting policy — [../../SECURITY.md](../../SECURITY.md)
 - Legacy Cursor rules entrypoint — [../../.cursorrules](../../.cursorrules)
