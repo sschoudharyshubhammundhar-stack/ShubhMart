@@ -11,3 +11,8 @@ Record material changes to this security documentation and audit state. This fil
 
 ## Maintenance rule
 Append a dated entry whenever a security document or finding status changes. Include the relevant commit/PR and evidence links where available. Never rewrite historical entries to imply that an unperformed test passed.
+## 2026-10-27 — expanded coverage
+- Added authorization matrix, data inventory/privacy controls, checkout/payment state-machine contract, and CI/CD supply-chain checklist.
+- Expanded findings register with critical checkout idempotency, inventory/variant, coin lifecycle, RPC compatibility, multi-seller, browser XSS, and governance evidence gaps.
+- Updated handbook index and links. These are specifications and audit records, not proof that controls are implemented or tests have passed.
+- Reaffirmed NO-GO for live checkout until critical findings are resolved and isolated end-to-end evidence exists.
