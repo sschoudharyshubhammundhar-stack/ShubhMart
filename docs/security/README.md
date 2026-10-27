@@ -10,6 +10,17 @@ Purpose: the security handbook and evidence index for ShubhMart. Update this ind
 - Never put secrets, access tokens, customer PII, payment credentials, or raw sensitive logs in documentation.
 - A preview build is not a test result; passing source tests do not prove runtime security.
 
+## Persistent AI/project context files
+- Repository memory — [../../MEMORY.md](../../MEMORY.md)
+- Universal agent rules — [../../AGENTS.md](../../AGENTS.md)
+- Claude guidance — [../../CLAUDE.md](../../CLAUDE.md)
+- Gemini guidance — [../../GEMINI.md](../../GEMINI.md)
+- Codex guidance — [../../CODEX.md](../../CODEX.md)
+- GitHub Copilot guidance — [../../.github/copilot-instructions.md](../../.github/copilot-instructions.md)
+- Cursor rules — [../../.cursor/rules/shubhmart.mdc](../../.cursor/rules/shubhmart.mdc)
+
+`AGENTS.md` and `MEMORY.md` are the canonical references. Tool-specific files repeat the core guardrails for agents that do not automatically read the canonical files.
+
 ## Security documents
 - Threat model — [THREAT_MODEL.md](THREAT_MODEL.md)
 - Findings register — [FINDINGS_REGISTER.md](FINDINGS_REGISTER.md)
