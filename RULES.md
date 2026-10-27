@@ -11,6 +11,7 @@ This file is the human-readable, cross-tool summary of repository rules. `AGENTS
 - Do not claim a control is secure merely because a unit test or build passes.
 
 ## Required workflow
+0. Follow `docs/AI_TASK_PROTOCOL.md` for every task, including preflight, one-task scope, regression prevention, evidence-based status, and handoff.
 1. Read `AGENTS.md`, `MEMORY.md`, and the relevant security documents.
 2. Confirm branch and current state; inspect relevant code and configuration read-only first.
 3. State scope, risks, expected files, and whether any action crosses an approval boundary.
