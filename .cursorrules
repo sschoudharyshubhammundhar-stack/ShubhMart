@@ -1,0 +1,10 @@
+# ShubhMart Cursor Rules (legacy entrypoint)
+
+Read `AGENTS.md`, `MEMORY.md`, and `RULES.md` before editing. The maintained Cursor rules live in `.cursor/rules/shubhmart.mdc`; keep this legacy entrypoint consistent with them.
+
+- Audit first; make the smallest reversible change.
+- No production DB/SQL/migration/RLS/grant/trigger/RPC changes, Edge Function deploys, payment activation, production deploys, PR merges, paid resources, or external changes without explicit approval.
+- Preserve existing features. Use isolated synthetic test data.
+- Never expose secrets or customer/payment data.
+- Run relevant checks and report evidence with PASS / FAIL / BLOCKED / MISSING / UNVERIFIED.
+- A successful build is not proof of runtime or payment security.
