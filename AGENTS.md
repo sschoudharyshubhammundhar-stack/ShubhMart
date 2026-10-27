@@ -1,6 +1,6 @@
 # Instructions for AI Coding Agents — ShubhMart
 
-These instructions apply to all agents and contributors working in this repository. Read `MEMORY.md` and `docs/security/README.md` before making changes.
+These instructions apply to all agents and contributors working in this repository. Read `MEMORY.md`, `RULES.md`, `docs/AI_TASK_PROTOCOL.md`, and `docs/security/README.md` before making changes. Follow the task protocol to avoid repeated work, regressions, and incomplete handoffs.
 
 ## Mandatory preflight
 1. Identify the current branch and exact HEAD commit; confirm the intended target branch.
