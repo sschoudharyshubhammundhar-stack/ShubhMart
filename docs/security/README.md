@@ -1,30 +1,36 @@
 # ShubhMart Security Documentation
 
-Purpose: one durable security handbook for ShubhMart. Keep this index updated whenever a security document is added, renamed, or retired.
+Purpose: the security handbook and evidence index for ShubhMart. Update this index whenever a document is added, renamed, or retired.
 
 ## Operating rules
 - Never describe any system as absolutely hacker-proof. State evidence and remaining uncertainty.
-- Use PASS, FAIL, BLOCKED, MISSING, or UNVERIFIED for each control.
+- Use PASS, FAIL, BLOCKED, MISSING, or UNVERIFIED for each control; REVIEW means investigation is pending.
 - Read-only audit first. No production SQL/write, schema migration, RLS/grant/policy/trigger/RPC change, Edge Function deploy, payment activation, production deploy, merge, or paid resource creation without explicit authorization.
-- Preserve working features. Make changes on a non-production branch, with a narrow diff, tests, rollback notes, and review.
-- Never place secrets, access tokens, customer PII, payment credentials, or raw sensitive logs in these documents.
-- A preview build is not a test result; a passing source test is not proof of runtime security.
+- Preserve working features. Use a non-production branch, narrow diff, tests, rollback notes, and review.
+- Never put secrets, access tokens, customer PII, payment credentials, or raw sensitive logs in documentation.
+- A preview build is not a test result; passing source tests do not prove runtime security.
 
-## Documents
-- Threat model — THREAT_MODEL.md
-- Findings register — FINDINGS_REGISTER.md
-- Security test matrix — SECURITY_TEST_MATRIX.md
-- Release gate — RELEASE_GATE.md
-- Incident response — INCIDENT_RESPONSE.md
-- Audit runbook — AUDIT_RUNBOOK.md
-- Change log — CHANGELOG.md
+## Security documents
+- Threat model — [THREAT_MODEL.md](THREAT_MODEL.md)
+- Findings register — [FINDINGS_REGISTER.md](FINDINGS_REGISTER.md)
+- Security test matrix — [SECURITY_TEST_MATRIX.md](SECURITY_TEST_MATRIX.md)
+- Authorization matrix — [AUTHORIZATION_MATRIX.md](AUTHORIZATION_MATRIX.md)
+- Data inventory and privacy controls — [DATA_INVENTORY_AND_PRIVACY.md](DATA_INVENTORY_AND_PRIVACY.md)
+- Checkout and payment state machine — [CHECKOUT_STATE_MACHINE.md](CHECKOUT_STATE_MACHINE.md)
+- CI/CD and supply-chain review — [CI_SUPPLY_CHAIN.md](CI_SUPPLY_CHAIN.md)
+- Release gate — [RELEASE_GATE.md](RELEASE_GATE.md)
+- Incident response — [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md)
+- Read-only audit runbook — [AUDIT_RUNBOOK.md](AUDIT_RUNBOOK.md)
+- Documentation changelog — [CHANGELOG.md](CHANGELOG.md)
+- Dated audit evidence — [../drafts/SECURITY_AUDIT_SNAPSHOT_2026-10-27.md](../drafts/SECURITY_AUDIT_SNAPSHOT_2026-10-27.md)
 
-## Current verified snapshot (2026-10-27)
-- PR #66 on security/h01-safe-image-url is open, draft, and not merged.
-- The image URL regression workflow ran for commit 76ae2ca; job safe-image-url-test completed successfully. Audit snapshot reports 2 tests passed, 0 failed. These are source-level checks only.
-- Cloudflare preview build for 8f4fa7c succeeded; it was not a production deployment.
-- Supabase project API reports ACTIVE_HEALTHY, but database table/migration calls timed out and Security Advisor was unavailable due hibernation. DB/RLS/grants/triggers/RPC state remains UNVERIFIED.
-- Active Edge Functions observed: razorpay-payment v4 (verify_jwt=true), create-customer-order v4 (verify_jwt=true), shubhmart-ai v1 (verify_jwt=true). JWT verification alone does not prove business authorization.
+## Current evidence snapshot (2026-10-27; revalidate before relying on it)
+- PR #66 on `security/h01-safe-image-url` was open, draft, and unmerged at the time of the snapshot.
+- The image URL regression workflow for commit `76ae2ca` reported 2 source-level tests passed and 0 failed. This does not prove browser behavior or all XSS cases.
+- Cloudflare preview build for `8f4fa7c` succeeded; it was not a production deployment.
+- Supabase table/migration calls timed out and Security Advisor was unavailable. RLS, grants, triggers, RPCs, checkout and inventory invariants remain BLOCKED/UNVERIFIED.
+- Active Edge Functions observed: `razorpay-payment` v4, `create-customer-order` v4, and `shubhmart-ai` v1, all with `verify_jwt=true`. JWT verification alone does not prove business authorization.
+- The snapshot records source-level payment verification and ShubhCoins input-validation gaps requiring remediation and isolated testing.
 
-## Update protocol
-For every finding, record ID, severity, affected component, evidence and timestamp, impact, exploitability status, owner, remediation commit, tests, rollback plan, residual risk, and final status. Do not mark fixed until the relevant test and deployment state are independently verified.
+## Update and closure protocol
+For every finding, record ID, severity, affected component, evidence and timestamp, impact, exploitability confidence, owner, remediation commit, tests, rollback plan, residual risk, and final verification. Do not mark fixed until relevant tests and deployment state are independently verified. When a system is unavailable, record BLOCKED/UNVERIFIED rather than assuming safety.
