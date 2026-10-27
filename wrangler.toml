@@ -4,6 +4,10 @@ compatibility_date = "2026-09-26"
 [assets]
 directory = "."
 
+# Cloudflare Workers preview deployments require this configuration block.
+# This enables branch previews only; it does not change production routing or deploy targets.
+[previews]
+
 # Automatic deployment trigger
 # Deployment connection verified after secret update
 # CI trigger check
