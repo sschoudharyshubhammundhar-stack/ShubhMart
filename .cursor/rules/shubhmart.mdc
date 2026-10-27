@@ -1,0 +1,17 @@
+---
+description: ShubhMart repository-wide safety and security rules
+globs:
+alwaysApply: true
+---
+
+Read `AGENTS.md`, `MEMORY.md`, and `docs/security/README.md` before substantial work.
+
+- Audit first; inspect branch, exact HEAD, relevant code, tests and workflows.
+- No production database writes/migrations, RLS/grant/policy/trigger/RPC changes, Edge Function deploy, payment activation, production deploy, merge, paid resources or destructive changes without explicit user approval.
+- Preserve working features and use the smallest reviewable patch.
+- Use isolated synthetic environments for payment, checkout, inventory, concurrency and authorization tests.
+- Never expose secrets, payment credentials, customer PII or raw sensitive logs.
+- Enforce authorization server-side and in database policies. Treat client input and callbacks as untrusted.
+- Checkout, payment, stock and coin-ledger operations must be atomic/idempotent; do not mark payment Paid without server-to-server provider verification.
+- Record PASS/FAIL/BLOCKED/MISSING/UNVERIFIED with exact evidence. Never claim unrun tests passed or call the system hacker-proof.
+- Update relevant tests, rollback notes, findings and security documentation together.
