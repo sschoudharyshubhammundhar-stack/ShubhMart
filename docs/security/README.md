@@ -21,6 +21,16 @@ Purpose: the security handbook and evidence index for ShubhMart. Update this ind
 
 `AGENTS.md` and `MEMORY.md` are the canonical references. Tool-specific files repeat the core guardrails for agents that do not automatically read the canonical files.
 
+- Cross-tool project rules — [../../RULES.md](../../RULES.md)
+- Project context — [../PROJECT_CONTEXT.md](../PROJECT_CONTEXT.md)
+- AI-assisted workflow — [../AI_WORKFLOW.md](../AI_WORKFLOW.md)
+- Contribution workflow — [../../CONTRIBUTING.md](../../CONTRIBUTING.md)
+- Security reporting policy — [../../SECURITY.md](../../SECURITY.md)
+- Legacy Cursor rules entrypoint — [../../.cursorrules](../../.cursorrules)
+- Windsurf rules — [../../.windsurfrules](../../.windsurfrules)
+- Cline rules — [../../.clinerules/01-shubhmart.md](../../.clinerules/01-shubhmart.md)
+- GitHub Copilot path-scoped instructions — [../../.github/instructions/shubhmart.instructions.md](../../.github/instructions/shubhmart.instructions.md)
+
 ## Security documents
 - Threat model — [THREAT_MODEL.md](THREAT_MODEL.md)
 - Findings register — [FINDINGS_REGISTER.md](FINDINGS_REGISTER.md)
